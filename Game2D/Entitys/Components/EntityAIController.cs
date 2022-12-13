@@ -1,0 +1,27 @@
+﻿using OpenTK.Mathematics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Game2D.Entitys.Components
+{
+    public class EntityAIController : IEntityComponent
+    {
+        public bool Enabled { get; set; } = true;
+        public IEntity Entity { get; set; }
+
+        public void Draw(float dt)
+        {
+
+        }
+
+        public void Update(float dt)
+        {
+
+
+
+        }
+    }
+}
