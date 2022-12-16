@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game2D.Entitys.Components
+namespace Game2D.Entities.Components
 {
     public class EntityPhysicsComponent : IEntityComponent
     {
@@ -32,6 +32,7 @@ namespace Game2D.Entitys.Components
         // The gravity of the game world
         public Vector2 Gravity { get; set; } = new Vector2(0, -1.0f); // default value for gravity
 
+        // If the player is on the ground
         public bool OnGround { get; private set; }
 
         private Vector2 _gravitySpeed;
@@ -44,18 +45,14 @@ namespace Game2D.Entitys.Components
 
         public void Update(float deltaTime)
         {
-            // Chech ground collision
-            OnGround = collides(Position - new Vector2(0, Size.Y / 2));
+            // Check ground collision
+            OnGround = Collides(Position - new Vector2(0, Size.Y / 2));
 
             // Apply gravity
-            if (!OnGround)
-                _gravitySpeed = Vector2.Lerp(_gravitySpeed, Gravity, deltaTime * 0.01f);
-            else _gravitySpeed = Vector2.Zero;
+            _gravitySpeed = !OnGround ? Vector2.Lerp(_gravitySpeed, Gravity, deltaTime * 0.01f) : Vector2.Zero;
             Acceleration += _gravitySpeed;
 
-
             // Apply friction
-
             Velocity *= Friction;
 
             // Update velocity based on acceleration
@@ -67,17 +64,17 @@ namespace Game2D.Entitys.Components
             // Reset acceleration for next update
             Acceleration = Vector2.Lerp(Acceleration, Vector2.Zero, deltaTime * 10.0f);
         }
-        bool collides(Vector2 position) => GameManager.Instance.GameWorld[(int)(position.X), (int)(position.Y)].Id != World.Tiles.TileId.None;
+        private static bool Collides(Vector2 position) => GameManager.Instance.GameWorld[(int)(position.X), (int)(position.Y)].Id != World.Tiles.TileId.None;
 
         private void CheckCollisions(Vector2 target)
         {
-            if (collides(new Vector2(target.X, Position.Y)))
+            if (Collides(new Vector2(target.X, Position.Y)))
             {
                 Acceleration *= new Vector2(0, 1);
                 target.X = Position.X;
             }
 
-            if (collides(new Vector2(Position.X, target.Y)))
+            if (Collides(new Vector2(Position.X, target.Y)))
             {
                 Acceleration *= new Vector2(1, 0);
                 target.Y = Position.Y;

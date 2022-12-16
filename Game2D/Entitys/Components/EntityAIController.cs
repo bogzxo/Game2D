@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game2D.Entitys.Components
+namespace Game2D.Entities.Components
 {
     public class EntityAIController : IEntityComponent
     {

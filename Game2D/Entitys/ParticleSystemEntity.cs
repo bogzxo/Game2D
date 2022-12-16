@@ -1,5 +1,5 @@
 ﻿using Bogz.Logging;
-using Game2D.Entitys.Components;
+using Game2D.Entities.Components;
 using Game2D.OpenGL;
 using Game2D.Rendering;
 using OpenTK.Graphics.OpenGL4;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Game2D.Entitys
+namespace Game2D.Entities
 {
     public class ParticleSystemEntity : IEntity
     {
@@ -28,10 +28,10 @@ namespace Game2D.Entitys
             public static int SizeInBytes { get; } = Vector3.SizeInBytes + Vector2.SizeInBytes + sizeof(float) * 2;
         }
 
-        private Shader shader;
-        private float timer = 0.5f;
-        private int instanceVBO, quadVAO, quadVBO;
-        private ParticleInstanceData[] translations;
+        private readonly Shader _shader;
+        private float _timer = 0.5f;
+        private readonly int _instanceVbo, _quadVao, _quadVbo;
+        private readonly ParticleInstanceData[] _translations;
 
         public float MaximumAge { get; set; } = 1.0f;
         public float SpawnRate { get; set; } = 1.0f;
@@ -51,12 +51,12 @@ namespace Game2D.Entitys
                 { typeof(EntityPhysicsComponent), Physics }
             };
 
-            shader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/particle.vert"), (ShaderType.FragmentShader, "Assets/Shader/particle.frag"));
-            translations = new ParticleInstanceData[count];
+            _shader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/particle.vert"), (ShaderType.FragmentShader, "Assets/Shader/particle.frag"));
+            _translations = new ParticleInstanceData[count];
             for (int i = 0; i < Count; i++)
             {
                 Vector2 translation = new Vector2((float)rand.NextDouble() * 2 - 1, (float)rand.NextDouble() * 2 - 1) + Physics.Position;
-                translations[i] = new ParticleInstanceData
+                _translations[i] = new ParticleInstanceData
                 {
                     Age = 0.0f,
                     LifeTime = 1.0f,
@@ -65,9 +65,9 @@ namespace Game2D.Entitys
             }
 
             // --------------------------------------
-            instanceVBO = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, instanceVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, ParticleInstanceData.SizeInBytes * translations.Length, translations, BufferUsageHint.StaticDraw);
+            _instanceVbo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _instanceVbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, ParticleInstanceData.SizeInBytes * _translations.Length, _translations, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -83,17 +83,17 @@ namespace Game2D.Entitys
                 -scale, -scale,  1.0f, 1.0f,
                 -scale,  scale,  0.0f, 1.0f
             };
-            quadVAO = GL.GenVertexArray();
-            quadVBO = GL.GenBuffer();
-            GL.BindVertexArray(quadVAO);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, quadVBO);
+            _quadVao = GL.GenVertexArray();
+            _quadVbo = GL.GenBuffer();
+            GL.BindVertexArray(_quadVao);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _quadVbo);
             GL.BufferData(BufferTarget.ArrayBuffer, quadVertices.Length * sizeof(float), quadVertices, BufferUsageHint.StaticDraw);
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
             GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (2 * sizeof(float)));
             // also set instance data
-            GL.BindBuffer(BufferTarget.ArrayBuffer, instanceVBO); // this attribute comes from a different vertex buffer
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _instanceVbo); // this attribute comes from a different vertex buffer
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, ParticleInstanceData.SizeInBytes, 0);
@@ -119,66 +119,66 @@ namespace Game2D.Entitys
 
         }
 
-        float tmr = 0.0f;
+        private float _tmr = 0.0f;
         public void Draw(float dt)
         {
-            tmr += dt;
+            _tmr += dt;
 
             for (int i = 0; i < Count; i++)
             {
-                if (translations[i].LifeTime == 0 && IsSpawning)
+                if (_translations[i].LifeTime == 0 && IsSpawning)
                 {
-                    if (tmr > SpawnRate)
+                    if (_tmr > SpawnRate)
                     {
-                        translations[i] = new ParticleInstanceData
+                        _translations[i] = new ParticleInstanceData
                         {
                             Position = Physics.Position,
                             Age = 0.0f,
                             LifeTime = (float)rand.NextDouble() * MaximumAge,
                             Color = new Vector3((float)rand.NextDouble()) * 0.3f
                         };
-                        tmr = 0.0f;
+                        _tmr = 0.0f;
                     }
                 }
                 else
                 {
-                    translations[i].Age += dt * (float)rand.NextDouble();
-                    translations[i].Position += new Vector2(
+                    _translations[i].Age += dt * (float)rand.NextDouble();
+                    _translations[i].Position += new Vector2(
                         (float)(rand.NextDouble() - 0.5f) / 400.0f,
                         (float)rand.NextDouble() / 5000.0f
                         );
                 }
 
-                if (translations[i].Age > translations[i].LifeTime)
-                    translations[i] = ParticleInstanceData.None;
+                if (_translations[i].Age > _translations[i].LifeTime)
+                    _translations[i] = ParticleInstanceData.None;
             }
 
-            shader.UseShader();
+            _shader.UseShader();
 
             var mvp = Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix());
-            shader.Uniform1("timer", timer);
-            shader.Matrix4("Matrix", ref mvp);
+            _shader.Uniform1("timer", _timer);
+            _shader.Matrix4("Matrix", ref mvp);
 
-            GL.BindVertexArray(quadVAO);
+            GL.BindVertexArray(_quadVao);
             GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 6, 100);
             GL.BindVertexArray(0);
 
-            shader.End();
+            _shader.End();
 
         }
 
-        float updateTimer = 0.0f;
+        private float _updateTimer = 0.0f;
         public void Update(float dt)
         {
-            timer += dt;
+            _timer += dt;
 
-            updateTimer += dt;
+            _updateTimer += dt;
 
-            if (updateTimer > 0.01f)
+            if (_updateTimer > 0.01f)
             {
-                updateTimer = 0;
-                GL.BindBuffer(BufferTarget.ArrayBuffer, instanceVBO);
-                GL.BufferData(BufferTarget.ArrayBuffer, ParticleInstanceData.SizeInBytes * translations.Length, translations, BufferUsageHint.StaticDraw);
+                _updateTimer = 0;
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _instanceVbo);
+                GL.BufferData(BufferTarget.ArrayBuffer, ParticleInstanceData.SizeInBytes * _translations.Length, _translations, BufferUsageHint.StaticDraw);
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             }
 

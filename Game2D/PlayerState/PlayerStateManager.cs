@@ -1,4 +1,4 @@
-﻿using Game2D.Entitys;
+﻿using Game2D.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

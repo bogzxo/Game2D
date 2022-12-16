@@ -1,5 +1,5 @@
 ﻿using Game2D.Data;
-using Game2D.Entitys;
+using Game2D.Entities;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 

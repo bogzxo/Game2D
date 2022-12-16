@@ -1,4 +1,4 @@
-﻿using Game2D.Entitys;
+﻿using Game2D.Entities;
 
 namespace Game2D.PlayerState
 {

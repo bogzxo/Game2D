@@ -1,4 +1,4 @@
-﻿using Game2D.Entitys.Components;
+﻿using Game2D.Entities.Components;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game2D.Entitys
+namespace Game2D.Entities
 {
     public class SlimeEntity : IEntity
     {

@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Game2D.GameScreens.Graphics
 {
-    public class Sprite : IEntity
+    public class Sprite : IEntity, IDisposable
     {
         #region Private Members
-        private VertexBufferObject vbo;
-        private uint[] indices;
-        private Vertex[] vertices;
-        private Shader shader;
-        private Matrix4 model;
+        private readonly VertexBufferObject _vbo;
+        private readonly uint[] _indices;
+        private readonly Vertex[] _vertices;
+        private Shader _shader;
+        private Matrix4 _model;
         #endregion
 
         #region Public Members
@@ -40,63 +40,85 @@ namespace Game2D.GameScreens.Graphics
             if (sprShader == null)
             {
                 Logger.Instance.Log(LogLevel.Info, "Sprite constructed without any shader, using default shader...");
-                shader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/basic.frag"));
+                _shader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/basic.frag"));
             }
-            else shader = sprShader;
+            else _shader = sprShader;
 
-            Logger.Instance.Log(LogLevel.Info, $"Sprite constructed using shader({shader.Program})");
+            Logger.Instance.Log(LogLevel.Info, $"Sprite constructed using shader({_shader.Program})");
 
             Texture = tex;
-            vbo = new VertexBufferObject();
+            _vbo = new VertexBufferObject();
 
-            indices = new uint[] {
+            _indices = new uint[] {
                 0, 1, 2,
                 0, 2, 3
             };
 
-            vertices = new Vertex[] {
+            _vertices = new Vertex[] {
                 new Vertex(new Vector3(-size.X, -size.Y,0), new Vector2(0,1)),
                 new Vertex(new Vector3(size.X, -size.Y,0), new Vector2(1,1)),
                 new Vertex(new Vector3(size.X, size.Y,0), new Vector2(1,0)),
                 new Vertex(new Vector3(-size.X, size.Y,0), new Vector2(0,0))
             };
 
-            vbo.PushVertexAttribPointer(0, 3, VertexAttribPointerType.Float, Vertex.SizeInBytes, 0);
-            vbo.PushVertexAttribPointer(1, 2, VertexAttribPointerType.Float, Vertex.SizeInBytes, Vector3.SizeInBytes);
+            _vbo.PushVertexAttribPointer(0, 3, VertexAttribPointerType.Float, Vertex.SizeInBytes, 0);
+            _vbo.PushVertexAttribPointer(1, 2, VertexAttribPointerType.Float, Vertex.SizeInBytes, Vector3.SizeInBytes);
 
-            vbo.BufferData(vertices, Vertex.SizeInBytes);
-            vbo.BufferIndices(indices);
+            _vbo.BufferData(_vertices, Vertex.SizeInBytes);
+            _vbo.BufferIndices(_indices);
 
-            model = Matrix4.Identity;
+            _model = Matrix4.Identity;
         }
-
+        ~Sprite()
+        {
+            Dispose(false);
+        }
         public void Update(float dt)
         {
-            model = Matrix4.CreateTranslation(Position.X, Position.Y, 0);
+            _model = Matrix4.CreateTranslation(Position.X, Position.Y, 0);
         }
 
         public void Draw(float dt)
         {
-            var mvp = Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix()) * Matrix4.Transpose(model);
+            var mvp = Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix()) * Matrix4.Transpose(_model);
             var imageSize = new Vector2(TextureRectangle.Width, TextureRectangle.Height);
             var texturePosition = new Vector2(TextureRectangle.X, TextureRectangle.Y);
 
-            shader.UseShader();
-            shader.Matrix4("mvp", ref mvp);
-            shader.Uniform2("imageSize", ref imageSize);
-            shader.Uniform2("texturePosition", ref texturePosition);
+            _shader.UseShader();
+            _shader.Matrix4("mvp", ref mvp);
+            _shader.Uniform2("imageSize", ref imageSize);
+            _shader.Uniform2("texturePosition", ref texturePosition);
 
-            shader.Uniform1("flipped", IsFlipped ? 1 : 0);
+            _shader.Uniform1("flipped", IsFlipped ? 1 : 0);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTextureUnit(0, Texture.GLTexture);
 
-            shader.Uniform1("inputTexture", 0);
+            _shader.Uniform1("inputTexture", 0);
 
-            vbo.Use();
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-            vbo.End();
-            shader.End();
+            _vbo.Use();
+            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            _vbo.End();
+            _shader.End();
+        }
+        private void ReleaseUnmanagedResources()
+        {
+            _vbo.Dispose();
+            _shader.Dispose();
+            Texture.Dispose();
+        }
+        private void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                // Release Managed Resources
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

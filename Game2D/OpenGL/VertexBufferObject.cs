@@ -21,26 +21,26 @@ public struct VertexAttribPointer
         GL.EnableVertexAttribArray(Index);
     }
 }
-public class VertexBufferObject
+public class VertexBufferObject : IDisposable
 {
     public int Handle { get; set; }
 
-    private int m_vao, m_ebo;
+    private readonly int _mVao, _mEbo;
 
-    private List<VertexAttribPointer> vertexAttribs;
+    private List<VertexAttribPointer> _vertexAttribs;
     public int ElementSize { get; private set; }
 
     public VertexBufferObject()
     {
         this.Handle = GL.GenBuffer();
-        this.m_ebo = GL.GenBuffer();
-        this.m_vao = GL.GenVertexArray();
-        this.vertexAttribs = new List<VertexAttribPointer>();
+        this._mEbo = GL.GenBuffer();
+        this._mVao = GL.GenVertexArray();
+        this._vertexAttribs = new List<VertexAttribPointer>();
     }
 
     public void PushVertexAttribPointer(int index, int size, VertexAttribPointerType type, int stride, int offset)
     {
-        this.vertexAttribs.Add(new VertexAttribPointer
+        this._vertexAttribs.Add(new VertexAttribPointer
         {
             Index = index,
             Size = size,
@@ -68,7 +68,7 @@ public class VertexBufferObject
     {
         ElementSize = data.Length;
 
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, this.m_ebo);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, this._mEbo);
         {
             GL.BufferData(BufferTarget.ElementArrayBuffer, data.Length * sizeof(uint), data, BufferUsageHint.StaticDraw);
 
@@ -81,11 +81,11 @@ public class VertexBufferObject
 
     public void Use()
     {
-        GL.BindVertexArray(m_vao);
+        GL.BindVertexArray(_mVao);
         GL.BindBuffer(BufferTarget.ArrayBuffer, this.Handle);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, this.m_ebo);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, this._mEbo);
 
-        foreach (var item in vertexAttribs)
+        foreach (var item in _vertexAttribs)
             item.Use();
     }
 
@@ -98,7 +98,7 @@ public class VertexBufferObject
 
     public void Dispose()
     {
-        GL.DeleteVertexArray(this.m_vao);
+        GL.DeleteVertexArray(this._mVao);
         GL.DeleteBuffer(this.Handle);
     }
 }

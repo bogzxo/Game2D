@@ -1,5 +1,5 @@
 ﻿using Game2D.Data;
-using Game2D.Entitys;
+using Game2D.Entities;
 using Game2D.OpenGL;
 using Game2D.Rendering;
 using Game2D.World;
