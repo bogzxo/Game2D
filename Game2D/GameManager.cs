@@ -116,7 +116,7 @@ namespace Game2D
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            InputManager.Update((float)args.Time);
+            InputManager.Update();
             GameScreenManager.Update((float)args.Time);
         }
     }

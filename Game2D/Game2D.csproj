@@ -17,7 +17,7 @@
     <PackageReference Include="ImGui.NET" Version="1.88.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OpenTK" Version="4.7.5" />
-    <PackageReference Include="OpenTK.Input" Version="4.7.5" />
+    <PackageReference Include="OpenTK.Input" Version="5.0.0-pre.8" />
     <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="6.11.0-preview" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
@@ -66,6 +66,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bogz.Logging\Bogz.Logging.csproj" />
+    <ProjectReference Include="..\XInputium\XInputium\XInputium.csproj" />
   </ItemGroup>
 
 </Project>

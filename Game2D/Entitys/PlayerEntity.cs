@@ -80,7 +80,7 @@ namespace Game2D.Entities
 
         public void Draw(float dt)
         {
-            var inputState = GameManager.Instance.InputManager.GetMovementAxis();
+            var inputState = GameManager.Instance.InputManager.GetMovementDirection();
 
             DrawableComponent.Sprite!.TextureRectangle = _animationManager.GetCurrentAnimation().boundingBox;
             DrawableComponent.Draw(dt);
@@ -109,13 +109,13 @@ namespace Game2D.Entities
 
             _jumpCooldown += dt;
 
-            if (onGround && _jumpCooldown > 0.1f && (GameManager.Instance.KeyboardState.IsKeyDown(Keys.Space)))
+            if (onGround && _jumpCooldown > 0.1f && (GameManager.Instance.InputManager.IsKeyDown(Keys.Space)))
             {
                 _jumpCooldown = 0;
                 PhysicsComponent.ApplyForce(new Vector2(0, 2.5f));
             }
 
-            Vector2 inputState = GameManager.Instance.InputManager.GetMovementAxis();
+            Vector2 inputState = GameManager.Instance.InputManager.GetMovementDirection();
 
             PhysicsComponent.ApplyForce(inputState * Information.Speed * dt);
 
