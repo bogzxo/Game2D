@@ -12,7 +12,7 @@ namespace Game2D.PlayerState
 
         public override void Update(PlayerEntity player, float dt)
         {
-            if (GameManager.Instance.KeyboardState.IsAnyKeyDown || GameManager.Instance.InputManager.IsAnyActiveInput)
+            if (GameManager.Instance.KeyboardState.IsAnyKeyDown )
                 Manager.ChangeState(PlayerStates.Moving);
         }
     }

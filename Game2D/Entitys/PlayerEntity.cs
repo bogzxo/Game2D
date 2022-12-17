@@ -62,7 +62,7 @@ namespace Game2D.Entities
             Particle = new ParticleSystemEntity(100) { MaximumAge = 5.0f, SpawnRate = 0.1f };
             InitializeSprite();
 
-            Position = new Vector2(16, 16);
+            Position = new Vector2(16, 18);
         }
 
         private void InitializeSprite()
@@ -89,6 +89,9 @@ namespace Game2D.Entities
             ImGui.Begin("Player Info");
             {
                 ImGui.Text($"Player Position: {Position}");
+                var pos = new System.Numerics.Vector2(Position.X, Position.Y);
+                ImGui.DragFloat2("pos", ref pos);
+                Position = new Vector2(pos.X, pos.Y);
                 ImGui.Text($"Local Position: Chunk({(int)(Position.X / Chunk.Width)}) [{(int)(Position.X % Chunk.Width)}, {(int)(Position.Y)}] = {GameManager.Instance.GameWorld[(int)Position.X, (int)Position.Y].Id}");
                 ImGui.Text($"Current Player State: {_manager.CurrentState.ToString()?.Split('.').LastOrDefault()}");
                 ImGui.Text($"IsMoving: {Information.IsMoving}");
@@ -104,12 +107,11 @@ namespace Game2D.Entities
 
         private void MoveUpdate(float dt)
         {
-            bool onGround = GameManager.Instance.GameWorld[(int)Position.X, (int)(Position.Y - Size.Y / 2.0f)].Id != World.Tiles.TileId.None;
             Information.IsMoving = false;
 
             _jumpCooldown += dt;
 
-            if (onGround && _jumpCooldown > 0.1f && (GameManager.Instance.KeyboardState.IsKeyDown(Keys.Space)))
+            if (PhysicsComponent.OnGround && _jumpCooldown > 0.1f && (GameManager.Instance.KeyboardState.IsKeyDown(Keys.Space)/* || GameManager.Instance.InputManager.State.IsButtonDown(1)*/))
             {
                 _jumpCooldown = 0;
                 PhysicsComponent.ApplyForce(new Vector2(0, 2.5f));
@@ -122,7 +124,7 @@ namespace Game2D.Entities
             DrawableComponent.Sprite!.IsFlipped = inputState.X < 0.0f;
 
 
-            if (!GameManager.Instance.InputManager.IsAnyActiveInput && PhysicsComponent.OnGround)
+            if (!GameManager.Instance.InputManager.IsAnyActiveInput)
                 _manager.ChangeState(PlayerStates.Idle);
         }
 

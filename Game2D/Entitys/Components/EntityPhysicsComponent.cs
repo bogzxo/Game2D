@@ -30,7 +30,7 @@ namespace Game2D.Entities.Components
         public float Friction { get; set; } = 0.9f; // default value for friction
 
         // The gravity of the game world
-        public Vector2 Gravity { get; set; } = new Vector2(0, -1.0f); // default value for gravity
+        public Vector2 Gravity { get; set; } = new Vector2(0, -1.5f); // default value for gravity
 
         // If the player is on the ground
         public bool OnGround { get; private set; }
@@ -46,10 +46,10 @@ namespace Game2D.Entities.Components
         public void Update(float deltaTime)
         {
             // Check ground collision
-            OnGround = Collides(Position - new Vector2(0, Size.Y / 2));
+            OnGround = RectangularCollision(Position - new Vector2(0, Size.Y / 2), GameManager.Instance.Player.Size);
 
             // Apply gravity
-            _gravitySpeed = !OnGround ? Vector2.Lerp(_gravitySpeed, Gravity, deltaTime * 0.01f) : Vector2.Zero;
+            _gravitySpeed = !OnGround ? Vector2.Lerp(_gravitySpeed, Gravity, deltaTime * 0.1f) : Vector2.Zero;
             Acceleration += _gravitySpeed;
 
             // Apply friction
@@ -66,15 +66,50 @@ namespace Game2D.Entities.Components
         }
         private static bool Collides(Vector2 position) => GameManager.Instance.GameWorld[(int)(position.X), (int)(position.Y)].Id != World.Tiles.TileId.None;
 
+
+        public bool RectangularCollision(Vector2 pos, Vector2 size)
+        {
+            // Calculate the top left and bottom right corners of the rectangular bounding box
+            Vector2 topLeft = pos - size / 2;
+            Vector2 bottomRight = pos + size / 2;
+
+            // Check top left corner
+            if (Collides(topLeft))
+            {
+                return true;
+            }
+
+            // Check top right corner
+            if (Collides(new Vector2(bottomRight.X, topLeft.Y)))
+            {
+                return true;
+            }
+
+            // Check bottom left corner
+            if (Collides(new Vector2(topLeft.X, bottomRight.Y)))
+            {
+                return true;
+            }
+
+            // Check bottom right corner
+            if (Collides(bottomRight))
+            {
+                return true;
+            }
+
+            // No collisions at any of the corners, so return false
+            return false;
+        }
+
         private void CheckCollisions(Vector2 target)
         {
-            if (Collides(new Vector2(target.X, Position.Y)))
+            if (RectangularCollision(new Vector2(target.X, Position.Y), GameManager.Instance.Player.Size))
             {
                 Acceleration *= new Vector2(0, 1);
                 target.X = Position.X;
             }
 
-            if (Collides(new Vector2(Position.X, target.Y)))
+            if (RectangularCollision(new Vector2(Position.X, target.Y), GameManager.Instance.Player.Size))
             {
                 Acceleration *= new Vector2(1, 0);
                 target.Y = Position.Y;

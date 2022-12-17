@@ -52,8 +52,8 @@ float value(vec2 fragCoord)
     
     for (int i =0;i < 3; i++)
     {
-        vec2 motion = vec2(fbm(uv + iTime * 0.05f + vec2(i)));
-        final += fbm(uv + motion + vec2(i));
+        vec2 motion = vec2(fbm(uv + vec2(iTime * 0.7f, -iTime * 0.05f) * 0.05f + vec2(i)));
+        final += fbm(uv + motion + vec2(i * uv));
     }
 
 	return final / 3.0f;
@@ -65,5 +65,5 @@ void main()
 {
 	vec2 texC = texCoords;
 	texC.x *= (iResolution.x / iResolution.y);
-	fragColor = vec4(mix(vec3(74 / 255.0f, 255 / 255.0f, 222 / 255.0f), vec3(23 / 255.0f, 36 / 255.0f, 71 / 255.0f) + vec3(-0.3f), 1 - value(texC)), 1);
+	fragColor = vec4(mix(vec3(74 / 255.0f, 255 / 255.0f, 222 / 255.0f) + vec3(0.3f), vec3(23 / 255.0f, 36 / 255.0f, 71 / 255.0f) + vec3(-0.3f), 1 - value(texC)), 1);
 }

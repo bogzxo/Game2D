@@ -25,21 +25,7 @@ namespace Game2D
         static bool inited;
         public static GameManager Instance
         {
-            get
-            {
-                //due to an edge case of GameManager being called before singleton is instantiated, we need a second check :/
-                if (!inited)
-                {
-                    GameWindowSettings gameWindowSettings = GameWindowSettings.Default;
-
-                    NativeWindowSettings nativeWindowSettings = NativeWindowSettings.Default;
-                    nativeWindowSettings.Size = new OpenTK.Mathematics.Vector2i(1920, 1080);
-
-
-                    instance ??= new GameManager(gameWindowSettings, nativeWindowSettings);
-                }
-                return instance;
-            }
+            get => instance;
         }
         public ImGuiController ImGuiController { get; private set; }
         public InputManager InputManager { get; private set; }
@@ -52,10 +38,10 @@ namespace Game2D
             : base(gameWindowSettings, nativeWindowSettings)
         {
             inited = true;
+            instance = this;
             Logger.InitializeLogger(new BasicLogger("info.log"));
             InputManager = new InputManager();
 
-            this.VSync = VSyncMode.Off;
 
             ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
         }
