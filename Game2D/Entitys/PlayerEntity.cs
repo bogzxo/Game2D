@@ -62,7 +62,7 @@ namespace Game2D.Entities
             Particle = new ParticleSystemEntity(100) { MaximumAge = 5.0f, SpawnRate = 0.1f };
             InitializeSprite();
 
-            Position = new Vector2(16, 16);
+            Position = new Vector2(32, 38);
         }
 
         private void InitializeSprite()

@@ -68,16 +68,14 @@ namespace Game2D.Entities.Components
 
         private void CheckCollisions(Vector2 target)
         {
-            if (Collides(new Vector2(target.X, Position.Y)))
-            {
-                Acceleration *= new Vector2(0, 1);
-                target.X = Position.X;
-            }
+            var xCollision = Collides(new Vector2(target.X, Position.Y));
+            var yCollision = Collides(new Vector2(Position.X, target.Y));
 
-            if (Collides(new Vector2(Position.X, target.Y)))
+            if (xCollision || yCollision)
             {
-                Acceleration *= new Vector2(1, 0);
-                target.Y = Position.Y;
+                var newAcceleration = new Vector2(xCollision ? 0 : 1, yCollision ? 0 : 1);
+                Acceleration *= newAcceleration;
+                target = new Vector2(xCollision ? Position.X : target.X, yCollision ? Position.Y : target.Y);
             }
             Position = target;
         }

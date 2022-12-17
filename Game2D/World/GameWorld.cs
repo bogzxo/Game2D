@@ -13,6 +13,7 @@ namespace Game2D.World
         #endregion
 
         #region Internal Members
+        public GameWorldGenerator GameWorldGenerator { get; }
         #endregion
 
 
@@ -36,20 +37,14 @@ namespace Game2D.World
         public GameWorld()
         {
             GameManager.Instance.GameWorld = this;
-
-            Stopwatch sw = Stopwatch.StartNew();
-
+            GameWorldGenerator = new GameWorldGenerator();
             Chunks = new Chunk[Width];
-
             for (int i = 0; i < Chunks.Length; i++)
                 Chunks[i] = new Chunk(i);
 
-            Parallel.For(0, Width, (i) => Chunks[i].GenerateChunk());
 
-            for (int i = 0; i < Chunks.Length; i++)
-                Chunks[i].UploadVertexBuffer();
 
-            sw.Stop();
+            GenerateWorld();
 
             // SINGLE THREADED
             // 10 Chunks: 5s
@@ -61,8 +56,25 @@ namespace Game2D.World
 
             // fuck
 
+        }
+
+        public void GenerateWorld()
+        {
+            GameWorldGenerator.Regenerate();
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            for (int i = 0; i < Chunks.Length; i++)
+                Chunks[i].GenerateChunk(GameWorldGenerator);
+
+
+            for (int i = 0; i < Chunks.Length; i++)
+                Chunks[i].UploadVertexBuffer();
+
+            sw.Stop();
             Logger.Instance.Log(LogLevel.Error, $"Total Chunk Generation Time {sw.ElapsedMilliseconds}ms");
         }
+
         float timer = 0.0f;
         public void Update(float dt)
         {
