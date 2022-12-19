@@ -4,11 +4,11 @@
     {
         public static readonly WorldGenerationParameters Default = new WorldGenerationParameters
         {
-            BaseSurfaceFrequency = 0.07f,
-            BaseCavernFrequency = 0.1f,
+            BaseSurfaceFrequency = 0.04f,
+            BaseCavernFrequency = 0.04f,
             ErosionBias = 0.1f,
-            ErosionPasses = 5,
-            TileGenerationThreshold = 0.55f
+            ErosionPasses = 9,
+            TileGenerationThreshold = 0.50f
         };
         public float BaseSurfaceFrequency;
         public float BaseCavernFrequency;

@@ -31,14 +31,12 @@ namespace Game2D.World
             {
                 for (int y = heightMapSamples[x]; y < Chunk.Height; y++)
                 {
-                    // Scale the y coordinate by a factor to make caves more likely to generate
-                    // the deeper down you go.
-                    double yScaled = y * 0.5;
+                    double yScaled = (Chunk.Height - 1 - y) / Chunk.Height + 0.1f;
 
-                    double sample = 0.1;
+                    double sample = 0.7;
 
-                    for (int i = 1; i < 10; i++)
-                        sample = (sample + (_cavernNoise.GetSimplex(x, yScaled, i) / i));
+                    //for (int i = 1; i < 10; i++)
+                    sample += Math.Clamp(_cavernNoise.GetSimplex(x, y, 0), -0.2f, 0.2f);
 
 
                     _world[x, y] = (float)sample;
@@ -48,11 +46,11 @@ namespace Game2D.World
             _world = ApplyTerrainFilters(_world);
         }
 
-        public float[,] ApplyTerrainFilters(float[,] noiseMap)
+        public float[,] ApplyTerrainFilters(in float[,] noiseMap)
         {
             var erodedNoiseMap = noiseMap;
 
-            for (int i = 0; i < 10 -  Parameters.ErosionPasses; i++)
+            for (int i = 0; i < 10 - Parameters.ErosionPasses; i++)
             {
                 for (int x = 1; x < noiseMap.GetLength(0) - 1; x++)
                 {
@@ -73,13 +71,16 @@ namespace Game2D.World
 
             for (int x = 0; x < width; x++)
             {
-                double sample = 0;
+                double sample = 0.1;
 
-                for (int i = 0; i < 10; i++)
-                    sample = (sample + _surfaceNoise.GetSimplex(pos * width + x, i)) / 2.0;
-                sample *= 30;
+                for (int i = 0; i < 6; i++)
+                    sample += Math.Abs((sample + _surfaceNoise.GetSimplex(pos * width + x, i))) / 6;
 
-                samples[x] = (int)Math.Clamp((float)sample, 0.0f, maxHeight);
+
+                sample *= maxHeight * (2 / 3.0f);
+                sample -= (1 / 8.0f) * maxHeight;
+                sample = Math.Clamp(sample, 0, maxHeight);
+                samples[x] = (int)sample;
             }
 
             return samples;
@@ -92,7 +93,7 @@ namespace Game2D.World
                 for (int y = 0; y < Chunk.Height; y++)
                 {
                     Tile t = Tile.None;
-                    if (_world[x + chunk.Position * Chunk.Width, y] >= Parameters.TileGenerationThreshold * 2.0f - 1.0f)
+                    if (_world[x + chunk.Position * Chunk.Width, y] >= Parameters.TileGenerationThreshold)
                         t = Tile.IdToTile(TileId.Dirt);
 
                     chunk.Tiles[x, Chunk.Height - 1 - y] = t;

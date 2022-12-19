@@ -38,6 +38,7 @@ namespace Game2D.Entities
         public Dictionary<Type, IEntityComponent> Components { get; set; }
         public ParticleSystemEntity Particle { get; private set; }
         public PlayerInformation Information = new PlayerInformation();
+        public PlayerState.PlayerState State { get => _manager.CurrentState; }
         #endregion
 
         #region Private members
@@ -47,8 +48,6 @@ namespace Game2D.Entities
 
         public PlayerEntity()
         {
-            GameManager.Instance.Player = this;
-
             PhysicsComponent = new EntityPhysicsComponent(new Vector2(0, 0), Size, 1.0f);
             DrawableComponent = new EntityDrawableComponent(PhysicsComponent);
 
@@ -59,10 +58,11 @@ namespace Game2D.Entities
                 {typeof(EntityPhysicsComponent), PhysicsComponent },
                 {typeof(EntityDrawableComponent), DrawableComponent }
             };
+
             Particle = new ParticleSystemEntity(100) { MaximumAge = 5.0f, SpawnRate = 0.1f };
             InitializeSprite();
 
-            Position = new Vector2(16, 18);
+            Position = new Vector2((GameManager.Instance.GameWorld.Width * Chunk.Width) / 2.0f, Chunk.Height);
         }
 
         private void InitializeSprite()
@@ -83,35 +83,6 @@ namespace Game2D.Entities
             DrawableComponent.Sprite!.TextureRectangle = _animationManager.GetCurrentAnimation().boundingBox;
             DrawableComponent.Draw(dt);
             Particle.Draw(dt);
-
-            ImGui.Begin("Player Info");
-            {
-                ImGui.Text($"Player Position: {Position}");
-                var pos = new System.Numerics.Vector2(Position.X, Position.Y);
-                ImGui.DragFloat2("pos", ref pos);
-                Position = new Vector2(pos.X, pos.Y);
-                ImGui.Text($"Local Position: Chunk({(int)(Position.X / Chunk.Width)}) [{(int)(Position.X % Chunk.Width)}, {(int)(Position.Y)}] = {GameManager.Instance.GameWorld[(int)Position.X, (int)Position.Y].Id}");
-                ImGui.Text($"Current Player State: {_manager.CurrentState.ToString()?.Split('.').LastOrDefault()}");
-                ImGui.Text($"IsMoving: {Information.IsMoving}");
-                ImGui.Text($"IsOnGround: {PhysicsComponent.OnGround}");
-                ImGui.Text($"Acceleration: {PhysicsComponent.Acceleration}");
-
-                //if (ImPlot.BeginPlot("test"))
-                //{
-                //    int[] x = new[] { 1, 2, 3, 4, 5 };
-                //    unsafe
-                //    {
-                //        fixed (int* p = &x)
-                //        {
-                //            ImPlot.PlotLine("m", ref x, x.Length);
-                //        }
-                //    }
-
-                //    ImPlot.EndPlot();
-                //}
-
-                ImGui.End();
-            }
         }
 
         private float _jumpCooldown = 0;

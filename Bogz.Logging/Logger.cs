@@ -29,7 +29,7 @@ public class Logger
         if (_logger == null)
             throw new Exception("No Instance of a Logger Found! Consider using Logger.IntializeLogger();");
 
-        if (Instance.GetType() == typeof(ILoggerDisposable) || Instance.GetType() == typeof(Loggers.BasicLogger))
+        if (Instance.GetType() == typeof(ILoggerDisposable) || Instance.GetType() == typeof(Loggers.AsynchronousLogger) || Instance.GetType() == typeof(Loggers.BasicLogger))
             ((ILoggerDisposable)Instance).Dispose();
         else throw new Exception();
     }

@@ -55,24 +55,15 @@ namespace Game2D
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
 
-            // game screen manager
             GameScreenManager = new GameScreenManager();
-        }
-
-        protected override void OnJoystickConnected(JoystickEventArgs e)
-        {
-            //InputManager.JoystickConnectedEvent(e);
-            base.OnJoystickConnected(e);
         }
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             ImGuiController.Update(this, (float)args.Time);
+
             GameScreenManager.Draw((float)args.Time);
 
-
-
             ImGuiController.Render();
-
             ImGuiController.CheckGLError("End of frame");
 
             SwapBuffers();

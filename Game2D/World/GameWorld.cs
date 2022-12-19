@@ -1,6 +1,8 @@
 ﻿using Bogz.Logging;
+using Game2D.Entities;
 using Game2D.World.Tiles;
 using OpenTK.Mathematics;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Game2D.World
@@ -10,14 +12,10 @@ namespace Game2D.World
         #region Public Members
         public int Width { get; private set; } = 10;
         public Chunk[] Chunks { get; private set; }
-        #endregion
-
-        #region Internal Members
         public GameWorldGenerator GameWorldGenerator { get; }
+        public ConcurrentBag<IEntity> Entities { get; private set; }
         #endregion
 
-
-        public List<Light> Lights { get; private set; } = new List<Light>();
         public Tile this[int x, int y]
         {
             get
@@ -42,7 +40,7 @@ namespace Game2D.World
             for (int i = 0; i < Chunks.Length; i++)
                 Chunks[i] = new Chunk(i);
 
-
+            Entities = new ConcurrentBag<IEntity>();
 
             GenerateWorld();
 
@@ -78,17 +76,14 @@ namespace Game2D.World
         float timer = 0.0f;
         public void Update(float dt)
         {
-            //timer += dt;
-            //if (timer > 0.1f)
-            //{
-            //    timer = 0.0f;
+            foreach (var item in Entities)
+                item.Update(dt);
+        }
 
-            //    for (int i = 0; i < Chunks.Length; i++)
-            //        Chunks[i].GenerateMesh();
-            //}
-
-
-
+        public void AddEntity(in IEntity entity)
+        {
+            if (Entities.Contains(entity)) return;
+            Entities.Add(entity);
         }
     }
 }

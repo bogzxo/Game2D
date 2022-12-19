@@ -80,6 +80,9 @@ namespace Game2D.World
             foreach (var chunk in world.Chunks)
                 chunk.Draw(dt);
 
+            foreach (var item in world.Entities)
+                item.Draw(dt);
+
             shader.End();
             GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
             fbo0.End();

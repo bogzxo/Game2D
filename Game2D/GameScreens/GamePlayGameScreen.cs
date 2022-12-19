@@ -17,7 +17,6 @@ namespace Game2D.GameScreens
 {
     public class GamePlayGameScreen : IGameScreen
     {
-        private List<IEntity> entities;
         private PlayerEntity player;
         private GameWorld world;
         private GameWorldRenderer worldRenderer;
@@ -31,14 +30,13 @@ namespace Game2D.GameScreens
 
         public void Initialize()
         {
-            player = new PlayerEntity();
-            entities = new List<IEntity>
-            {
-                player
-            };
             GameManager.Instance.Camera = new Camera(CameraType.Perspective, new Vector3(0, 0, 15), 16.0f / 9.0f);
 
             world = new GameWorld();
+
+            GameManager.Instance.Player = new PlayerEntity();
+            world.AddEntity(GameManager.Instance.Player);
+
             worldRenderer = new GameWorldRenderer(world, "Assets/Map/tilesheet.png");
 
             //background = new Texture(1920, 1080);
@@ -71,20 +69,11 @@ namespace Game2D.GameScreens
 
             GL.ClearColor(Color4.Aqua);
         }
+
+        bool showGenerationOptions, showPlayerOptions;
         public void Draw(float dt)
         {
-            if (ImGui.Begin("WorldGeneration"))
-            {
-                ImGui.SliderFloat($"Genration Threshold:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.TileGenerationThreshold, 0.0f, 1.0f);
-                ImGui.SliderFloat($"Erosion Bias:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionBias, 0.0f, 1.0f);
-                ImGui.SliderInt($"Erosion Passes:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionPasses, 1, 10);
-
-                if (ImGui.Button("Generate"))
-                    GameManager.Instance.GameWorld.GenerateWorld();
-
-                ImGui.End();
-            }
-
+            DrawImGui();
 
             fbo.Use();
 
@@ -111,8 +100,6 @@ namespace Game2D.GameScreens
             GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
             worldRenderer.EndDraw();
 
-            foreach (var item in entities)
-                item.Draw(dt);
 
             fbo.End();
 
@@ -128,16 +115,56 @@ namespace Game2D.GameScreens
             vbo.End();
         }
 
+        private void DrawImGui()
+        {
+            if (ImGui.BeginMainMenuBar())
+            {
+                if (ImGui.BeginMenu("World"))
+                {
+                    ImGui.MenuItem("Generation Options", "", ref showGenerationOptions);
+                    ImGui.EndMenu();
+                }
+                if (ImGui.BeginMenu("Player"))
+                {
+                    ImGui.MenuItem("Player Information", "", ref showPlayerOptions);
+                    ImGui.EndMenu();
+                }
+
+                ImGui.EndMainMenuBar();
+            }
+
+            if (showGenerationOptions && ImGui.Begin("WorldGeneration"))
+            {
+                ImGui.SliderFloat($"Genration Threshold:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.TileGenerationThreshold, 0.0f, 1.0f);
+                ImGui.SliderFloat($"Erosion Bias:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionBias, 0.0f, 1.0f);
+                ImGui.SliderInt($"Erosion Passes:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionPasses, 1, 10);
+
+                if (ImGui.Button("Generate"))
+                    GameManager.Instance.GameWorld.GenerateWorld();
+
+                ImGui.End();
+            }
+            if (showPlayerOptions && ImGui.Begin("Player Info"))
+            {
+                ImGui.Text($"Player Position: {GameManager.Instance.Player.Position}");
+                var pos = new System.Numerics.Vector2(GameManager.Instance.Player.Position.X, GameManager.Instance.Player.Position.Y);
+                ImGui.DragFloat2("pos", ref pos);
+                GameManager.Instance.Player.Position = new Vector2(pos.X, pos.Y);
+                ImGui.Text($"Local Position: Chunk({(int)(GameManager.Instance.Player.Position.X / Chunk.Width)}) [{(int)(GameManager.Instance.Player.Position.X % Chunk.Width)}, {(int)(GameManager.Instance.Player.Position.Y)}] = {GameManager.Instance.GameWorld[(int)GameManager.Instance.Player.Position.X, (int)GameManager.Instance.Player.Position.Y].Id}");
+                ImGui.Text($"Current Player State: {GameManager.Instance.Player.State.ToString()?.Split('.').LastOrDefault()}");
+                ImGui.Text($"IsMoving: {GameManager.Instance.Player.Information.IsMoving}");
+                ImGui.Text($"IsOnGround: {GameManager.Instance.Player.PhysicsComponent.OnGround}");
+                ImGui.Text($"Acceleration: {GameManager.Instance.Player.PhysicsComponent.Acceleration}");
+
+                ImGui.End();
+            }
+        }
+
         public void Update(float dt)
         {
             iTime += dt;
 
-
-
             world.Update(dt);
-
-            foreach (var item in entities)
-                item.Update(dt);
         }
     }
 }
