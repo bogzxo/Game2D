@@ -12,20 +12,14 @@ using XInputium.XInput;
 
 namespace Game2D.Data
 {
-    public class InputManager
+    public struct InputManagerConfiguration
     {
-        private readonly Dictionary<XButtons, Keys> _bindings;
-        private readonly XGamepad _controller;
-        private List<Keys> _activeKeys;
+        public Dictionary<XButtons, Keys> ControllerBindings { get; set; }
+        public float DeadZone { get; set; }
 
-        public bool IsAnyActiveInput { get; private set; }
-
-        public InputManager()
+        public static InputManagerConfiguration Default = new InputManagerConfiguration()
         {
-            _controller = new XGamepad(); ;
-            _activeKeys = new List<Keys>();
-
-            _bindings = new Dictionary<XButtons, Keys>
+            ControllerBindings = new Dictionary<XButtons, Keys>
             {
                 { XButtons.A, Keys.Space },
                 { XButtons.B, Keys.X },
@@ -35,7 +29,27 @@ namespace Game2D.Data
                 { XButtons.RB, Keys.W },
                 { XButtons.Start, Keys.Escape },
                 { XButtons.Back, Keys.Tab }
-            };
+            },
+            DeadZone = 0.25f
+        };
+    }
+    public class InputManager
+    {
+        private readonly XGamepad _controller;
+        private List<Keys> _activeKeys;
+
+        public InputManagerConfiguration Configuration { get; private set; }
+
+        public bool IsAnyActiveInput { get; private set; }
+        public Vector2 LastDirection { get; private set; }
+        public Vector2 Direction { get; private set; }
+
+        public InputManager(in InputManagerConfiguration config)
+        {
+            _controller = new XGamepad();
+            _activeKeys = new List<Keys>();
+
+            Configuration = config;
         }
         public bool IsKeyDown(Keys key) => _activeKeys.Contains(key);
         public void Update()
@@ -47,51 +61,64 @@ namespace Game2D.Data
             _activeKeys.Clear();
 
             // Check if any of the bound buttons are pressed
-            foreach (var binding in _bindings)
+            foreach (var binding in Configuration.ControllerBindings)
             {
                 if (_controller.Buttons[binding.Key].IsPressed || GameManager.Instance.IsKeyDown(binding.Value))
                     _activeKeys.Add(binding.Value);
             }
+
+            UpdateMovementDirection();
         }
-        public Vector2 GetMovementDirection()
+
+        // TODO: fix this spaghetti shit 
+
+        private void UpdateMovementDirection()
         {
-            // Check if the W or S keys are being pressed
             float y = 0;
             if (GameManager.Instance.IsKeyDown(Keys.W))
-            {
                 y = 1;
-            }
             else if (GameManager.Instance.IsKeyDown(Keys.S))
-            {
                 y = -1;
-            }
 
-            // Check if the A or D keys are being pressed
+
             float x = 0;
             if (GameManager.Instance.IsKeyDown(Keys.A))
-            {
                 x = -1;
-            }
             else if (GameManager.Instance.IsKeyDown(Keys.D))
-            {
                 x = 1;
-            }
 
-            // If no keyboard input was detected, check the gamepad joystick
+
             if (x == 0 && y == 0)
             {
-                // Update the controller state
                 _controller.Update();
 
-                // Get the left joystick axis values
                 x = _controller.LeftJoystick.X;
                 y = _controller.LeftJoystick.Y;
+
+                ProcessJoystickInput(ref x, ref y);
             }
 
-            IsAnyActiveInput = x + y > 0;
+            IsAnyActiveInput = Direction.LengthSquared > 0;
 
-            // Return the movement direction as a Vector2
-            return new Vector2(x, y);
+            if (Direction.X + Direction.Y != 0)
+                LastDirection = Direction;
+
+            Direction = new Vector2(x, y);
+        }
+
+        // Scaled Radial Dead Zone 
+        private void ProcessJoystickInput(ref float x, ref float y)
+        {
+            // too lazy to refactor
+
+            Vector2 stickInput = new Vector2(x, y);
+            if (stickInput.Length < Configuration.DeadZone)
+                stickInput = Vector2.Zero;
+            else
+                stickInput = stickInput.Normalized() * ((stickInput.Length - Configuration.DeadZone) / (1 - Configuration.DeadZone));
+
+            x = stickInput.X;
+            y = stickInput.Y;
         }
     }
 }

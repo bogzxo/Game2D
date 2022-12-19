@@ -53,7 +53,7 @@ namespace Game2D
         {
             inited = true;
             Logger.InitializeLogger(new BasicLogger("info.log"));
-            InputManager = new InputManager();
+            InputManager = new InputManager(InputManagerConfiguration.Default);
 
             this.VSync = VSyncMode.Off;
 
