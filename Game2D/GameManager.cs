@@ -40,7 +40,7 @@ namespace Game2D
             inited = true;
             instance = this;
             Logger.InitializeLogger(new BasicLogger("info.log"));
-            InputManager = new InputManager();
+            InputManager = new InputManager(InputManagerConfiguration.Default);
 
 
             ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
@@ -102,7 +102,7 @@ namespace Game2D
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            InputManager.Update((float)args.Time);
+            InputManager.Update();
             GameScreenManager.Update((float)args.Time);
         }
     }

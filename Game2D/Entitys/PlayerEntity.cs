@@ -80,8 +80,6 @@ namespace Game2D.Entities
 
         public void Draw(float dt)
         {
-            var inputState = GameManager.Instance.InputManager.GetMovementAxis();
-
             DrawableComponent.Sprite!.TextureRectangle = _animationManager.GetCurrentAnimation().boundingBox;
             DrawableComponent.Draw(dt);
             Particle.Draw(dt);
@@ -98,6 +96,19 @@ namespace Game2D.Entities
                 ImGui.Text($"IsOnGround: {PhysicsComponent.OnGround}");
                 ImGui.Text($"Acceleration: {PhysicsComponent.Acceleration}");
 
+                //if (ImPlot.BeginPlot("test"))
+                //{
+                //    int[] x = new[] { 1, 2, 3, 4, 5 };
+                //    unsafe
+                //    {
+                //        fixed (int* p = &x)
+                //        {
+                //            ImPlot.PlotLine("m", ref x, x.Length);
+                //        }
+                //    }
+
+                //    ImPlot.EndPlot();
+                //}
 
                 ImGui.End();
             }
@@ -117,11 +128,11 @@ namespace Game2D.Entities
                 PhysicsComponent.ApplyForce(new Vector2(0, 2.5f));
             }
 
-            Vector2 inputState = GameManager.Instance.InputManager.GetMovementAxis();
+            Vector2 inputState = GameManager.Instance.InputManager.Direction;
 
             PhysicsComponent.ApplyForce(inputState * Information.Speed * dt);
 
-            DrawableComponent.Sprite!.IsFlipped = inputState.X < 0.0f;
+            DrawableComponent.Sprite!.IsFlipped = GameManager.Instance.InputManager.LastDirection.X < 0;
 
 
             if (!GameManager.Instance.InputManager.IsAnyActiveInput)

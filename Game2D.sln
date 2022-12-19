@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game2D", "Game2D\Game2D.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bogz.Logging", "Bogz.Logging\Bogz.Logging.csproj", "{F4ADCC47-5636-4B20-9EDC-34886B747408}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XInputium", "XInputium\XInputium\XInputium.csproj", "{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{F4ADCC47-5636-4B20-9EDC-34886B747408}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4ADCC47-5636-4B20-9EDC-34886B747408}.Release|x64.ActiveCfg = Release|Any CPU
 		{F4ADCC47-5636-4B20-9EDC-34886B747408}.Release|x64.Build.0 = Release|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Debug|x64.Build.0 = Debug|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Release|x64.ActiveCfg = Release|Any CPU
+		{A13C9F76-8DFC-4496-B6DA-86E17E48D80B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

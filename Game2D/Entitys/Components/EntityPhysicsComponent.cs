@@ -111,8 +111,9 @@ namespace Game2D.Entities.Components
 
             if (RectangularCollision(new Vector2(Position.X, target.Y), GameManager.Instance.Player.Size))
             {
-                Acceleration *= new Vector2(1, 0);
-                target.Y = Position.Y;
+                var newAcceleration = new Vector2(xCollision ? 0 : 1, yCollision ? 0 : 1);
+                Acceleration *= newAcceleration;
+                target = new Vector2(xCollision ? Position.X : target.X, yCollision ? Position.Y : target.Y);
             }
             Position = target;
         }

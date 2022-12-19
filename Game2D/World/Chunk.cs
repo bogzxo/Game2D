@@ -12,8 +12,8 @@ namespace Game2D.World
     public class Chunk
     {
         #region Public Members
-        public static int Width { get; } = 16;
-        public static int Height { get; } = 16;
+        public static int Width { get; } = 32;
+        public static int Height { get; } = 32;
         public static Vector2 Size { get => new Vector2(Width, Height); }
         public int Position { get; set; }
         public Tile[,] Tiles { get; set; }
@@ -24,15 +24,9 @@ namespace Game2D.World
         private VertexBufferObject vbo;
         private Vertex[] verticesArray;
         private uint[] indicesArray;
-        private static WorldChunkGenerator generator;
-
         const int tilesetSize = 10;
         const float texOffset = 1.0f / tilesetSize;
         #endregion
-        static Chunk()
-        {
-            generator = new WorldChunkGenerator();
-        }
         public Chunk(int position)
         {
             Tiles = new Tile[Width, Height];
@@ -42,16 +36,19 @@ namespace Game2D.World
             vbo.PushVertexAttribPointer(0, 3, VertexAttribPointerType.Float, Vertex.SizeInBytes, 0);
             vbo.PushVertexAttribPointer(1, 2, VertexAttribPointerType.Float, Vertex.SizeInBytes, Vector3.SizeInBytes);
         }
-        public void GenerateChunk()
+        public void GenerateChunk(GameWorldGenerator gameWorldGenerator)
         {
             for (int x = 0; x < Width; x++)
                 for (int y = 0; y < Height; y++)
                     Tiles[x, y] = Tile.None;
 
-            generator.Generate(this);
+            gameWorldGenerator.Generate(this);
 
             generateMesh();
         }
+
+
+
         private void generateMesh()
         {
             List<Vertex> vertices = new();

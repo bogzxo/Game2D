@@ -3,6 +3,7 @@ using Game2D.Entities;
 using Game2D.OpenGL;
 using Game2D.Rendering;
 using Game2D.World;
+using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -72,6 +73,19 @@ namespace Game2D.GameScreens
         }
         public void Draw(float dt)
         {
+            if (ImGui.Begin("WorldGeneration"))
+            {
+                ImGui.SliderFloat($"Genration Threshold:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.TileGenerationThreshold, 0.0f, 1.0f);
+                ImGui.SliderFloat($"Erosion Bias:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionBias, 0.0f, 1.0f);
+                ImGui.SliderInt($"Erosion Passes:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionPasses, 1, 10);
+
+                if (ImGui.Button("Generate"))
+                    GameManager.Instance.GameWorld.GenerateWorld();
+
+                ImGui.End();
+            }
+
+
             fbo.Use();
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -101,7 +115,7 @@ namespace Game2D.GameScreens
                 item.Draw(dt);
 
             fbo.End();
-            
+
             postProcessingShader.UseShader();
             postProcessingShader.Matrix4("mvp", ref mat);
             GL.ActiveTexture(TextureUnit.Texture0);
@@ -117,6 +131,8 @@ namespace Game2D.GameScreens
         public void Update(float dt)
         {
             iTime += dt;
+
+
 
             world.Update(dt);
 

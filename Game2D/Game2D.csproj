@@ -70,6 +70,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bogz.Logging\Bogz.Logging.csproj" />
+    <ProjectReference Include="..\XInputium\XInputium\XInputium.csproj" />
   </ItemGroup>
 
 </Project>
