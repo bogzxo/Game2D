@@ -8,23 +8,26 @@ namespace Game2D.World
         private float[,] _world;
         private readonly Noise _surfaceNoise = new Noise();
         private readonly Noise _cavernNoise = new Noise();
-        public WorldGenerationParameters Parameters = WorldGenerationParameters.Default;
 
         public GameWorldGenerator()
         {
-            _surfaceNoise.SetFrequency(Parameters.BaseSurfaceFrequency);
-            _cavernNoise.SetFrequency(Parameters.BaseCavernFrequency);
+            _surfaceNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseSurfaceFrequency);
+            _cavernNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseCavernFrequency);
 
-            _surfaceNoise.SetSeed(Parameters.Seed);
-            _cavernNoise.SetSeed(Parameters.Seed);
+            _surfaceNoise.SetSeed(WorldGenerationParameters.CurrentParameters.Seed);
+            _cavernNoise.SetSeed(WorldGenerationParameters.CurrentParameters.Seed);
 
             Regenerate();
         }
 
         public void Regenerate()
         {
-            _surfaceNoise.SetSeed(Parameters.Seed);
-            _cavernNoise.SetSeed(Parameters.Seed);
+
+            _surfaceNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseSurfaceFrequency);
+            _cavernNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseCavernFrequency);
+
+            _surfaceNoise.SetSeed(WorldGenerationParameters.CurrentParameters.Seed);
+            _cavernNoise.SetSeed(WorldGenerationParameters.CurrentParameters.Seed);
 
             _world = new float[GameManager.Instance.GameWorld.Width * Chunk.Width, Chunk.Height];
 
@@ -56,14 +59,14 @@ namespace Game2D.World
         {
             var erodedNoiseMap = noiseMap;
 
-            for (int i = 0; i < 10 - Parameters.ErosionPasses; i++)
+            for (int i = 0; i < 10 - WorldGenerationParameters.CurrentParameters.ErosionPasses; i++)
             {
                 for (int x = 1; x < noiseMap.GetLength(0) - 1; x++)
                 {
                     for (int y = 1; y < noiseMap.GetLength(1) - 1; y++)
                     {
                         // Apply erosion by setting the noise value at this point to the average of its neighbors
-                        erodedNoiseMap[x, y] = (erodedNoiseMap[x - 1, y] + erodedNoiseMap[x + 1, y] + erodedNoiseMap[x, y - 1] + erodedNoiseMap[x, y + 1] + Parameters.ErosionBias / 10.0f) / (4 + (0.1f - Parameters.ErosionBias / 10.0f));
+                        erodedNoiseMap[x, y] = (erodedNoiseMap[x - 1, y] + erodedNoiseMap[x + 1, y] + erodedNoiseMap[x, y - 1] + erodedNoiseMap[x, y + 1] + WorldGenerationParameters.CurrentParameters.ErosionBias / 10.0f) / (4 + (0.1f - WorldGenerationParameters.CurrentParameters.ErosionBias / 10.0f));
                     }
                 }
             }
@@ -71,7 +74,7 @@ namespace Game2D.World
             return erodedNoiseMap;
         }
 
-        private int[] GenerateHeightSamples(int pos, int width, int maxHeight)
+        public int[] GenerateHeightSamples(int pos, int width, int maxHeight)
         {
             int[] samples = new int[width];
 
@@ -92,6 +95,28 @@ namespace Game2D.World
             return samples;
         }
 
+        public float[] GenerateHeightSamplesPreview(int pos, int width, int maxHeight)
+        {
+            float[] samples = new float[width];
+
+            for (int x = 0; x < width; x++)
+            {
+                double sample = 0.1;
+
+                for (int i = 0; i < 6; i++)
+                    sample += Math.Abs((sample + _surfaceNoise.GetSimplex(pos * width + x, i))) / 6;
+
+
+                sample *= maxHeight * (2 / 3.0f);
+                sample -= (1 / 8.0f) * maxHeight;
+                sample = Math.Clamp(sample, 0, maxHeight);
+                samples[x] = (int)sample;
+            }
+
+            return samples;
+        }
+
+
         public void Generate(Chunk chunk)
         {
             for (int x = 0; x < Chunk.Width; x++)
@@ -99,7 +124,7 @@ namespace Game2D.World
                 for (int y = 0; y < Chunk.Height; y++)
                 {
                     Tile t = Tile.None;
-                    if (_world[x + chunk.Position * Chunk.Width, y] >= Parameters.TileGenerationThreshold)
+                    if (_world[x + chunk.Position * Chunk.Width, y] >= WorldGenerationParameters.CurrentParameters.TileGenerationThreshold)
                         t = Tile.IdToTile(TileId.Dirt);
 
                     chunk.Tiles[x, Chunk.Height - 1 - y] = t;

@@ -4,6 +4,7 @@ using Game2D.Data;
 using Game2D.Entities;
 using Game2D.Rendering;
 using Game2D.World;
+using Game2D.World.Generation;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -45,8 +46,18 @@ namespace Game2D
 
             ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
             AssetManager = new AssetManager();
+
+            // make sure config dir exists
+            if (!Directory.Exists("config"))
+                Directory.CreateDirectory("config");
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            WorldGenerationParameters.SaveToFile("config/worldgen.json");
+
+            base.OnClosing(e);
+        }
         protected override void OnLoad()
         {
             base.OnLoad();

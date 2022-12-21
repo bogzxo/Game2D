@@ -9,6 +9,8 @@ layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 NormalColor;
 layout (location = 2) out vec4 FragPos;
 
+uniform float brightness = 1.0f;
+
 float vignette(vec2 uv)
 {
     uv *=  1.0 - uv.yx;
@@ -23,5 +25,5 @@ void main()
     vec3 color = texture2D(inputTexture, texCoords).rgb;
     color.rgb *= vignette(texCoords);
 
-	FragColor = vec4(color, 1.0f);
+	FragColor = vec4(color, 1.0f) * brightness;
 }

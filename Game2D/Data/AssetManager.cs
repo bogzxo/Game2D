@@ -1,5 +1,7 @@
 ﻿using Bogz.Logging;
+using Game2D.Rendering;
 using ImGuiNET;
+using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,20 +22,33 @@ namespace Game2D.Data
             Pointer = ptr;
         }
     }
+    public struct AssetManagerShaderAsset
+    {
+        public Shader Shader { get; set; }
+
+        public AssetManagerShaderAsset(string fragPath, string vertPath)
+        {
+            Shader = Shader.CreateShader((ShaderType.FragmentShader, fragPath), (ShaderType.VertexShader, vertPath));
+        }
+    }
     public class AssetManager : IDisposable
     {
         private bool disposedValue;
 
         public Dictionary<string, AssetManagerFontAsset> Fonts { get; set; }
+        public Dictionary<string, AssetManagerShaderAsset> Shaders { get; set; }
 
         public AssetManager()
         {
             Fonts = new Dictionary<string, AssetManagerFontAsset>();
+            Shaders = new Dictionary<string, AssetManagerShaderAsset>();
 
             Logger.Instance.Log(LogLevel.Info, "Asset Manager Loaded!");
         }
 
         public ImFontPtr GetFont(in string name) => Fonts[name].Pointer;
+        public Shader GetShader(in string name) => Shaders[name].Shader;
+
 
         public void RegisterFont(string name, string path, int size)
         {
@@ -51,6 +66,14 @@ namespace Game2D.Data
                 Logger.Instance.Log(LogLevel.Error, $"Font({name}) Failed to load!");
         }
 
+        public Shader RegisterShader(in string name, in string fragPath, in string vertPath)
+        {
+            Shaders.Add(name, new AssetManagerShaderAsset(fragPath, vertPath));
+            Logger.Instance.Log(LogLevel.Success, $"Shader({name}) Loaded Successfully!");
+
+            return Shaders[name].Shader;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -58,10 +81,16 @@ namespace Game2D.Data
                 foreach (var item in Fonts)
                     item.Value.Pointer.Destroy();
 
+                foreach (var item in Shaders)
+                    item.Value.Shader.Dispose();
+
                 if (disposing)
                 {
                     Fonts.Clear();
                     Fonts = null;
+
+                    Shaders.Clear();
+                    Shaders = null;
                 }
 
                 disposedValue = true;

@@ -3,6 +3,7 @@
 uniform float iTime;
 uniform vec2 iResolution;
 uniform float pixels;
+uniform float brightness = 1.0f;
 
 in vec2 texCoords;
 
@@ -64,5 +65,5 @@ void main()
 {
 	vec2 texC = texCoords;
 	texC.x *= (iResolution.x / iResolution.y);
-	fragColor = vec4(mix(vec3(74 / 255.0f, 255 / 255.0f, 222 / 255.0f) + vec3(0.3f), vec3(23 / 255.0f, 36 / 255.0f, 71 / 255.0f) + vec3(-0.3f), 1 - value(texC)), 1);
+	fragColor = vec4(mix(vec3(74 / 255.0f, 255 / 255.0f, 222 / 255.0f) + vec3(0.3f), vec3(23 / 255.0f, 36 / 255.0f, 71 / 255.0f) + vec3(-0.3f), 1 - value(texC)), 1) * brightness;
 }

@@ -3,6 +3,7 @@ using Game2D.Entities;
 using Game2D.OpenGL;
 using Game2D.Rendering;
 using Game2D.World;
+using Game2D.World.Generation;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -12,40 +13,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.TimeZoneInfo;
 
 namespace Game2D.GameScreens
 {
     public class GamePlayGameScreen : IGameScreen
     {
         private PlayerEntity player;
-        private GameWorld world;
         private GameWorldRenderer worldRenderer;
-        private Shader backgroundShader, postProcessingShader;
+        private Shader postProcessingShader;
+        private Shader backgroundShader;
         private VertexBufferObject vbo;
         private FrameBufferObject fbo;
         private uint[] indices;
         private Vertex[] vertices;
 
-        float iTime = 0;
+        float iTime = 0, transitionTimer;
         float pixels = 256;
 
         public void Initialize()
         {
             GameManager.Instance.Camera = new Camera(CameraType.Perspective, new Vector3(0, 0, 15), 16.0f / 9.0f);
 
-            world = new GameWorld();
-
             GameManager.Instance.Player = new PlayerEntity();
-            world.AddEntity(GameManager.Instance.Player);
-
-            worldRenderer = new GameWorldRenderer(world, "Assets/Map/tilesheet.png");
+            GameManager.Instance.GameWorld.AddEntity(GameManager.Instance.Player);
+            worldRenderer = new GameWorldRenderer(GameManager.Instance.GameWorld, "Assets/Map/tilesheet.png");
 
             //background = new Texture(1920, 1080);
             //backgroundSprite = new Sprite(background);
             //backgroundSprite.Position = new Vector2(0, 0);
 
-            backgroundShader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/clouds.frag"));
+
             postProcessingShader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/post.frag"));
+
+            backgroundShader = GameManager.Instance.AssetManager.GetShader("background_clouds");
 
             vbo = new VertexBufferObject();
             indices = new uint[] {
@@ -67,13 +68,12 @@ namespace Game2D.GameScreens
             vbo.BufferIndices(indices);
 
             fbo = new FrameBufferObject(1920, 1080);
-
-            GL.ClearColor(Color4.Aqua);
         }
 
         bool showGenerationOptions, showPlayerOptions;
         public void Draw(float dt)
         {
+            transitionTimer += dt;
             GameManager.Instance.Camera.Position.Z += GameManager.Instance.MouseState.ScrollDelta.Y;
             pixels = (int)(256 * (1 + GameManager.Instance.MouseState.Scroll.Y / 15.0f));
 
@@ -93,6 +93,7 @@ namespace Game2D.GameScreens
             backgroundShader.Uniform1("iTime", iTime);
             backgroundShader.Uniform2("iResolution", ref ires);
             backgroundShader.Uniform1("pixels", pixels);
+            backgroundShader.Uniform1("brightness", 1.0f);
 
 
             vbo.Use();
@@ -111,6 +112,7 @@ namespace Game2D.GameScreens
 
             postProcessingShader.UseShader();
             postProcessingShader.Matrix4("mvp", ref mat);
+            postProcessingShader.Uniform1("brightness", MathF.Min(transitionTimer, 1.0f));
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTextureUnit(0, fbo.ColorTexture);
 
@@ -141,10 +143,13 @@ namespace Game2D.GameScreens
 
             if (showGenerationOptions && ImGui.Begin("WorldGeneration"))
             {
-                ImGui.InputInt("Seed: ", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.Seed);
-                ImGui.SliderFloat($"Genration Threshold:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.TileGenerationThreshold, 0.0f, 1.0f);
-                ImGui.SliderFloat($"Erosion Bias:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionBias, 0.0f, 1.0f);
-                ImGui.SliderInt($"Erosion Passes:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionPasses, 1, 10);
+                ImGui.InputInt("Seed: ", ref WorldGenerationParameters.CurrentParameters.Seed);
+                ImGui.SliderFloat($"Genration Threshold:", ref WorldGenerationParameters.CurrentParameters.TileGenerationThreshold, 0.0f, 1.0f);
+                ImGui.SliderFloat($"Erosion Bias:", ref WorldGenerationParameters.CurrentParameters.ErosionBias, 0.0f, 1.0f);
+                ImGui.SliderInt($"Erosion Passes:", ref WorldGenerationParameters.CurrentParameters.ErosionPasses, 1, 10);
+
+                ImGui.SliderFloat($"Surface Frequency:", ref WorldGenerationParameters.CurrentParameters.BaseSurfaceFrequency, 0.0f, 1.0f);
+                ImGui.SliderFloat($"Cavern Frequency:", ref WorldGenerationParameters.CurrentParameters.BaseCavernFrequency, 0.0f, 1.0f);
 
                 if (ImGui.Button("Generate"))
                     GameManager.Instance.GameWorld.GenerateWorld();
@@ -171,7 +176,7 @@ namespace Game2D.GameScreens
         {
             iTime += dt;
 
-            world.Update(dt);
+            GameManager.Instance.GameWorld.Update(dt);
         }
     }
 }
