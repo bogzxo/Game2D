@@ -62,7 +62,7 @@ namespace Game2D.Entities
             Particle = new ParticleSystemEntity(100) { MaximumAge = 5.0f, SpawnRate = 0.1f };
             InitializeSprite();
 
-            Position = new Vector2((GameManager.Instance.GameWorld.Width * Chunk.Width) / 2.0f, Chunk.Height);
+            Position = new Vector2((GameManager.Instance.GameWorld.Width * Chunk.Width) / 2.0f, Chunk.Height + 10.0f);
         }
 
         private void InitializeSprite()

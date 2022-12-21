@@ -67,7 +67,12 @@ namespace Game2D.GameScreens
             vbo.BufferData(vertices, Vertex.SizeInBytes);
             vbo.BufferIndices(indices);
 
-            fbo = new FrameBufferObject(1920, 1080);
+            fbo = new FrameBufferObject(GameManager.Instance.ClientSize.X, GameManager.Instance.ClientSize.Y);
+
+            GameManager.Instance.Resize += (e) =>
+            {
+                fbo.Resize(e.Width, e.Height);
+            };
         }
 
         bool showGenerationOptions, showPlayerOptions;

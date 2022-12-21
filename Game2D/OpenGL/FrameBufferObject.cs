@@ -88,6 +88,7 @@ public class FrameBufferObject : IDisposable
         Height = height;
 
         // Create Color Tex
+        GL.DeleteFramebuffer(FBOHandle);
         GL.DeleteTexture(ColorTexture);
 
         GL.GenTextures(1, out ColorTexture);
