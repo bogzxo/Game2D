@@ -1,10 +1,5 @@
 ﻿using Game2D.Entities.Components;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Entities
 {
@@ -25,6 +20,7 @@ namespace Game2D.Entities
                 { typeof(EntityDrawableComponent), DrawableComponent }
             };
         }
+
         public void Draw(float dt)
         {
             foreach (var entityPair in Components)

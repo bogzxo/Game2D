@@ -2,10 +2,9 @@
 
 namespace Game2D
 {
-
     public class GameScreenManager
     {
-        struct GameScreenManagerGameScreenInformation
+        private struct GameScreenManagerGameScreenInformation
         {
             public static GameScreenManagerGameScreenInformation Default
                 = new();
@@ -33,7 +32,9 @@ namespace Game2D
             }
             currentGameScreen.screen.Update(dt);
         }
+
         public void Draw(float dt) => currentGameScreen.screen.Draw(dt);
+
         public void SetGameScreen(Type type)
         {
             if (!gameScreens.ContainsKey(type))

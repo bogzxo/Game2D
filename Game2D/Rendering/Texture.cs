@@ -5,7 +5,6 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace Game2D.Rendering;
 
-
 public class Texture : IDisposable
 {
     public const SizedInternalFormat Srgb8Alpha8 = (SizedInternalFormat)All.Srgb8Alpha8;
@@ -80,7 +79,6 @@ public class Texture : IDisposable
     {
         GLTexture = GLTex;
     }
-
 
     public Texture(int width, int height, IntPtr data, bool generateMipmaps = false, bool srgb = false)
     {

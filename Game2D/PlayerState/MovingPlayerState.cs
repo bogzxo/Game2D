@@ -1,7 +1,4 @@
-﻿using Game2D.Data;
-using Game2D.Entities;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+﻿using Game2D.Entities;
 
 namespace Game2D.PlayerState
 {
@@ -15,7 +12,6 @@ namespace Game2D.PlayerState
 
         public override void Update(PlayerEntity player, float dt)
         {
-           
         }
     }
 }

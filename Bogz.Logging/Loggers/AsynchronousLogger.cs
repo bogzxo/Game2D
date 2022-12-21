@@ -18,7 +18,6 @@ public class AsynchronousLogger : ILoggerDisposable
         writer = new StreamWriter(logFile, new FileStreamOptions() { Access = FileAccess.Write, Mode = FileMode.CreateNew, Options = FileOptions.Asynchronous });
     }
 
-
     public void Log(in LogLevel level, in string message)
     {
         try
@@ -48,18 +47,23 @@ public class AsynchronousLogger : ILoggerDisposable
                 case LogLevel.Info:
                     color = ConsoleColor.Green;
                     break;
+
                 case LogLevel.Warning:
                     color = ConsoleColor.Yellow;
                     break;
+
                 case LogLevel.Error:
                     color = ConsoleColor.Red;
                     break;
+
                 case LogLevel.FatalError:
                     color = ConsoleColor.DarkRed;
                     break;
+
                 case LogLevel.Success:
                     color = ConsoleColor.Gray;
                     break;
+
                 default:
                     color = Console.ForegroundColor;
                     break;
@@ -82,6 +86,7 @@ public class AsynchronousLogger : ILoggerDisposable
     {
         Log(level, message);
     }
+
     public void Dispose()
     {
         MessageLoggingCallback();

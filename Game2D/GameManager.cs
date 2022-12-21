@@ -5,29 +5,23 @@ using Game2D.Entities;
 using Game2D.Rendering;
 using Game2D.World;
 using Game2D.World.Generation;
-using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D
 {
-
     internal class GameManager : GameWindow
     {
         private static GameManager instance;
-        static bool inited;
+        private static bool inited;
+
         public static GameManager Instance
         {
             get => instance;
         }
+
         public ImGuiController ImGuiController { get; private set; }
         public InputManager InputManager { get; private set; }
         public GameScreenManager GameScreenManager { get; private set; }
@@ -58,6 +52,7 @@ namespace Game2D
 
             base.OnClosing(e);
         }
+
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -71,6 +66,7 @@ namespace Game2D
 
             GameScreenManager = new GameScreenManager();
         }
+
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             ImGuiController.Update(this, (float)args.Time);
@@ -82,10 +78,10 @@ namespace Game2D
 
             SwapBuffers();
         }
+
         protected override void OnTextInput(TextInputEventArgs e)
         {
             base.OnTextInput(e);
-
 
             ImGuiController.PressChar((char)e.Unicode);
         }

@@ -1,13 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XInputium;
 using XInputium.XInput;
 
 namespace Game2D.Data
@@ -33,6 +25,7 @@ namespace Game2D.Data
             DeadZone = 0.25f
         };
     }
+
     public class InputManager
     {
         private readonly XGamepad _controller;
@@ -51,7 +44,9 @@ namespace Game2D.Data
 
             Configuration = config;
         }
+
         public bool IsKeyDown(Keys key) => _activeKeys.Contains(key);
+
         public void Update()
         {
             // Update the controller state
@@ -70,7 +65,7 @@ namespace Game2D.Data
             UpdateMovementDirection();
         }
 
-        // TODO: fix this spaghetti shit 
+        // TODO: fix this spaghetti shit
 
         private void UpdateMovementDirection()
         {
@@ -80,13 +75,11 @@ namespace Game2D.Data
             else if (GameManager.Instance.IsKeyDown(Keys.S))
                 y = -1;
 
-
             float x = 0;
             if (GameManager.Instance.IsKeyDown(Keys.A))
                 x = -1;
             else if (GameManager.Instance.IsKeyDown(Keys.D))
                 x = 1;
-
 
             if (x == 0 && y == 0)
             {
@@ -106,7 +99,7 @@ namespace Game2D.Data
             Direction = new Vector2(x, y);
         }
 
-        // Scaled Radial Dead Zone 
+        // Scaled Radial Dead Zone
         private void ProcessJoystickInput(ref float x, ref float y)
         {
             // too lazy to refactor

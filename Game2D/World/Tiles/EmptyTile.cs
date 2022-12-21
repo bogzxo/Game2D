@@ -8,6 +8,5 @@ public class EmptyTile : Tile
 
     public override void Update(Vector2i pos, float dt)
     {
-
     }
 }

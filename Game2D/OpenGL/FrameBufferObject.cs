@@ -1,9 +1,4 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.OpenGL;
 
@@ -74,7 +69,6 @@ public class FrameBufferObject : IDisposable
 
         GL.BindTexture(TextureTarget.Texture2D, 0); // bind default texture
     }
-
 
     public void Update()
     {

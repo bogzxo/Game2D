@@ -1,48 +1,44 @@
-﻿using System;
-
-namespace XInputium;
+﻿namespace XInputium;
 
 /// <summary>
-/// Exposes extension methods for <see cref="InputObject"/> 
+/// Exposes extension methods for <see cref="InputObject"/>
 /// objects.
 /// </summary>
 /// <seealso cref="InputObject"/>
 public static class InputObjectExtensions
 {
-
-
     #region Methods
 
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
     /// or deactivates.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
-    /// <param name="activationDelay">Delay time the event will 
-    /// wait after the activator function activates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="activationDelay">Delay time the event will
+    /// wait after the activator function activates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="deactivationDelay">Delay time the event will 
-    /// wait after the activator function deactivates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="deactivationDelay">Delay time the event will
+    /// wait after the activator function deactivates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="activeTimeout">Maximum duration the event's active 
-    /// state is allowed to have. Once the event is continuously active 
+    /// <param name="activeTimeout">Maximum duration the event's active
+    /// state is allowed to have. Once the event is continuously active
     /// for longer than this amount of time, the event deactivates.
-    /// If you specify <see cref="TimeSpan.Zero"/>, the event 
+    /// If you specify <see cref="TimeSpan.Zero"/>, the event
     /// deactivates immediately after activating.</param>
-    /// <param name="triggerMode">An 
-    /// <see cref="ActivationInputEventTriggerMode"/> constant that 
+    /// <param name="triggerMode">An
+    /// <see cref="ActivationInputEventTriggerMode"/> constant that
     /// specifies when the event will trigger.</param>
-    /// <param name="parameter">An custom object that will be passed 
-    /// to the event handler of the event; or <see langword="null"/> 
+    /// <param name="parameter">An custom object that will be passed
+    /// to the event handler of the event; or <see langword="null"/>
     /// to use no custom object.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -50,8 +46,8 @@ public static class InputObjectExtensions
     /// <paramref name="activator"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="triggerMode"/> 
-    /// is not a defined constant in an 
+    /// <exception cref="ArgumentException"><paramref name="triggerMode"/>
+    /// is not a defined constant in an
     /// <see cref="ActivationInputEventTriggerMode"/> enumeration.</exception>
     /// <seealso cref="InputObject"/>
     /// <seealso cref="ActivationInputEvent"/>
@@ -79,34 +75,33 @@ public static class InputObjectExtensions
         return activationEvent;
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
     /// or deactivates.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
-    /// <param name="activationDelay">Delay time the event will 
-    /// wait after the activator function activates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="activationDelay">Delay time the event will
+    /// wait after the activator function activates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="deactivationDelay">Delay time the event will 
-    /// wait after the activator function deactivates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="deactivationDelay">Delay time the event will
+    /// wait after the activator function deactivates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="activeTimeout">Maximum duration the event's active 
-    /// state is allowed to have. Once the event is continuously active 
+    /// <param name="activeTimeout">Maximum duration the event's active
+    /// state is allowed to have. Once the event is continuously active
     /// for longer than this amount of time, the event deactivates.
-    /// If you specify <see cref="TimeSpan.Zero"/>, the event 
+    /// If you specify <see cref="TimeSpan.Zero"/>, the event
     /// deactivates immediately after activating.</param>
-    /// <param name="triggerMode">An 
-    /// <see cref="ActivationInputEventTriggerMode"/> constant that 
+    /// <param name="triggerMode">An
+    /// <see cref="ActivationInputEventTriggerMode"/> constant that
     /// specifies when the event will trigger.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -114,8 +109,8 @@ public static class InputObjectExtensions
     /// <paramref name="activator"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="triggerMode"/> 
-    /// is not a defined constant in an 
+    /// <exception cref="ArgumentException"><paramref name="triggerMode"/>
+    /// is not a defined constant in an
     /// <see cref="ActivationInputEventTriggerMode"/> enumeration.</exception>
     /// <seealso cref="InputObject"/>
     /// <seealso cref="ActivationInputEvent"/>
@@ -132,29 +127,28 @@ public static class InputObjectExtensions
             triggerMode, (object?)null, callback);
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
     /// or deactivates.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
-    /// <param name="activationDelay">Delay time the event will 
-    /// wait after the activator function activates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="activationDelay">Delay time the event will
+    /// wait after the activator function activates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="deactivationDelay">Delay time the event will 
-    /// wait after the activator function deactivates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="deactivationDelay">Delay time the event will
+    /// wait after the activator function deactivates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="triggerMode">An 
-    /// <see cref="ActivationInputEventTriggerMode"/> constant that 
+    /// <param name="triggerMode">An
+    /// <see cref="ActivationInputEventTriggerMode"/> constant that
     /// specifies when the event will trigger.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -162,8 +156,8 @@ public static class InputObjectExtensions
     /// <paramref name="activator"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="triggerMode"/> 
-    /// is not a defined constant in an 
+    /// <exception cref="ArgumentException"><paramref name="triggerMode"/>
+    /// is not a defined constant in an
     /// <see cref="ActivationInputEventTriggerMode"/> enumeration.</exception>
     /// <seealso cref="InputObject"/>
     /// <seealso cref="ActivationInputEvent"/>
@@ -179,25 +173,24 @@ public static class InputObjectExtensions
             triggerMode, (object?)null, callback);
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
     /// or deactivates.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
-    /// <param name="activationDelay">Delay time the event will 
-    /// wait after the activator function activates, until the 
-    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>, 
+    /// <param name="activationDelay">Delay time the event will
+    /// wait after the activator function activates, until the
+    /// event triggers. If you specify <see cref="TimeSpan.Zero"/>,
     /// the event triggers immediately.</param>
-    /// <param name="triggerMode">An 
-    /// <see cref="ActivationInputEventTriggerMode"/> constant that 
+    /// <param name="triggerMode">An
+    /// <see cref="ActivationInputEventTriggerMode"/> constant that
     /// specifies when the event will trigger.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -205,8 +198,8 @@ public static class InputObjectExtensions
     /// <paramref name="activator"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="triggerMode"/> 
-    /// is not a defined constant in an 
+    /// <exception cref="ArgumentException"><paramref name="triggerMode"/>
+    /// is not a defined constant in an
     /// <see cref="ActivationInputEventTriggerMode"/> enumeration.</exception>
     /// <seealso cref="InputObject"/>
     /// <seealso cref="ActivationInputEvent"/>
@@ -222,21 +215,20 @@ public static class InputObjectExtensions
             triggerMode, (object?)null, callback);
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
     /// or deactivates.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
-    /// <param name="triggerMode">An 
-    /// <see cref="ActivationInputEventTriggerMode"/> constant that 
+    /// <param name="triggerMode">An
+    /// <see cref="ActivationInputEventTriggerMode"/> constant that
     /// specifies when the event will trigger.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -244,8 +236,8 @@ public static class InputObjectExtensions
     /// <paramref name="activator"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="triggerMode"/> 
-    /// is not a defined constant in an 
+    /// <exception cref="ArgumentException"><paramref name="triggerMode"/>
+    /// is not a defined constant in an
     /// <see cref="ActivationInputEventTriggerMode"/> enumeration.</exception>
     /// <seealso cref="InputObject"/>
     /// <seealso cref="ActivationInputEvent"/>
@@ -260,20 +252,19 @@ public static class InputObjectExtensions
             triggerMode, (object?)null, callback);
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="ActivationInputEvent"/> that 
-    /// triggers whenever the specified activator function activates 
-    /// or deactivates, and uses 
+    /// Registers a new <see cref="ActivationInputEvent"/> that
+    /// triggers whenever the specified activator function activates
+    /// or deactivates, and uses
     /// <see cref="ActivationInputEventTriggerMode.OnActivationAndDeactivation"/>
     /// as its trigger mode.
     /// </summary>
-    /// <param name="inputObject"><see cref="InputObject"/> where 
+    /// <param name="inputObject"><see cref="InputObject"/> where
     /// the event will be registered.</param>
-    /// <param name="activator">Function that will be called to 
+    /// <param name="activator">Function that will be called to
     /// determine whether a custom condition is met.</param>
     /// <param name="callback">Callback that will handle the event.</param>
-    /// <returns>The newly created and registered 
+    /// <returns>The newly created and registered
     /// <see cref="ActivationInputEvent"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -294,28 +285,27 @@ public static class InputObjectExtensions
             (object?)null, callback);
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered when the specified button changes its state 
-    /// from released to pressed, meaning the user has just tapped 
+    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered when the specified button changes its state
+    /// from released to pressed, meaning the user has just tapped
     /// the button.
     /// </summary>
-    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/> 
+    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/>
     /// that specifies the type of the button that the event will listen to.
     /// </typeparam>
-    /// <param name="inputObject">THe <see cref="InputObject"/> instance 
+    /// <param name="inputObject">THe <see cref="InputObject"/> instance
     /// where the event will be registered.</param>
     /// <param name="button">A <typeparamref name="T"/> object deriving
-    /// from <see cref="DigitalButton"/>, that represents the button 
+    /// from <see cref="DigitalButton"/>, that represents the button
     /// the event will listen for.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/>
     /// instance that was registered.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="button"/> 
+    /// <exception cref="ArgumentNullException"><paramref name="button"/>
     /// is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
@@ -338,28 +328,27 @@ public static class InputObjectExtensions
         return inputEvent;
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered when the specified button changes its state 
-    /// from pressed to released, meaning the user has just released 
+    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered when the specified button changes its state
+    /// from pressed to released, meaning the user has just released
     /// the button that was being pressed.
     /// </summary>
-    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/> 
+    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/>
     /// that specifies the type of the button that the event will listen to.
     /// </typeparam>
-    /// <param name="inputObject">THe <see cref="InputObject"/> instance 
+    /// <param name="inputObject">THe <see cref="InputObject"/> instance
     /// where the event will be registered.</param>
     /// <param name="button">A <typeparamref name="T"/> object deriving
-    /// from <see cref="DigitalButton"/>, that represents the button 
+    /// from <see cref="DigitalButton"/>, that represents the button
     /// the event will listen for.</param>
-    /// <param name="callback">Callback that will be called when the event 
+    /// <param name="callback">Callback that will be called when the event
     /// is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/>
     /// instance that was registered.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="button"/> 
+    /// <exception cref="ArgumentNullException"><paramref name="button"/>
     /// is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
@@ -382,40 +371,39 @@ public static class InputObjectExtensions
         return inputEvent;
     }
 
-
     /// <summary>
-    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered when the specified button is held by the 
+    /// Registers a new <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered when the specified button is held by the
     /// specified duration.
     /// </summary>
-    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/> 
+    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/>
     /// that specifies the type of the button that the event will listen to.
     /// </typeparam>
-    /// <param name="inputObject">THe <see cref="InputObject"/> instance 
+    /// <param name="inputObject">THe <see cref="InputObject"/> instance
     /// where the event will be registered.</param>
     /// <param name="button">A <typeparamref name="T"/> object deriving
-    /// from <see cref="DigitalButton"/>, that represents the button 
+    /// from <see cref="DigitalButton"/>, that represents the button
     /// the event will listen for.</param>
-    /// <param name="holdDuration">The amount of time the user must 
-    /// hold down the button for the event to trigger. If you specify 
-    /// <see cref="TimeSpan.Zero"/>, this event will behave like a pressed 
+    /// <param name="holdDuration">The amount of time the user must
+    /// hold down the button for the event to trigger. If you specify
+    /// <see cref="TimeSpan.Zero"/>, this event will behave like a pressed
     /// event.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/>
     /// instance that was registered.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="button"/> 
+    /// <exception cref="ArgumentNullException"><paramref name="button"/>
     /// is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
     /// <remarks>
-    /// The returned registered <see cref="DigitalButtonInputEvent{T}"/> 
-    /// will be triggered once, when the user presses and holds the button 
-    /// for the specified amount of time. Once the event is triggered, 
-    /// it will only be triggered again after the user releases the 
-    /// button and repeats the same action (pressing and holding the 
+    /// The returned registered <see cref="DigitalButtonInputEvent{T}"/>
+    /// will be triggered once, when the user presses and holds the button
+    /// for the specified amount of time. Once the event is triggered,
+    /// it will only be triggered again after the user releases the
+    /// button and repeats the same action (pressing and holding the
     /// button for <paramref name="holdDuration"/>).
     /// </remarks>
     public static DigitalButtonInputEvent<T> RegisterButtonHoldEvent<T>(
@@ -438,40 +426,39 @@ public static class InputObjectExtensions
         return inputEvent;
     }
 
-
     /// <summary>
-    /// Registers a new a <see cref="RepeatDigitalButtonInputEvent{T}"/> 
-    /// that is triggered repeatedly while the specified button is held, and 
-    /// uses the specified acceleration parameters for acceleration or 
+    /// Registers a new a <see cref="RepeatDigitalButtonInputEvent{T}"/>
+    /// that is triggered repeatedly while the specified button is held, and
+    /// uses the specified acceleration parameters for acceleration or
     /// deceleration of repeat delay times.
     /// </summary>
-    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/> 
+    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/>
     /// that specifies the type of the button that the event will listen to.
     /// </typeparam>
-    /// <param name="inputObject"><see cref="InputObject"/> instance where the 
+    /// <param name="inputObject"><see cref="InputObject"/> instance where the
     /// event will be registered.</param>
-    /// <param name="button">A <typeparamref name="T"/> object deriving from 
+    /// <param name="button">A <typeparamref name="T"/> object deriving from
     /// <see cref="DigitalButton"/> to which the event will listen.</param>
-    /// <param name="initialDelay">Amount of time the button must be held for 
+    /// <param name="initialDelay">Amount of time the button must be held for
     /// the repeating to start.</param>
-    /// <param name="repeatDelay">Base amount of time to wait between each 
+    /// <param name="repeatDelay">Base amount of time to wait between each
     /// repeat.</param>
-    /// <param name="accelerationRatio">A number greater than 0, that specifies 
-    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that 
-    /// will be applied on each triggering repeat. A value less than 1 causes 
-    /// the repeats to be slower, more than 1 causes the repeats to be faster, 
+    /// <param name="accelerationRatio">A number greater than 0, that specifies
+    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that
+    /// will be applied on each triggering repeat. A value less than 1 causes
+    /// the repeats to be slower, more than 1 causes the repeats to be faster,
     /// and 1 uses no acceleration or deceleration.</param>
-    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is greater than 1, causing the repeat delay time to be shorter on each 
-    /// triggering repeat, this specifies the minimum delay time allowed between 
+    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is greater than 1, causing the repeat delay time to be shorter on each
+    /// triggering repeat, this specifies the minimum delay time allowed between
     /// each repeat.</param>
-    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is lower than 1, causing the repeat delay time to be longer on each 
-    /// triggering repeat, this specifies the maximum delay time allowed between 
+    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is lower than 1, causing the repeat delay time to be longer on each
+    /// triggering repeat, this specifies the maximum delay time allowed between
     /// each repeat.</param>
-    /// <param name="callback">Callback that will be called when the event is 
+    /// <param name="callback">Callback that will be called when the event is
     /// triggered.</param>
-    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -479,7 +466,7 @@ public static class InputObjectExtensions
     /// is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/> 
+    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="accelerationRatio"/> is equal to or lower than 0.</exception>
@@ -506,25 +493,24 @@ public static class InputObjectExtensions
         return inputEvent;
     }
 
-
     /// <summary>
-    /// Registers a new a <see cref="RepeatDigitalButtonInputEvent{T}"/> 
+    /// Registers a new a <see cref="RepeatDigitalButtonInputEvent{T}"/>
     /// that is triggered repeatedly while the specified button is held.
     /// </summary>
-    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/> 
+    /// <typeparam name="T">A type deriving from <see cref="DigitalButton"/>
     /// that specifies the type of the button that the event will listen to.
     /// </typeparam>
-    /// <param name="inputObject"><see cref="InputObject"/> instance where the 
+    /// <param name="inputObject"><see cref="InputObject"/> instance where the
     /// event will be registered.</param>
-    /// <param name="button">A <typeparamref name="T"/> object deriving from 
+    /// <param name="button">A <typeparamref name="T"/> object deriving from
     /// <see cref="DigitalButton"/> to which the event will listen.</param>
-    /// <param name="initialDelay">Amount of time the button must be held for 
+    /// <param name="initialDelay">Amount of time the button must be held for
     /// the repeating to start.</param>
-    /// <param name="repeatDelay">Amount of time to wait between each 
+    /// <param name="repeatDelay">Amount of time to wait between each
     /// repeat.</param>
-    /// <param name="callback">Callback that will be called when the event is 
+    /// <param name="callback">Callback that will be called when the event is
     /// triggered.</param>
-    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="inputObject"/> is <see langword="null"/>.</exception>
@@ -545,6 +531,4 @@ public static class InputObjectExtensions
     }
 
     #endregion Methods
-
-
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace XInputium;
 
@@ -13,12 +12,10 @@ namespace XInputium;
 public readonly struct JoystickDelta
     : IEquatable<JoystickDelta>
 {
-
-
     #region Fields
 
     /// <summary>
-    /// A <see cref="JoystickDelta"/> object that represents 
+    /// A <see cref="JoystickDelta"/> object that represents
     /// no joystick movement, having a relative position of 0, 0.
     /// </summary>
     /// <seealso cref="HasMoved"/>
@@ -28,20 +25,19 @@ public readonly struct JoystickDelta
 
     #endregion Fields
 
-
     #region Constructors
 
     /// <summary>
-    /// Creates a new <see cref="JoystickDelta"/> object that has the 
+    /// Creates a new <see cref="JoystickDelta"/> object that has the
     /// specified delta coordinates.
     /// </summary>
-    /// <param name="x">Target position of the joystick's X axis, 
+    /// <param name="x">Target position of the joystick's X axis,
     /// relative to its source position.</param>
-    /// <param name="y">Target position of the joystick's Y axis, 
+    /// <param name="y">Target position of the joystick's Y axis,
     /// relative to its source position.</param>
-    /// <exception cref="ArgumentException"><paramref name="x"/> is 
+    /// <exception cref="ArgumentException"><paramref name="x"/> is
     /// <see cref="float.NaN"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="y"/> is 
+    /// <exception cref="ArgumentException"><paramref name="y"/> is
     /// <see cref="float.NaN"/>.</exception>
     /// <seealso cref="FromJoystickPosition(float, float, float, float)"/>
     public JoystickDelta(float x, float y)
@@ -54,7 +50,6 @@ public readonly struct JoystickDelta
             throw new ArgumentException(
                 $"'{nameof(y)}' cannot be {float.NaN}.",
                 nameof(y)); ;
-
 
         x = Math.Clamp(x, -2f, 2f);
         y = Math.Clamp(y, -2f, 2f);
@@ -81,7 +76,6 @@ public readonly struct JoystickDelta
 
     #endregion Constructors
 
-
     #region Operators
 
     /// <summary>
@@ -89,20 +83,19 @@ public readonly struct JoystickDelta
     /// </summary>
     /// <param name="left">Left <see cref="JoystickDelta"/> operand.</param>
     /// <param name="right">Right <see cref="JoystickDelta"/> operand.</param>
-    /// <returns><see langword="true"/> if <paramref name="left"/> is identical 
+    /// <returns><see langword="true"/> if <paramref name="left"/> is identical
     /// to <paramref name="right"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(JoystickDelta left, JoystickDelta right)
     {
         return left.Equals(right);
     }
 
-
     /// <summary>
     /// Determines if both <see cref="JoystickDelta"/> objects differ.
     /// </summary>
     /// <param name="left">Left <see cref="JoystickDelta"/> operand.</param>
     /// <param name="right">Right <see cref="JoystickDelta"/> operand.</param>
-    /// <returns><see langword="true"/> if <paramref name="left"/> differs from 
+    /// <returns><see langword="true"/> if <paramref name="left"/> differs from
     /// <paramref name="right"/>; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(JoystickDelta left, JoystickDelta right)
     {
@@ -111,55 +104,49 @@ public readonly struct JoystickDelta
 
     #endregion Operators
 
-
     #region Properties
 
     /// <summary>
-    /// Gets the target position of the joystick's X axis, relative to 
-    /// its source position. This is by how much the joystick's X axis 
+    /// Gets the target position of the joystick's X axis, relative to
+    /// its source position. This is by how much the joystick's X axis
     /// has moved.
     /// </summary>
     /// <seealso cref="Y"/>
     public float X { get; }
 
-
     /// <summary>
-    /// Gets the target position of the joystick's Y axis, relative to 
-    /// its source position. This is by how much the joystick's Y axis 
+    /// Gets the target position of the joystick's Y axis, relative to
+    /// its source position. This is by how much the joystick's Y axis
     /// has moved.
     /// </summary>
     /// <seealso cref="X"/>
     public float Y { get; }
 
-
     /// <summary>
-    /// Gets the angle towards which the joystick has moved, relative 
+    /// Gets the angle towards which the joystick has moved, relative
     /// to its source position.
     /// </summary>
     /// <seealso cref="Distance"/>
     /// <seealso cref="Direction"/>
     public float Angle { get; }
 
-
     /// <summary>
-    /// Gets the distance the joystick has moved, from its source position 
+    /// Gets the distance the joystick has moved, from its source position
     /// to its target position.
     /// </summary>
     /// <seealso cref="Angle"/>
     public float Distance { get; }
 
-
     /// <summary>
-    /// Gets a <see cref="bool"/> that indicates if the joystick 
+    /// Gets a <see cref="bool"/> that indicates if the joystick
     /// has moved, considering its delta.
     /// </summary>
     /// <seealso cref="Zero"/>
     /// <seealso cref="Distance"/>
     public bool HasMoved => X != 0f || Y != 0f;
 
-
     /// <summary>
-    /// Gets a <see cref="JoystickDirection"/> constant that 
+    /// Gets a <see cref="JoystickDirection"/> constant that
     /// indicates the direction to which the joystick was moved.
     /// </summary>
     /// <seealso cref="Angle"/>
@@ -167,25 +154,24 @@ public readonly struct JoystickDelta
 
     #endregion Properties
 
-
     #region Methods
 
     /// <summary>
-    /// Gets a <see cref="JoystickDelta"/> object that represents the 
-    /// movement delta between the specified source and target 
+    /// Gets a <see cref="JoystickDelta"/> object that represents the
+    /// movement delta between the specified source and target
     /// positions of a joystick.
     /// </summary>
-    /// <param name="sourceX">A number between -1 and 1, representing 
+    /// <param name="sourceX">A number between -1 and 1, representing
     /// the source position of the X axis of the joystick.</param>
-    /// <param name="sourceY">A number between -1 and 1, representing 
+    /// <param name="sourceY">A number between -1 and 1, representing
     /// the source position of the Y axis of the joystick.</param>
-    /// <param name="targetX">A number between -1 and 1, representing 
+    /// <param name="targetX">A number between -1 and 1, representing
     /// the target position of the X axis of the joystick.</param>
-    /// <param name="targetY">A number between -1 and 1, representing 
+    /// <param name="targetY">A number between -1 and 1, representing
     /// the target position of the Y axis of the joystick.</param>
-    /// <returns>A <see cref="JoystickDelta"/> object that represents 
-    /// the difference between the specified source and target 
-    /// positions. If there is no difference between the source and 
+    /// <returns>A <see cref="JoystickDelta"/> object that represents
+    /// the difference between the specified source and target
+    /// positions. If there is no difference between the source and
     /// target positions, <see cref="Zero"/> is returned.</returns>
     /// <exception cref="ArgumentException"><paramref name="sourceX"/>
     /// is <see cref="float.NaN"/>.</exception>
@@ -230,19 +216,18 @@ public readonly struct JoystickDelta
         return new JoystickDelta(targetX - sourceX, targetY - sourceY);
     }
 
-
     /// <summary>
-    /// Gets a <see cref="JoystickDelta"/> object that represents the 
-    /// movement delta between the specified source and target 
+    /// Gets a <see cref="JoystickDelta"/> object that represents the
+    /// movement delta between the specified source and target
     /// positions of a joystick.
     /// </summary>
-    /// <param name="source">A <see cref="SlimJoystick"/> object 
+    /// <param name="source">A <see cref="SlimJoystick"/> object
     /// representing the source joystick position.</param>
-    /// <param name="target">A <see cref="SlimJoystick"/> object 
+    /// <param name="target">A <see cref="SlimJoystick"/> object
     /// representing the target joystick position.</param>
-    /// <returns>A <see cref="JoystickDelta"/> object that represents 
-    /// the difference between the specified source and target 
-    /// positions. If there is no difference between the source and 
+    /// <returns>A <see cref="JoystickDelta"/> object that represents
+    /// the difference between the specified source and target
+    /// positions. If there is no difference between the source and
     /// target positions, <see cref="Zero"/> is returned.</returns>
     public static JoystickDelta FromJoystickPosition(
         SlimJoystick source, SlimJoystick target)
@@ -251,18 +236,16 @@ public readonly struct JoystickDelta
             target.X, target.Y);
     }
 
-
     /// <summary>
-    /// Gets the <see cref="string"/> representation of the 
+    /// Gets the <see cref="string"/> representation of the
     /// <see cref="JoystickDelta"/> instance.
     /// </summary>
-    /// <returns>The <see cref="string"/> representation of 
+    /// <returns>The <see cref="string"/> representation of
     /// the <see cref="JoystickDelta"/>.</returns>
     public override string ToString()
     {
         return $"{X}, {Y}";
     }
-
 
     /// <summary>
     /// Gets the hash code for the current <see cref="JoystickDelta"/>
@@ -275,15 +258,14 @@ public readonly struct JoystickDelta
         return _hashCode;
     }
 
-
     /// <summary>
-    /// Determines if the current <see cref="JoystickDelta"/> is 
+    /// Determines if the current <see cref="JoystickDelta"/> is
     /// identical to the specified <see cref="object"/> instance.
     /// Overrides <see cref="object.Equals(object?)"/>
     /// </summary>
-    /// <param name="obj"><see cref="object"/> instance to 
+    /// <param name="obj"><see cref="object"/> instance to
     /// compare with the current <see cref="JoystickDelta"/>.</param>
-    /// <returns><see langword="true"/> if the current 
+    /// <returns><see langword="true"/> if the current
     /// <see cref="JoystickDelta"/> is identical to <paramref name="obj"/>;
     /// otherwise, <see langword="false"/>.</returns>
     /// <seealso cref="GetHashCode()"/>
@@ -295,15 +277,14 @@ public readonly struct JoystickDelta
             return false;
     }
 
-
     /// <summary>
-    /// Determines if the current <see cref="JoystickDelta"/> is 
-    /// identical to the specified <see cref="JoystickDelta"/> 
+    /// Determines if the current <see cref="JoystickDelta"/> is
+    /// identical to the specified <see cref="JoystickDelta"/>
     /// object.
     /// </summary>
-    /// <param name="other"><see cref="JoystickDelta"/> object to 
+    /// <param name="other"><see cref="JoystickDelta"/> object to
     /// compare with the current <see cref="JoystickDelta"/>.</param>
-    /// <returns><see langword="true"/> if the current 
+    /// <returns><see langword="true"/> if the current
     /// <see cref="JoystickDelta"/> is identical to <paramref name="other"/>;
     /// otherwise, <see langword="false"/>.</returns>
     public bool Equals(JoystickDelta other)
@@ -311,16 +292,15 @@ public readonly struct JoystickDelta
         return X == other.X && Y == other.Y;
     }
 
-
     /// <summary>
-    /// Gets the source position of the joystick, considering its specified 
+    /// Gets the source position of the joystick, considering its specified
     /// target position.
     /// </summary>
     /// <param name="targetX">Target position of the joystick's X axis.</param>
     /// <param name="targetY">Target position of the joystick's Y axis.</param>
-    /// <returns>A <see cref="SlimJoystick"/> object that represents the 
+    /// <returns>A <see cref="SlimJoystick"/> object that represents the
     /// source joystick position.</returns>
-    /// <exception cref="ArgumentException"><paramref name="targetX"/> 
+    /// <exception cref="ArgumentException"><paramref name="targetX"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="targetY"/>
     /// is <see cref="float.NaN"/>.</exception>
@@ -340,24 +320,22 @@ public readonly struct JoystickDelta
         return new SlimJoystick(targetX - X, targetY - Y);
     }
 
-
     /// <summary>
-    /// Gets the source position of the joystick, considering its specified 
+    /// Gets the source position of the joystick, considering its specified
     /// target position.
     /// </summary>
-    /// <param name="joystick"><see cref="SlimJoystick"/> object representing 
+    /// <param name="joystick"><see cref="SlimJoystick"/> object representing
     /// the target joystick position.</param>
     public SlimJoystick GetSourcePosition(SlimJoystick joystick)
     {
         return GetSourcePosition(joystick.X, joystick.Y);
     }
 
-
     /// <summary>
-    /// Gets the source position of the joystick, considering its specified 
+    /// Gets the source position of the joystick, considering its specified
     /// target position.
     /// </summary>
-    /// <param name="joystick"><see cref="Joystick"/> object representing 
+    /// <param name="joystick"><see cref="Joystick"/> object representing
     /// the target joystick position.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="joystick"/> is <see langword="null"/>.</exception>
@@ -369,16 +347,15 @@ public readonly struct JoystickDelta
         return GetSourcePosition(joystick.X, joystick.Y);
     }
 
-
     /// <summary>
-    /// Gets the target position of the joystick, considering its specified 
+    /// Gets the target position of the joystick, considering its specified
     /// source position.
     /// </summary>
     /// <param name="sourceX">Source position of the joystick's X axis.</param>
     /// <param name="sourceY">Source position of the joystick's Y axis.</param>
-    /// <returns>A <see cref="SlimJoystick"/> object that represents the 
+    /// <returns>A <see cref="SlimJoystick"/> object that represents the
     /// target joystick position.</returns>
-    /// <exception cref="ArgumentException"><paramref name="sourceX"/> 
+    /// <exception cref="ArgumentException"><paramref name="sourceX"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="sourceY"/>
     /// is <see cref="float.NaN"/>.</exception>
@@ -398,24 +375,22 @@ public readonly struct JoystickDelta
         return new SlimJoystick(sourceX + X, sourceY + Y);
     }
 
-
     /// <summary>
-    /// Gets the target position of the joystick, considering its specified 
+    /// Gets the target position of the joystick, considering its specified
     /// source position.
     /// </summary>
-    /// <param name="joystick"><see cref="SlimJoystick"/> object representing 
+    /// <param name="joystick"><see cref="SlimJoystick"/> object representing
     /// the source joystick position.</param>
     public SlimJoystick GetTargetPosition(SlimJoystick joystick)
     {
         return GetTargetPosition(joystick.X, joystick.Y);
     }
 
-
     /// <summary>
-    /// Gets the target position of the joystick, considering its specified 
+    /// Gets the target position of the joystick, considering its specified
     /// source position.
     /// </summary>
-    /// <param name="joystick"><see cref="Joystick"/> object representing 
+    /// <param name="joystick"><see cref="Joystick"/> object representing
     /// the source joystick position.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="joystick"/> is <see langword="null"/>.</exception>
@@ -428,6 +403,4 @@ public readonly struct JoystickDelta
     }
 
     #endregion Methods
-
-
 }

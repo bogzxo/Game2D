@@ -1,28 +1,24 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace XInputium.Internal;
 
 /// <summary>
-/// Implements an <see cref="InputLoopWatch"/> that uses 
+/// Implements an <see cref="InputLoopWatch"/> that uses
 /// the system counter to measure time.
 /// </summary>
 /// <seealso cref="InputLoopWatch"/>
 internal class DefaultInputLoopWatch : InputLoopWatch
 {
-
-
     #region Fields
 
     private readonly Stopwatch _stopwatch;  // Stopwatch used to measure time in the current instance.
 
     #endregion Fields
 
-
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of a <see cref="DefaultInputLoopWatch"/> 
+    /// Initializes a new instance of a <see cref="DefaultInputLoopWatch"/>
     /// class.
     /// </summary>
     public DefaultInputLoopWatch()
@@ -33,11 +29,10 @@ internal class DefaultInputLoopWatch : InputLoopWatch
 
     #endregion Constructors
 
-
     #region Methods
 
     /// <summary>
-    /// Stops time measurement and resets the measured time 
+    /// Stops time measurement and resets the measured time
     /// to 0.
     /// Overrides <see cref="InputLoopWatch.Reset()"/>.
     /// </summary>
@@ -47,13 +42,12 @@ internal class DefaultInputLoopWatch : InputLoopWatch
         _stopwatch.Reset();
     }
 
-
     /// <summary>
-    /// Gets the amount of time elapsed since the last call to 
-    /// <see cref="GetTime()"/> method. 
+    /// Gets the amount of time elapsed since the last call to
+    /// <see cref="GetTime()"/> method.
     /// Overrides <see cref="InputLoopWatch.GetTime()"/>.
     /// </summary>
-    /// <returns>The amount of time elapsed since the last call 
+    /// <returns>The amount of time elapsed since the last call
     /// to <see cref="GetTime()"/> method.</returns>
     /// <seealso cref="Reset()"/>
     public override TimeSpan GetTime()
@@ -64,6 +58,4 @@ internal class DefaultInputLoopWatch : InputLoopWatch
     }
 
     #endregion Methods
-
-
 }

@@ -1,7 +1,4 @@
 ﻿using Bogz.Logging;
-using Game2D.Entities;
-using Game2D.World.Tiles;
-using OpenTK.Mathematics;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -10,11 +7,13 @@ namespace Game2D.World
     public class GameWorld
     {
         #region Public Members
+
         public int Width { get; private set; } = 10;
         public Chunk[] Chunks { get; private set; }
         public GameWorldGenerator GameWorldGenerator { get; }
         public ConcurrentBag<IEntity> Entities { get; private set; }
-        #endregion
+
+        #endregion Public Members
 
         public Tile this[int x, int y]
         {
@@ -53,7 +52,6 @@ namespace Game2D.World
             // 100 Chunks 33ms
 
             // fuck
-
         }
 
         public void GenerateWorld()
@@ -65,7 +63,6 @@ namespace Game2D.World
             for (int i = 0; i < Chunks.Length; i++)
                 Chunks[i].GenerateChunk(GameWorldGenerator);
 
-
             for (int i = 0; i < Chunks.Length; i++)
                 Chunks[i].UploadVertexBuffer();
 
@@ -73,7 +70,8 @@ namespace Game2D.World
             Logger.Instance.Log(LogLevel.Error, $"Total Chunk Generation Time {sw.ElapsedMilliseconds}ms");
         }
 
-        float timer = 0.0f;
+        private float timer = 0.0f;
+
         public void Update(float dt)
         {
             foreach (var item in Entities)

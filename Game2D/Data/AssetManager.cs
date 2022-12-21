@@ -2,12 +2,6 @@
 using Game2D.Rendering;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Data
 {
@@ -22,6 +16,7 @@ namespace Game2D.Data
             Pointer = ptr;
         }
     }
+
     public struct AssetManagerShaderAsset
     {
         public Shader Shader { get; set; }
@@ -31,6 +26,7 @@ namespace Game2D.Data
             Shader = Shader.CreateShader((ShaderType.FragmentShader, fragPath), (ShaderType.VertexShader, vertPath));
         }
     }
+
     public class AssetManager : IDisposable
     {
         private bool disposedValue;
@@ -47,8 +43,8 @@ namespace Game2D.Data
         }
 
         public ImFontPtr GetFont(in string name) => Fonts[name].Pointer;
-        public Shader GetShader(in string name) => Shaders[name].Shader;
 
+        public Shader GetShader(in string name) => Shaders[name].Shader;
 
         public void RegisterFont(string name, string path, int size)
         {

@@ -1,53 +1,51 @@
-﻿using System;
-
-namespace XInputium;
+﻿namespace XInputium;
 
 /// <summary>
 /// Implements an <see cref="InputEvent"/> that monitors the state
-/// of a <see cref="DigitalButton"/> derived class, and repeatedly 
+/// of a <see cref="DigitalButton"/> derived class, and repeatedly
 /// triggers while the associated button is held.
 /// </summary>
-/// <typeparam name="T"><see cref="DigitalButton"/> or a type derived 
-/// from <see cref="DigitalButton"/>, that is the type of the button 
+/// <typeparam name="T"><see cref="DigitalButton"/> or a type derived
+/// from <see cref="DigitalButton"/>, that is the type of the button
 /// monitored by the input event.</typeparam>
 /// <remarks>
-/// <see cref="RepeatDigitalButtonInputEvent{T}"/> provides a way 
-/// for adding button repeating functionality to your game or 
-/// application. Once the user starts pressing and holding the button, 
+/// <see cref="RepeatDigitalButtonInputEvent{T}"/> provides a way
+/// for adding button repeating functionality to your game or
+/// application. Once the user starts pressing and holding the button,
 /// the following happens while the button is held:
 /// <br/>1. The event is immediately triggered.
-/// <br/>2. The event waits for an optional <i>initial delay</i> (specified at 
-/// <see cref="InitialDelay"/> property). If no <i>initial delay</i> is 
+/// <br/>2. The event waits for an optional <i>initial delay</i> (specified at
+/// <see cref="InitialDelay"/> property). If no <i>initial delay</i> is
 /// used, skips to step 4.
 /// <br/>3. The event triggers.
-/// <br/>4. Waits for the <i>repeat delay time</i> (specified at 
+/// <br/>4. Waits for the <i>repeat delay time</i> (specified at
 /// <see cref="RepeatDelay"/> property).
 /// <br/>5. Repeats from step 3.
 /// <br/><br/>
-/// At step 4, the <i>repeat delay time</i> is affected by the optional 
-/// <i>acceleration ratio</i> (specified at <see cref="AccelerationRatio"/> 
-/// property), which either decreases (accelerates) or increases (decelerates) 
-/// the <i>repeat delay time</i>. On each repeat, this time is divided by the 
-/// value of <see cref="AccelerationRatio"/> to perform the acceleration or 
-/// deceleration. When accelerating, the effective <i>repeat delay time</i> 
-/// will be clamped in order to never be less than 
-/// <see cref="MinimumRepeatDelay"/>. Similarly, when decelerating, it will 
-/// be clamped in order to never be greater than 
+/// At step 4, the <i>repeat delay time</i> is affected by the optional
+/// <i>acceleration ratio</i> (specified at <see cref="AccelerationRatio"/>
+/// property), which either decreases (accelerates) or increases (decelerates)
+/// the <i>repeat delay time</i>. On each repeat, this time is divided by the
+/// value of <see cref="AccelerationRatio"/> to perform the acceleration or
+/// deceleration. When accelerating, the effective <i>repeat delay time</i>
+/// will be clamped in order to never be less than
+/// <see cref="MinimumRepeatDelay"/>. Similarly, when decelerating, it will
+/// be clamped in order to never be greater than
 /// <see cref="MaximumRepeatDelay"/>.
 /// <br/><br/>
-/// You can get the current <i>repeat delay time</i> using 
-/// <see cref="CurrentRepeatDelay"/> property. To determine if the 
-/// <see cref="RepeatDigitalButtonInputEvent{T}"/> is currently repeating, 
-/// use <see cref="IsRepeating"/> property. To get the number of triggered 
-/// repeats since the user pressed the button, use <see cref="RepeatCount"/> 
+/// You can get the current <i>repeat delay time</i> using
+/// <see cref="CurrentRepeatDelay"/> property. To determine if the
+/// <see cref="RepeatDigitalButtonInputEvent{T}"/> is currently repeating,
+/// use <see cref="IsRepeating"/> property. To get the number of triggered
+/// repeats since the user pressed the button, use <see cref="RepeatCount"/>
 /// property.
 /// <br/><br/>
-/// <see cref="RepeatDigitalButtonInputEvent{T}"/> is useful in scenarios 
-/// where you need a button to repeatedly trigger as the user holds the 
-/// associated physical button. This is common in the UI of many game titles, 
-/// usually in menus, lists and controls that support items cycling. Although 
+/// <see cref="RepeatDigitalButtonInputEvent{T}"/> is useful in scenarios
+/// where you need a button to repeatedly trigger as the user holds the
+/// associated physical button. This is common in the UI of many game titles,
+/// usually in menus, lists and controls that support items cycling. Although
 /// such functionality is usually implemented in the UI layer,
-/// <see cref="RepeatDigitalButtonInputEvent{T}"/> enables you to get this 
+/// <see cref="RepeatDigitalButtonInputEvent{T}"/> enables you to get this
 /// functionality directly from the input layer.
 /// </remarks>
 /// <seealso cref="InputEvent"/>
@@ -56,8 +54,6 @@ namespace XInputium;
 public class RepeatDigitalButtonInputEvent<T> : InputEvent
     where T : notnull, DigitalButton
 {
-
-
     #region Fields
 
     private readonly DigitalButtonInputEventArgs<T> _eventArgs;  // Cached event arguments for the event.
@@ -77,38 +73,37 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
 
     #endregion Fields
 
-
     #region Constructors
 
     /// <summary>
     /// Initializes a new instance of a <see cref="RepeatDigitalButtonInputEvent{T}"/>
-    /// class, that is associated with the specified button, uses the specified delay 
-    /// times and accelerates its repeat delay using the specified acceleration 
+    /// class, that is associated with the specified button, uses the specified delay
+    /// times and accelerates its repeat delay using the specified acceleration
     /// parameters.
     /// </summary>
-    /// <param name="button"><typeparamref name="T"/> instance that 
-    /// represents the button of which state will be monitored by 
+    /// <param name="button"><typeparamref name="T"/> instance that
+    /// represents the button of which state will be monitored by
     /// the <see cref="RepeatDigitalButtonInputEvent{T}"/> instance.</param>
-    /// <param name="initialDelay">Amount of time the user must hold 
+    /// <param name="initialDelay">Amount of time the user must hold
     /// the button before the event triggering starts repeating.</param>
-    /// <param name="repeatDelay">Time to wait between each event triggering 
+    /// <param name="repeatDelay">Time to wait between each event triggering
     /// repeat.</param>
-    /// <param name="accelerationRatio">A number greater than 0, that specifies 
-    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that 
-    /// will be applied on each triggering repeat. A value less than 1 causes 
-    /// the repeats to be slower, more than 1 causes the repeats to be faster, 
+    /// <param name="accelerationRatio">A number greater than 0, that specifies
+    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that
+    /// will be applied on each triggering repeat. A value less than 1 causes
+    /// the repeats to be slower, more than 1 causes the repeats to be faster,
     /// and 1 uses no acceleration or deceleration.</param>
-    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is greater than 1, causing the repeat delay time to be shorter on each 
-    /// triggering repeat, this specifies the minimum delay time allowed between 
+    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is greater than 1, causing the repeat delay time to be shorter on each
+    /// triggering repeat, this specifies the minimum delay time allowed between
     /// each repeat.</param>
-    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is lower than 1, causing the repeat delay time to be longer on each 
-    /// triggering repeat, this specifies the maximum delay time allowed between 
+    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is lower than 1, causing the repeat delay time to be longer on each
+    /// triggering repeat, this specifies the maximum delay time allowed between
     /// each repeat.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="button"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/> 
+    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="accelerationRatio"/> is equal to or lower than 0.</exception>
@@ -137,18 +132,17 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         _eventArgs = new(this, button);
     }
 
-
     /// <summary>
     /// Initializes a new instance of a <see cref="RepeatDigitalButtonInputEvent{T}"/>
-    /// class, that is associated with the specified button 
+    /// class, that is associated with the specified button
     /// and uses the specified delay times.
     /// </summary>
-    /// <param name="button"><typeparamref name="T"/> instance that 
-    /// represents the button of which state will be monitored by 
+    /// <param name="button"><typeparamref name="T"/> instance that
+    /// represents the button of which state will be monitored by
     /// the <see cref="RepeatDigitalButtonInputEvent{T}"/> instance.</param>
-    /// <param name="initialDelay">Amount of time the user must hold 
+    /// <param name="initialDelay">Amount of time the user must hold
     /// the button before the event triggering starts repeating.</param>
-    /// <param name="repeatDelay">Time to wait between each event triggering 
+    /// <param name="repeatDelay">Time to wait between each event triggering
     /// repeat.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="button"/> is <see langword="null"/>.</exception>
@@ -157,23 +151,20 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         : this(button, initialDelay, repeatDelay,
               1f, TimeSpan.Zero, TimeSpan.MaxValue)
     {
-
     }
 
     #endregion Constructors
 
-
     #region Properties
 
     /// <summary>
-    /// Gets the <typeparamref name="T"/> instance that represents the 
+    /// Gets the <typeparamref name="T"/> instance that represents the
     /// button associated with the current input event.
     /// </summary>
     public T Button { get; }
 
-
     /// <summary>
-    /// Gets or sets the amount of time the user must press the button 
+    /// Gets or sets the amount of time the user must press the button
     /// before the button starts repeating.
     /// </summary>
     public TimeSpan InitialDelay
@@ -181,7 +172,6 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         get => _initialDelay;
         set => _initialDelay = value > TimeSpan.Zero ? value : TimeSpan.Zero;
     }
-
 
     /// <summary>
     /// Gets or sets the amount of time to wait between each repeat.
@@ -193,18 +183,17 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         set => _repeatDelay = value > TimeSpan.Zero ? value : TimeSpan.Zero;
     }
 
-
     /// <summary>
-    /// Gets or sets the value by which <see cref="RepeatDelay"/> 
+    /// Gets or sets the value by which <see cref="RepeatDelay"/>
     /// is divided, during the acceleration period.
     /// </summary>
-    /// <value>A number greater than 0, where less than 1 increases 
-    /// the amount of time between each repeat, more than 1 
+    /// <value>A number greater than 0, where less than 1 increases
+    /// the amount of time between each repeat, more than 1
     /// decreases this time, and 1 has no effect.
     /// The default value is 1.</value>
-    /// <exception cref="ArgumentException">The value being set to the 
+    /// <exception cref="ArgumentException">The value being set to the
     /// property is <see cref="float.NaN"/>.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">The value being 
+    /// <exception cref="ArgumentOutOfRangeException">The value being
     /// set to the property is equal to or less than 0.</exception>
     /// <seealso cref="RepeatDelay"/>
     public float AccelerationRatio
@@ -223,12 +212,11 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         }
     }
 
-
     /// <summary>
-    /// Gets or sets the minimum repeat delay time allowed for the 
+    /// Gets or sets the minimum repeat delay time allowed for the
     /// decelerated initial repeat delay.
     /// </summary>
-    /// <value>A positive <see cref="TimeSpan"/> value. 
+    /// <value>A positive <see cref="TimeSpan"/> value.
     /// The default value is <see cref="TimeSpan.Zero"/>.</value>
     /// <seealso cref="MaximumRepeatDelay"/>
     /// <seealso cref="RepeatDelay"/>
@@ -238,12 +226,11 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         set => _minimumRepeatDelay = value > TimeSpan.Zero ? value : TimeSpan.Zero;
     }
 
-
     /// <summary>
-    /// Gets or sets the maximum repeat delay time allowed for the 
+    /// Gets or sets the maximum repeat delay time allowed for the
     /// accelerated initial repeat delay.
     /// </summary>
-    /// <value>A positive <see cref="TimeSpan"/> value. 
+    /// <value>A positive <see cref="TimeSpan"/> value.
     /// The default value is <see cref="TimeSpan.MaxValue"/>.</value>
     /// <seealso cref="MinimumRepeatDelay"/>
     /// <seealso cref="RepeatDelay"/>
@@ -253,19 +240,17 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
         set => _maximumRepeatDelay = value > TimeSpan.Zero ? value : TimeSpan.Zero;
     }
 
-
     /// <summary>
-    /// Gets the calculated repeat delay currently in effect, 
+    /// Gets the calculated repeat delay currently in effect,
     /// which can potentially be accelerated or decelerated.
     /// </summary>
-    /// <returns>If <see cref="IsRepeating"/> is <see langword="true"/>, 
-    /// returns the current effective repeat delay; otherwise, returns 
+    /// <returns>If <see cref="IsRepeating"/> is <see langword="true"/>,
+    /// returns the current effective repeat delay; otherwise, returns
     /// the value of <see cref="RepeatDelay"/>.</returns>
     /// <seealso cref="RepeatDelay"/>
     /// <seealso cref="AccelerationRatio"/>
     public TimeSpan CurrentRepeatDelay
         => IsRepeating ? _currentRepeatDelay : RepeatDelay;
-
 
     /// <summary>
     /// Gets a <see cref="bool"/> indicating if the input event
@@ -274,9 +259,8 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
     /// <seealso cref="RepeatCount"/>
     public bool IsRepeating => _isRepeating;
 
-
     /// <summary>
-    /// Gets the number of triggering repeats since the button 
+    /// Gets the number of triggering repeats since the button
     /// was tapped.
     /// </summary>
     /// <seealso cref="IsRepeating"/>
@@ -284,15 +268,14 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
 
     #endregion Properties
 
-
     #region Methods
 
     /// <summary>
-    /// Evaluates event logic and, if conditions are met, triggers 
-    /// the event. Overrides 
+    /// Evaluates event logic and, if conditions are met, triggers
+    /// the event. Overrides
     /// <see cref="InputEvent.OnUpdate(TimeSpan)"/> method.
     /// </summary>
-    /// <param name="time">Amount of time elapsed since the last 
+    /// <param name="time">Amount of time elapsed since the last
     /// update operation.</param>
     protected override void OnUpdate(TimeSpan time)
     {
@@ -353,7 +336,6 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
                         Raise(this, _eventArgs);
                     }
                 }
-
             }
             // The button has just been released.
             else if (_wasPressed)
@@ -375,6 +357,4 @@ public class RepeatDigitalButtonInputEvent<T> : InputEvent
     }
 
     #endregion Methods
-
-
 }

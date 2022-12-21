@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Entities.Components
 {
@@ -36,6 +31,7 @@ namespace Game2D.Entities.Components
         public bool OnGround { get; private set; }
 
         private Vector2 _gravitySpeed;
+
         public EntityPhysicsComponent(Vector2 position, Vector2 size, float mass)
         {
             Size = size;
@@ -64,8 +60,8 @@ namespace Game2D.Entities.Components
             // Reset acceleration for next update
             Acceleration = Vector2.Lerp(Acceleration, Vector2.Zero, deltaTime * 10.0f);
         }
-        private static bool Collides(Vector2 position) => GameManager.Instance.GameWorld[(int)(position.X), (int)(position.Y)].Id != World.Tiles.TileId.None;
 
+        private static bool Collides(Vector2 position) => GameManager.Instance.GameWorld[(int)(position.X), (int)(position.Y)].Id != World.Tiles.TileId.None;
 
         public bool RectangularCollision(Vector2 pos, Vector2 size)
         {
@@ -123,11 +119,8 @@ namespace Game2D.Entities.Components
             Acceleration += force / Mass;
         }
 
-
         public void Draw(float dt)
         {
-
         }
-
     }
 }

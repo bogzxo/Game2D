@@ -4,32 +4,31 @@ using Game2D.OpenGL;
 using Game2D.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.GameScreens.Graphics
 {
     public class Sprite : IEntity, IDisposable
     {
         #region Private Members
+
         private readonly VertexBufferObject _vbo;
         private readonly uint[] _indices;
         private readonly Vertex[] _vertices;
         private Shader _shader;
         private Matrix4 _model;
-        #endregion
+
+        #endregion Private Members
 
         #region Public Members
+
         public bool IsFlipped { get; set; }
         public Texture Texture { get; set; }
         public Vector2 Position { get; set; }
         public Vector2 Size { get; private set; }
         public RectangleF TextureRectangle { get; set; }
-        #endregion
+
+        #endregion Public Members
 
         public Dictionary<Type, IEntityComponent> Components { get; set; } = new Dictionary<Type, IEntityComponent>();
 
@@ -69,10 +68,12 @@ namespace Game2D.GameScreens.Graphics
 
             _model = Matrix4.Identity;
         }
+
         ~Sprite()
         {
             Dispose(false);
         }
+
         public void Update(float dt)
         {
             _model = Matrix4.CreateTranslation(Position.X, Position.Y, 0);
@@ -101,12 +102,14 @@ namespace Game2D.GameScreens.Graphics
             _vbo.End();
             _shader.End();
         }
+
         private void ReleaseUnmanagedResources()
         {
             _vbo.Dispose();
             _shader.Dispose();
             Texture.Dispose();
         }
+
         private void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
@@ -115,6 +118,7 @@ namespace Game2D.GameScreens.Graphics
                 // Release Managed Resources
             }
         }
+
         public void Dispose()
         {
             Dispose(true);

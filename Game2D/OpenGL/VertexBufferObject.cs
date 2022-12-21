@@ -1,11 +1,7 @@
-﻿using OpenTK.Compute.OpenCL;
-using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenTK.Graphics.OpenGL4;
+
 namespace Game2D.OpenGL;
+
 public struct VertexAttribPointer
 {
     public int Index { get; set; }
@@ -21,6 +17,7 @@ public struct VertexAttribPointer
         GL.EnableVertexAttribArray(Index);
     }
 }
+
 public class VertexBufferObject : IDisposable
 {
     public int Handle { get; set; }

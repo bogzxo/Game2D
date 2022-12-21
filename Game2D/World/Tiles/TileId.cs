@@ -5,6 +5,7 @@
         None = 0,
         Dirt = 1
     }
+
     public enum TileTextureId
     {
         None = 0,

@@ -1,11 +1,4 @@
-﻿using Game2D.World.Tiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game2D.World.Generation
+﻿namespace Game2D.World.Generation
 {
     public class WorldChunkGenerator
     {
@@ -21,7 +14,6 @@ namespace Game2D.World.Generation
 
         public WorldChunkGenerator()
         {
-
             WorldGenerationParameters parameters = WorldGenerationParameters.Default;
             _surfaceNoise.SetFrequency(parameters.BaseSurfaceFrequency);
             _cavernNoise.SetFrequency(parameters.BaseCavernFrequency);
@@ -43,7 +35,6 @@ namespace Game2D.World.Generation
 
             return samples;
         }
-
 
         // Returns a new noise map with 2D erosion applied to it
         public float[,] ApplyTerrainFilters(float[,] noiseMap)

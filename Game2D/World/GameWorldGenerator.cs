@@ -22,7 +22,6 @@ namespace Game2D.World
 
         public void Regenerate()
         {
-
             _surfaceNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseSurfaceFrequency);
             _cavernNoise.SetFrequency(WorldGenerationParameters.CurrentParameters.BaseCavernFrequency);
 
@@ -46,7 +45,6 @@ namespace Game2D.World
 
                     //for (int i = 1; i < 10; i++)
                     sample += Math.Clamp(_cavernNoise.GetSimplex(x, y, 0), -0.2f, 0.2f);
-
 
                     _world[x, y] = (float)sample;
                 }
@@ -85,7 +83,6 @@ namespace Game2D.World
                 for (int i = 0; i < 6; i++)
                     sample += Math.Abs((sample + _surfaceNoise.GetSimplex(pos * width + x, i))) / 6;
 
-
                 sample *= maxHeight * (2 / 3.0f);
                 sample -= (1 / 8.0f) * maxHeight;
                 sample = Math.Clamp(sample, 0, maxHeight);
@@ -106,7 +103,6 @@ namespace Game2D.World
                 for (int i = 0; i < 6; i++)
                     sample += Math.Abs((sample + _surfaceNoise.GetSimplex(pos * width + x, i))) / 6;
 
-
                 sample *= maxHeight * (2 / 3.0f);
                 sample -= (1 / 8.0f) * maxHeight;
                 sample = Math.Clamp(sample, 0, maxHeight);
@@ -115,7 +111,6 @@ namespace Game2D.World
 
             return samples;
         }
-
 
         public void Generate(Chunk chunk)
         {
@@ -128,7 +123,6 @@ namespace Game2D.World
                         t = Tile.IdToTile(TileId.Dirt);
 
                     chunk.Tiles[x, Chunk.Height - 1 - y] = t;
-
                 }
             }
         }

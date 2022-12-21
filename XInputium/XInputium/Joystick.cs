@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using XInputium.Internal.Statistics;
@@ -7,13 +6,13 @@ using XInputium.Internal.Statistics;
 namespace XInputium;
 
 /// <summary>
-/// Represents a controller joystick, with support for 
-/// configuration of how its position is effectively 
+/// Represents a controller joystick, with support for
+/// configuration of how its position is effectively
 /// represented.
 /// </summary>
 /// <remarks>
-/// For a lightweight alternative to the <see cref="Joystick"/> 
-/// class, that has only the essential functionality, you 
+/// For a lightweight alternative to the <see cref="Joystick"/>
+/// class, that has only the essential functionality, you
 /// can use <see cref="SlimJoystick"/> structure.
 /// </remarks>
 /// <seealso cref="SlimJoystick"/>
@@ -23,14 +22,11 @@ namespace XInputium;
 [Serializable]
 public class Joystick : EventDispatcherObject
 {
-
-
     #region Internal types
 
     [Serializable]
     private readonly struct JoystickSample
     {
-
         public static readonly JoystickSample Zero = new(0f, 0f, TimeSpan.Zero);
 
         public readonly float X;
@@ -53,34 +49,26 @@ public class Joystick : EventDispatcherObject
         {
             return new JoystickSample(x.X - y.X, x.Y - y.Y, x.Time - y.Time);
         }
-
     }
-
 
     private sealed class JoystickSamples : SampledAverage<JoystickSample>
     {
-
         public JoystickSamples(int maxSampleLength)
             : base(maxSampleLength)
         {
-
         }
 
-
         protected override JoystickSample Zero { get; } = JoystickSample.Zero;
-
 
         protected override JoystickSample SumValue(JoystickSample x, JoystickSample y)
         {
             return x + y;
         }
 
-
         protected override JoystickSample SubtractValue(JoystickSample x, JoystickSample y)
         {
             return x - y;
         }
-
 
         protected override JoystickSample GetAverage(int samplesCount, JoystickSample totalSum)
         {
@@ -95,23 +83,22 @@ public class Joystick : EventDispatcherObject
                 return Zero;
             }
         }
-
-
     }
 
     #endregion Internal types
-
 
     #region Fields and constants
 
     // Constants used to provide some defaults.
     private const int MinSmoothingSamples = 2;  // Minimum number of smoothing samples to register, when using smoothing.
+
     private const int MaxSmoothingSamples = 500;  // Maximum number of smoothing samples to register, when using smoothing.
     private const int DefaultSmoothingSamples = 120;  // Initial number of samples to register, before adjustments.
 
     // Static PropertyChangedEventArgs for property changes. This is to avoid instantiating
     // a PropertyChangedEventArgs class whenever the value of a property changes.
     private static readonly PropertyChangedEventArgs s_EA_RawX = new(nameof(RawX));
+
     private static readonly PropertyChangedEventArgs s_EA_RawY = new(nameof(RawY));
     private static readonly PropertyChangedEventArgs s_EA_RawRadius = new(nameof(RawRadius));
     private static readonly PropertyChangedEventArgs s_EA_RawAngle = new(nameof(RawAngle));
@@ -129,6 +116,7 @@ public class Joystick : EventDispatcherObject
 
     // Property backing storage fields.
     private float _rawX = 0f;  // Store for the value of RawX property.
+
     private float _rawY = 0f;  // Store for the value of RawY property.
     private float _rawRadius = 0f;  // Store for the value of RawRadius property.
     private float _rawAngle = 0f;  // Store for the value of RawAngle property.
@@ -156,32 +144,30 @@ public class Joystick : EventDispatcherObject
 
     // State keeping fields.
     private bool _isValid = false;  // Stores the value that specifies if the effective joystick position is up to date.
+
     private bool _isValidating = false;  // Stores the value that indicates if a validation operation is currently in progress.
     private readonly JoystickSamples _smoothingSamples = new(DefaultSmoothingSamples);  // Stores the joystick samples, used for smoothing.
 
     #endregion Fields and constants
 
-
     #region Constructors
 
     /// <summary>
-    /// Initializes a default instance of a <see cref="Joystick"/> 
+    /// Initializes a default instance of a <see cref="Joystick"/>
     /// class.
     /// </summary>
     private Joystick()
         : base(EventDispatchMode.Deferred)
     {
-
     }
 
-
     /// <summary>
-    /// Initializes a new instance of a <see cref="Joystick"/> 
+    /// Initializes a new instance of a <see cref="Joystick"/>
     /// class, that supports state updating from external code.
     /// </summary>
-    /// <param name="updateCallback">Variable that will be set 
-    /// with a <see cref="JoystickUpdateCallback"/> delegate 
-    /// that can be invoked to update the state of the 
+    /// <param name="updateCallback">Variable that will be set
+    /// with a <see cref="JoystickUpdateCallback"/> delegate
+    /// that can be invoked to update the state of the
     /// <see cref="Joystick"/> instance.</param>
     public Joystick(out JoystickUpdateCallback updateCallback)
         : this()
@@ -189,20 +175,19 @@ public class Joystick : EventDispatcherObject
         updateCallback = new JoystickUpdateCallback(UpdateRawPosition);
     }
 
-
     /// <summary>
-    /// Initializes a new instance of a <see cref="Joystick"/> 
+    /// Initializes a new instance of a <see cref="Joystick"/>
     /// class, that has a read-only raw position.
     /// </summary>
-    /// <param name="x">A value between -1 and 1 representing the 
-    /// horizontal axis, where -1 is the left and 1 is the right 
+    /// <param name="x">A value between -1 and 1 representing the
+    /// horizontal axis, where -1 is the left and 1 is the right
     /// position.</param>
-    /// <param name="y">A value between -1 and 1 representing the 
-    /// vertical axis, where -1 is the bottom and 1 is the top 
+    /// <param name="y">A value between -1 and 1 representing the
+    /// vertical axis, where -1 is the bottom and 1 is the top
     /// position.</param>
-    /// <exception cref="ArgumentException"><paramref name="x"/> 
+    /// <exception cref="ArgumentException"><paramref name="x"/>
     /// is <see cref="float.NaN"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="y"/> 
+    /// <exception cref="ArgumentException"><paramref name="y"/>
     /// is <see cref="float.NaN"/>.</exception>
     public Joystick(float x, float y)
         : this()
@@ -219,24 +204,21 @@ public class Joystick : EventDispatcherObject
         UpdateRawPosition(x, y, TimeSpan.Zero);
     }
 
-
     /// <summary>
-    /// Creates a new instance of a <see cref="Joystick"/> 
-    /// class that has read-only raw coordinates obtained from 
-    /// the coordinates of the specified <see cref="SlimJoystick"/> 
+    /// Creates a new instance of a <see cref="Joystick"/>
+    /// class that has read-only raw coordinates obtained from
+    /// the coordinates of the specified <see cref="SlimJoystick"/>
     /// object.
     /// </summary>
-    /// <param name="joystick"><see cref="SlimJoystick"/> object 
+    /// <param name="joystick"><see cref="SlimJoystick"/> object
     /// to obtain the raw coordinates from.</param>
     /// <seealso cref="SlimJoystick"/>
     public Joystick(SlimJoystick joystick)
         : this(joystick.X, joystick.Y)
     {
-
     }
 
     #endregion Constructors
-
 
     #region Events
 
@@ -246,51 +228,45 @@ public class Joystick : EventDispatcherObject
     /// </summary>
     public event EventHandler? Updated;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="X"/> or 
+    /// It's invoked whenever the value of <see cref="X"/> or
     /// <see cref="Y"/> properties changes.
     /// </summary>
     /// <seealso cref="X"/>
     /// <seealso cref="Y"/>
     public event EventHandler? PositionChanged;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="Angle"/> 
+    /// It's invoked whenever the value of <see cref="Angle"/>
     /// property changes.
     /// </summary>
     /// <seealso cref="Angle"/>
     public event EventHandler? AngleChanged;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="Radius"/> 
+    /// It's invoked whenever the value of <see cref="Radius"/>
     /// property changes.
     /// </summary>
     /// <seealso cref="Radius"/>
     public event EventHandler? RadiusChanged;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="Direction"/> 
+    /// It's invoked whenever the value of <see cref="Direction"/>
     /// property changes.
     /// </summary>
     /// <seealso cref="Direction"/>
     public event EventHandler? DirectionChanged;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="IsMoving"/> 
+    /// It's invoked whenever the value of <see cref="IsMoving"/>
     /// property changes.
     /// </summary>
     /// <seealso cref="IsMoving"/>
     /// <seealso cref="OnIsMovingChanged()"/>
     public event EventHandler? IsMovingChanged;
 
-
     /// <summary>
-    /// It's invoked whenever the value of <see cref="IsPushed"/> 
+    /// It's invoked whenever the value of <see cref="IsPushed"/>
     /// property changes.
     /// </summary>
     /// <seealso cref="IsPushed"/>
@@ -298,20 +274,19 @@ public class Joystick : EventDispatcherObject
 
     #endregion Events
 
-
     #region Properties
 
     /// <summary>
     /// Gets the raw position of the joystick's X axis.
     /// </summary>
-    /// <returns>A value between -1 and 1, where -1 represents the 
-    /// left and 1 represents the right raw position of 
+    /// <returns>A value between -1 and 1, where -1 represents the
+    /// left and 1 represents the right raw position of
     /// the joystick.</returns>
     /// <remarks>
-    /// <see cref="RawX"/> returns the raw position of the 
-    /// joystick's horizontal axis as provided by the underlying 
-    /// device. To get the effective position of the X axis, 
-    /// use <see cref="X"/> property, which considers all of 
+    /// <see cref="RawX"/> returns the raw position of the
+    /// joystick's horizontal axis as provided by the underlying
+    /// device. To get the effective position of the X axis,
+    /// use <see cref="X"/> property, which considers all of
     /// the <see cref="Joystick"/>'s modifiers.
     /// </remarks>
     /// <seealso cref="RawY"/>
@@ -323,18 +298,17 @@ public class Joystick : EventDispatcherObject
             ref _rawX, InputMath.Clamp11(value), s_EA_RawX));
     }
 
-
     /// <summary>
     /// Gets the raw position of the joystick's Y axis.
     /// </summary>
-    /// <returns>A value between -1 and 1, where -1 represents the 
-    /// bottom and 1 represents the top raw position of 
+    /// <returns>A value between -1 and 1, where -1 represents the
+    /// bottom and 1 represents the top raw position of
     /// the joystick.</returns>
     /// <remarks>
-    /// <see cref="RawY"/> returns the raw position of the 
-    /// joystick's vertical axis as provided by the underlying 
-    /// device. To get the effective position of the Y axis, 
-    /// use <see cref="Y"/> property, which considers all of 
+    /// <see cref="RawY"/> returns the raw position of the
+    /// joystick's vertical axis as provided by the underlying
+    /// device. To get the effective position of the Y axis,
+    /// use <see cref="Y"/> property, which considers all of
     /// the <see cref="Joystick"/>'s modifiers.
     /// </remarks>
     /// <seealso cref="RawX"/>
@@ -346,13 +320,12 @@ public class Joystick : EventDispatcherObject
             ref _rawY, InputMath.Clamp11(value), s_EA_RawY));
     }
 
-
     /// <summary>
-    /// Gets the raw radius of the joystick, which is 
-    /// analogous to its distance from the center raw 
+    /// Gets the raw radius of the joystick, which is
+    /// analogous to its distance from the center raw
     /// position.
     /// </summary>
-    /// <returns>A value between 0 and 1, where 0 is the center 
+    /// <returns>A value between 0 and 1, where 0 is the center
     /// of the joystick and 1 is its outer edge.</returns>
     /// <seealso cref="Radius"/>
     /// <seealso cref="Angle"/>
@@ -365,26 +338,25 @@ public class Joystick : EventDispatcherObject
             ref _rawRadius, InputMath.Clamp01(value), s_EA_RawRadius));
     }
 
-
     /// <summary>
     /// Gets the normalized raw angle of the joystick.
     /// </summary>
-    /// <returns>A value between 0 and 1, representing the 
+    /// <returns>A value between 0 and 1, representing the
     /// joystick's normalized raw angle.</returns>
     /// <remarks>
-    /// In the context of the <see cref="Joystick"/> class, 
-    /// a normalized angle is a value between 0 and 1 that 
-    /// represents the angle. The normalized angle is 
-    /// analogous to a quartz clock, where 0 is analogous 
-    /// to 12 o´clock, and increases in clockwise orientation 
+    /// In the context of the <see cref="Joystick"/> class,
+    /// a normalized angle is a value between 0 and 1 that
+    /// represents the angle. The normalized angle is
+    /// analogous to a quartz clock, where 0 is analogous
+    /// to 12 o´clock, and increases in clockwise orientation
     /// until 1 is analogous to 12 o'clock again.
     /// <br/>
-    /// The normalized angle can be useful when converting 
+    /// The normalized angle can be useful when converting
     /// it to other units, like degrees.
     /// <br/>
-    /// You can convert between normalized angles and radians 
-    /// using <see cref="InputMath.ConvertNormalToRadians(float)"/> 
-    /// and <see cref="InputMath.ConvertRadiansToNormal(float)"/> 
+    /// You can convert between normalized angles and radians
+    /// using <see cref="InputMath.ConvertNormalToRadians(float)"/>
+    /// and <see cref="InputMath.ConvertRadiansToNormal(float)"/>
     /// methods.
     /// </remarks>
     /// <seealso cref="RawRadius"/>
@@ -396,26 +368,25 @@ public class Joystick : EventDispatcherObject
             ref _rawAngle, InputMath.Clamp01(value), s_EA_RawAngle));
     }
 
-
     /// <summary>
-    /// Gets a <see cref="bool"/> that indicates whether the 
-    /// raw position of the joystick is within the full circular 
+    /// Gets a <see cref="bool"/> that indicates whether the
+    /// raw position of the joystick is within the full circular
     /// area of the joystick.
     /// </summary>
-    /// <returns><see langword="true"/> when the raw position 
-    /// of the joystick would result in a radius lower than or 
+    /// <returns><see langword="true"/> when the raw position
+    /// of the joystick would result in a radius lower than or
     /// equal to 1; otherwise, <see langword="false"/>.</returns>
     /// <remarks>
-    /// This property will return <see langword="false"/> when 
-    /// the raw position of the joystick, as reported by 
-    /// <see cref="RawX"/> and <see cref="RawY"/> coordinates, 
-    /// would result in a radius that is greater than 1. 
-    /// Usually, when this property returns <see langword="false"/>, 
-    /// it means the raw position would not be valid for a 
-    /// circular joystick, meaning a device reporting such position 
-    /// may be damaged or defective. Not that devices may not 
-    /// be 100% accurate in their axis measurement, making it 
-    /// possible for this property to return <see langword="false"/> 
+    /// This property will return <see langword="false"/> when
+    /// the raw position of the joystick, as reported by
+    /// <see cref="RawX"/> and <see cref="RawY"/> coordinates,
+    /// would result in a radius that is greater than 1.
+    /// Usually, when this property returns <see langword="false"/>,
+    /// it means the raw position would not be valid for a
+    /// circular joystick, meaning a device reporting such position
+    /// may be damaged or defective. Not that devices may not
+    /// be 100% accurate in their axis measurement, making it
+    /// possible for this property to return <see langword="false"/>
     /// even on properly working devices.
     /// </remarks>
     public bool IsRawWithinCircle
@@ -425,22 +396,21 @@ public class Joystick : EventDispatcherObject
             ref _isRawWithinCircle, value, s_EA_IsRawWithinCircle));
     }
 
-
     /// <summary>
     /// Gets the effective value of the joystick's X axis.
     /// </summary>
-    /// <returns>A value between -1 and 1, where -1 represents the 
-    /// left and 1 represents the right effective position of 
+    /// <returns>A value between -1 and 1, where -1 represents the
+    /// left and 1 represents the right effective position of
     /// the joystick.</returns>
     /// <remarks>
-    /// <see cref="X"/> property returns the effective position 
-    /// of the joystick's horizontal axis. In the context of the 
-    /// <see cref="Joystick"/> class, the effective position of 
-    /// an axis is the position of the axis with all the modifiers 
-    /// applied to the joystick. This contrasts with the raw 
-    /// position, which represents the non-processed position of 
-    /// the joystick as provided by the underlying device. You 
-    /// can use <see cref="RawX"/> to get the raw position of the 
+    /// <see cref="X"/> property returns the effective position
+    /// of the joystick's horizontal axis. In the context of the
+    /// <see cref="Joystick"/> class, the effective position of
+    /// an axis is the position of the axis with all the modifiers
+    /// applied to the joystick. This contrasts with the raw
+    /// position, which represents the non-processed position of
+    /// the joystick as provided by the underlying device. You
+    /// can use <see cref="RawX"/> to get the raw position of the
     /// X axis.
     /// </remarks>
     /// <seealso cref="Y"/>
@@ -464,22 +434,21 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
     /// Gets the effective value of the joystick's Y axis.
     /// </summary>
-    /// <returns>A value between -1 and 1, where -1 represents the 
-    /// bottom and 1 represents the top effective position of 
+    /// <returns>A value between -1 and 1, where -1 represents the
+    /// bottom and 1 represents the top effective position of
     /// the joystick.</returns>
     /// <remarks>
-    /// <see cref="Y"/> property returns the effective position 
-    /// of the joystick's vertical axis. In the context of the 
-    /// <see cref="Joystick"/> class, the effective position of 
-    /// an axis is the position of the axis with all the modifiers 
-    /// applied to the joystick. This contrasts with the raw 
-    /// position, which represents the non-processed position of 
-    /// the joystick as provided by the underlying device. You 
-    /// can use <see cref="RawY"/> to get the raw position of the 
+    /// <see cref="Y"/> property returns the effective position
+    /// of the joystick's vertical axis. In the context of the
+    /// <see cref="Joystick"/> class, the effective position of
+    /// an axis is the position of the axis with all the modifiers
+    /// applied to the joystick. This contrasts with the raw
+    /// position, which represents the non-processed position of
+    /// the joystick as provided by the underlying device. You
+    /// can use <see cref="RawY"/> to get the raw position of the
     /// Y axis.
     /// </remarks>
     /// <seealso cref="X"/>
@@ -503,26 +472,25 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
     /// Gets the effective normalized angle of the joystick.
     /// </summary>
-    /// <returns>A value between 0 and 1, representing the 
+    /// <returns>A value between 0 and 1, representing the
     /// joystick's effective normalized angle.</returns>
     /// <remarks>
-    /// In the context of the <see cref="Joystick"/> class, 
-    /// a normalized angle is a value between 0 and 1 that 
-    /// represents the angle. The normalized angle is 
-    /// analogous to a quartz clock, where 0 is analogous 
-    /// to 12 o´clock, and increases in clockwise orientation 
+    /// In the context of the <see cref="Joystick"/> class,
+    /// a normalized angle is a value between 0 and 1 that
+    /// represents the angle. The normalized angle is
+    /// analogous to a quartz clock, where 0 is analogous
+    /// to 12 o´clock, and increases in clockwise orientation
     /// until 1 is analogous to 12 o'clock again.
     /// <br/>
-    /// The normalized angle can be useful when converting 
+    /// The normalized angle can be useful when converting
     /// it to other units, like degrees.
     /// <br/>
-    /// You can convert between normalized angles and radians 
-    /// using <see cref="InputMath.ConvertNormalToRadians(float)"/> 
-    /// and <see cref="InputMath.ConvertRadiansToNormal(float)"/> 
+    /// You can convert between normalized angles and radians
+    /// using <see cref="InputMath.ConvertNormalToRadians(float)"/>
+    /// and <see cref="InputMath.ConvertRadiansToNormal(float)"/>
     /// methods.
     /// </remarks>
     /// <seealso cref="Radius"/>
@@ -545,13 +513,12 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets the effective radius of the joystick, which is 
-    /// analogous to its distance from the center effective 
+    /// Gets the effective radius of the joystick, which is
+    /// analogous to its distance from the center effective
     /// position.
     /// </summary>
-    /// <returns>A value between 0 and 1, where 0 is the center 
+    /// <returns>A value between 0 and 1, where 0 is the center
     /// of the joystick and 1 is its outer edge.</returns>
     /// <seealso cref="RawRadius"/>
     /// <seealso cref="Angle"/>
@@ -574,19 +541,18 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets a <see cref="JoystickDelta"/> object that represents 
-    /// the difference between the current and the previous joystick 
+    /// Gets a <see cref="JoystickDelta"/> object that represents
+    /// the difference between the current and the previous joystick
     /// effective position.
     /// </summary>
-    /// <returns>A <see cref="JoystickDelta"/> object representing 
+    /// <returns>A <see cref="JoystickDelta"/> object representing
     /// the movement delta of the joystick.</returns>
     /// <remarks>
-    /// This property can be useful to determine if the joystick has 
-    /// moved and by how much it has moved. The returned 
-    /// <see cref="JoystickDelta"/> object contains the relative 
-    /// coordinates of the current joystick effective position, relative 
+    /// This property can be useful to determine if the joystick has
+    /// moved and by how much it has moved. The returned
+    /// <see cref="JoystickDelta"/> object contains the relative
+    /// coordinates of the current joystick effective position, relative
     /// to the effective position it had before the most recent update.
     /// </remarks>
     /// <seealso cref="IsPushed"/>
@@ -606,15 +572,14 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets a <see cref="XInputium.JoystickDirection"/> constant 
-    /// that represents the current effective direction of 
+    /// Gets a <see cref="XInputium.JoystickDirection"/> constant
+    /// that represents the current effective direction of
     /// the joystick.
     /// </summary>
-    /// <returns>An <see cref="XInputium.JoystickDirection"/> constant 
-    /// representing the direction of the joystick's angle. 
-    /// If the joystick radius is 0, <see cref="JoystickDirection.None"/> 
+    /// <returns>An <see cref="XInputium.JoystickDirection"/> constant
+    /// representing the direction of the joystick's angle.
+    /// If the joystick radius is 0, <see cref="JoystickDirection.None"/>
     /// is returned.</returns>
     /// <seealso cref="XInputium.JoystickDirection"/>
     /// <seealso cref="Angle"/>
@@ -638,29 +603,28 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
     /// Gets the estimated distance per second the joystick is being moved by,
     /// by considering its current a previous effective position.
     /// </summary>
-    /// <returns>A number equal to or greater than 0, representing the estimated 
-    /// distance the joystick is moving per second. If <see cref="FrameTime"/> 
-    /// is <see cref="TimeSpan.Zero"/> and <see cref="Delta"/> reports a 
-    /// movement distance greater than 0, <see cref="float.PositiveInfinity"/> 
+    /// <returns>A number equal to or greater than 0, representing the estimated
+    /// distance the joystick is moving per second. If <see cref="FrameTime"/>
+    /// is <see cref="TimeSpan.Zero"/> and <see cref="Delta"/> reports a
+    /// movement distance greater than 0, <see cref="float.PositiveInfinity"/>
     /// is returned.</returns>
     /// <remarks>
-    /// The number returned by this property represents the total distance the 
-    /// joystick would travel within a second, if it kept moving at its current 
-    /// speed. Its current speed is the joystick's delta distance (see 
-    /// <see cref="Delta"/> property), divided by the number of seconds elapsed 
-    /// between the two most recent update operations. Although the joystick 
-    /// could not keep moving indeterminately because it is constrained to its 
+    /// The number returned by this property represents the total distance the
+    /// joystick would travel within a second, if it kept moving at its current
+    /// speed. Its current speed is the joystick's delta distance (see
+    /// <see cref="Delta"/> property), divided by the number of seconds elapsed
+    /// between the two most recent update operations. Although the joystick
+    /// could not keep moving indeterminately because it is constrained to its
     /// -1 to 1 boundaries, this property assumes as if it could.
     /// <br/><br/>
-    /// When the time elapsed between the two most recent update operations is 
-    /// zero (<see cref="TimeSpan.Zero"/>) while the delta distance is greater 
-    /// than 0, this property returns <see cref="float.PositiveInfinity"/> to 
-    /// indicate the joystick is moving at infinite speed and represent an 
+    /// When the time elapsed between the two most recent update operations is
+    /// zero (<see cref="TimeSpan.Zero"/>) while the delta distance is greater
+    /// than 0, this property returns <see cref="float.PositiveInfinity"/> to
+    /// indicate the joystick is moving at infinite speed and represent an
     /// immediate movement.
     /// </remarks>
     /// <seealso cref="Delta"/>
@@ -682,10 +646,9 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets a <see cref="bool"/> that indicates if the joystick is 
-    /// currently being moved, considering the two most recent 
+    /// Gets a <see cref="bool"/> that indicates if the joystick is
+    /// currently being moved, considering the two most recent
     /// update operations.
     /// </summary>
     /// <returns><see langword="true"/> if the joystick is being moved;
@@ -712,13 +675,12 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets a <see cref="bool"/> that indicates the joystick's 
-    /// effective position is currently not at its center position, 
+    /// Gets a <see cref="bool"/> that indicates the joystick's
+    /// effective position is currently not at its center position,
     /// meaning it is being pushed by the user.
     /// </summary>
-    /// <returns><see langword="true"/> if <see cref="Radius"/> is 
+    /// <returns><see langword="true"/> if <see cref="Radius"/> is
     /// greater than 0; otherwise, <see langword="false"/>.</returns>
     /// <seealso cref="Radius"/>
     public bool IsPushed
@@ -740,9 +702,8 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets the amount of time elapsed since the last time the 
+    /// Gets the amount of time elapsed since the last time the
     /// <see cref="Joystick"/> raw position was updated.
     /// </summary>
     public TimeSpan FrameTime
@@ -751,18 +712,17 @@ public class Joystick : EventDispatcherObject
         private set => SetProperty(ref _frameTime, value, s_EA_FrameTime);
     }
 
-
     /// <summary>
-    /// Gets or sets a <see cref="bool"/> that specifies if the 
+    /// Gets or sets a <see cref="bool"/> that specifies if the
     /// value of the X axis must be inverted.
     /// </summary>
-    /// <value><see langword="true"/> to invert the value of 
-    /// the X axis or <see langword="false"/> to not change it. 
+    /// <value><see langword="true"/> to invert the value of
+    /// the X axis or <see langword="false"/> to not change it.
     /// The default value is <see langword="false"/>.</value>
     /// <remarks>
-    /// When this property is set to <see langword="true"/>, the 
-    /// value of the X axis will be inverted, meaning a value that 
-    /// would be -1 will be 1, and a value that would be 1 will 
+    /// When this property is set to <see langword="true"/>, the
+    /// value of the X axis will be inverted, meaning a value that
+    /// would be -1 will be 1, and a value that would be 1 will
     /// be -1.
     /// </remarks>
     /// <seealso cref="InvertY"/>
@@ -773,18 +733,17 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _invertX, value));
     }
 
-
     /// <summary>
-    /// Gets or sets a <see cref="bool"/> that specifies if the 
+    /// Gets or sets a <see cref="bool"/> that specifies if the
     /// value of the Y axis must be inverted.
     /// </summary>
-    /// <value><see langword="true"/> to invert the value of 
-    /// the Y axis or <see langword="false"/> to not change it. 
+    /// <value><see langword="true"/> to invert the value of
+    /// the Y axis or <see langword="false"/> to not change it.
     /// The default value is <see langword="false"/>.</value>
     /// <remarks>
-    /// When this property is set to <see langword="true"/>, the 
-    /// value of the T axis will be inverted, meaning a value that 
-    /// would be -1 will be 1, and a value that would be 1 will 
+    /// When this property is set to <see langword="true"/>, the
+    /// value of the T axis will be inverted, meaning a value that
+    /// would be -1 will be 1, and a value that would be 1 will
     /// be -1.
     /// </remarks>
     /// <seealso cref="InvertX"/>
@@ -795,14 +754,13 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _invertY, value));
     }
 
-
     /// <summary>
     /// Gets or sets the inner circular dead-zone of the joystick.
     /// </summary>
-    /// <value>A value between 0 and 1, representing the portion 
-    /// of the joystick's inner area that will be effectively 
+    /// <value>A value between 0 and 1, representing the portion
+    /// of the joystick's inner area that will be effectively
     /// ignored. The default value is 0.</value>
-    /// <exception cref="ArgumentException">The value being set 
+    /// <exception cref="ArgumentException">The value being set
     /// to the property is <see cref="float.NaN"/>.</exception>
     /// <seealso cref="OuterDeadZone"/>
     public float InnerDeadZone
@@ -820,14 +778,13 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
     /// Gets or sets the outer circular dead-zone of the joystick.
     /// </summary>
-    /// <value>A value between 0 and 1, representing the portion 
-    /// of the joystick's outer area that will be effectively 
+    /// <value>A value between 0 and 1, representing the portion
+    /// of the joystick's outer area that will be effectively
     /// ignored. The default value is 0.</value>
-    /// <exception cref="ArgumentException">The value being set 
+    /// <exception cref="ArgumentException">The value being set
     /// to the property is <see cref="float.NaN"/>.</exception>
     /// <seealso cref="InnerDeadZone"/>
     public float OuterDeadZone
@@ -845,13 +802,12 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets or sets the <see cref="ModifierFunction"/> delegate 
+    /// Gets or sets the <see cref="ModifierFunction"/> delegate
     /// that is used to modify the X axis.
     /// </summary>
-    /// <value>A <see cref="ModifierFunction"/> delegate or 
-    /// <see langword="null"/> to specify no modifier function. 
+    /// <value>A <see cref="ModifierFunction"/> delegate or
+    /// <see langword="null"/> to specify no modifier function.
     /// The default value is <see langword="null"/>.</value>
     /// <seealso cref="X"/>
     public ModifierFunction? XModifierFunction
@@ -860,13 +816,12 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _xModifierFunction, value));
     }
 
-
     /// <summary>
-    /// Gets or sets the <see cref="ModifierFunction"/> delegate 
+    /// Gets or sets the <see cref="ModifierFunction"/> delegate
     /// that is used to modify the Y axis.
     /// </summary>
-    /// <value>A <see cref="ModifierFunction"/> delegate or 
-    /// <see langword="null"/> to specify no modifier function. 
+    /// <value>A <see cref="ModifierFunction"/> delegate or
+    /// <see langword="null"/> to specify no modifier function.
     /// The default value is <see langword="null"/>.</value>
     /// <seealso cref="Y"/>
     public ModifierFunction? YModifierFunction
@@ -875,14 +830,13 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _yModifierFunction, value));
     }
 
-
     /// <summary>
-    /// Gets or sets the <see cref="ModifierFunction"/> delegate 
-    /// that is used to modify the effective radius of the 
+    /// Gets or sets the <see cref="ModifierFunction"/> delegate
+    /// that is used to modify the effective radius of the
     /// joystick.
     /// </summary>
-    /// <value>A <see cref="ModifierFunction"/> delegate or 
-    /// <see langword="null"/> to specify no modifier function. 
+    /// <value>A <see cref="ModifierFunction"/> delegate or
+    /// <see langword="null"/> to specify no modifier function.
     /// The default value is <see langword="null"/>.</value>
     /// <seealso cref="Radius"/>
     public ModifierFunction? RadiusModifierFunction
@@ -891,14 +845,13 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _radiusModifierFunction, value));
     }
 
-
     /// <summary>
-    /// Gets or sets the <see cref="ModifierFunction"/> delegate 
-    /// that is used to modify the effective angle of the 
+    /// Gets or sets the <see cref="ModifierFunction"/> delegate
+    /// that is used to modify the effective angle of the
     /// joystick.
     /// </summary>
-    /// <value>A <see cref="ModifierFunction"/> delegate or 
-    /// <see langword="null"/> to specify no modifier function. 
+    /// <value>A <see cref="ModifierFunction"/> delegate or
+    /// <see langword="null"/> to specify no modifier function.
     /// The default value is <see langword="null"/>.</value>
     /// <seealso cref="Angle"/>
     public ModifierFunction? AngleModifierFunction
@@ -907,36 +860,35 @@ public class Joystick : EventDispatcherObject
         set => Invalidate(SetProperty(ref _angleModifierFunction, value));
     }
 
-
     /// <summary>
-    /// Gets or sets the maximum amount of time a smoothing 
-    /// sample is kept in memory for joystick smoothing 
+    /// Gets or sets the maximum amount of time a smoothing
+    /// sample is kept in memory for joystick smoothing
     /// calculation.
     /// </summary>
-    /// <value>A <see cref="TimeSpan"/> object representing 
-    /// positive time, where <see cref="TimeSpan.Zero"/> 
-    /// disables smoothing. The default value is 
+    /// <value>A <see cref="TimeSpan"/> object representing
+    /// positive time, where <see cref="TimeSpan.Zero"/>
+    /// disables smoothing. The default value is
     /// <see cref="TimeSpan.Zero"/>.</value>
     /// <remarks>
-    /// This property specifies how long the most recent 
-    /// joystick position samples are kept in memory for 
-    /// use in joystick smoothing calculation. The longer 
-    /// the period, the more smoothing is applied and, 
-    /// consequently, the more the fastest joystick movements 
-    /// are slowed down. A <see cref="TimeSpan.Zero"/> means 
-    /// no time frame will be considered, meaning smoothing 
+    /// This property specifies how long the most recent
+    /// joystick position samples are kept in memory for
+    /// use in joystick smoothing calculation. The longer
+    /// the period, the more smoothing is applied and,
+    /// consequently, the more the fastest joystick movements
+    /// are slowed down. A <see cref="TimeSpan.Zero"/> means
+    /// no time frame will be considered, meaning smoothing
     /// doesn't occur. Usually, for smoothing of fast and
-    /// unstable movements, just a few milliseconds would 
+    /// unstable movements, just a few milliseconds would
     /// be the ideal value for this property.
     /// <br/><br/>
-    /// To specify how much of the calculated smoothing is 
-    /// effectively applied to the joystick, use 
+    /// To specify how much of the calculated smoothing is
+    /// effectively applied to the joystick, use
     /// <see cref="SmoothingFactor"/> property.
     /// <br/><br/>
-    /// Joystick smoothing is not applicable to all use cases. 
-    /// Some use cases might include a game or application 
-    /// that requires the user to move an object in screen 
-    /// with high precision or to minimize accidental 
+    /// Joystick smoothing is not applicable to all use cases.
+    /// Some use cases might include a game or application
+    /// that requires the user to move an object in screen
+    /// with high precision or to minimize accidental
     /// steering in a car driving game.
     /// </remarks>
     /// <seealso cref="SmoothingFactor"/>
@@ -959,24 +911,23 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// Gets or sets how much of the computed smoothing is 
+    /// Gets or sets how much of the computed smoothing is
     /// applied to the joystick.
     /// </summary>
-    /// <value>A number between 0 and 1, where 0 means no 
-    /// smoothing is applied and 1 means full smoothing. 
+    /// <value>A number between 0 and 1, where 0 means no
+    /// smoothing is applied and 1 means full smoothing.
     /// The default value is 0.</value>
-    /// <exception cref="ArgumentException">The value being 
+    /// <exception cref="ArgumentException">The value being
     /// set to the property is <see cref="float.NaN"/>.</exception>
     /// <remarks>
-    /// This property specifies how much smoothing is applied. 
-    /// While <see cref="SmoothingSamplePeriod"/> specifies the 
-    /// amount of time newer registered samples are kept in 
-    /// memory for the smoothing algorithm to determine the 
-    /// smoothed coordinates calculation, 
-    /// <see cref="SmoothingFactor"/> specifies how much of 
-    /// that smoothed coordinates are used for the effective 
+    /// This property specifies how much smoothing is applied.
+    /// While <see cref="SmoothingSamplePeriod"/> specifies the
+    /// amount of time newer registered samples are kept in
+    /// memory for the smoothing algorithm to determine the
+    /// smoothed coordinates calculation,
+    /// <see cref="SmoothingFactor"/> specifies how much of
+    /// that smoothed coordinates are used for the effective
     /// position.
     /// </remarks>
     /// <seealso cref="SmoothingSamplePeriod"/>
@@ -997,32 +948,31 @@ public class Joystick : EventDispatcherObject
 
     #endregion Properties
 
-
     #region Methods
 
     /// <summary>
-    /// Gets a new <see cref="Joystick"/> instance that encapsulates 
-    /// the specified <see cref="Joystick"/> instance, and that has 
-    /// its raw joystick position automatically updated whenever the 
+    /// Gets a new <see cref="Joystick"/> instance that encapsulates
+    /// the specified <see cref="Joystick"/> instance, and that has
+    /// its raw joystick position automatically updated whenever the
     /// encapsulated instance is updated.
     /// </summary>
-    /// <param name="joystick"><see cref="Joystick"/> instance to 
+    /// <param name="joystick"><see cref="Joystick"/> instance to
     /// encapsulate.</param>
     /// <returns>The newly created <see cref="Joystick"/> instance.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="joystick"/>
     /// is <see langword="null"/>.</exception>
     /// <remarks>
-    /// This method allows you to create a new <see cref="Joystick"/> instance, 
-    /// but use another <see cref="Joystick"/> instance as the source of 
-    /// its raw state information. This is useful in scenarios where you need 
-    /// to have different <see cref="Joystick"/> instances that represent the 
-    /// same physical joystick, but need to have different settings depending 
-    /// on your application's state. The returned <see cref="Joystick"/> 
-    /// instance is automatically updated whenever the underlying 
-    /// <paramref name="joystick"/> is updated. Only the underlying joystick's 
-    /// raw position and time information is obtained; the effective position 
-    /// of the returned <see cref="Joystick"/> is determined depending on the 
-    /// obtained raw position and the settings you specify on the new 
+    /// This method allows you to create a new <see cref="Joystick"/> instance,
+    /// but use another <see cref="Joystick"/> instance as the source of
+    /// its raw state information. This is useful in scenarios where you need
+    /// to have different <see cref="Joystick"/> instances that represent the
+    /// same physical joystick, but need to have different settings depending
+    /// on your application's state. The returned <see cref="Joystick"/>
+    /// instance is automatically updated whenever the underlying
+    /// <paramref name="joystick"/> is updated. Only the underlying joystick's
+    /// raw position and time information is obtained; the effective position
+    /// of the returned <see cref="Joystick"/> is determined depending on the
+    /// obtained raw position and the settings you specify on the new
     /// <see cref="Joystick"/>.
     /// </remarks>
     public static Joystick Encapsulate(Joystick joystick)
@@ -1042,15 +992,14 @@ public class Joystick : EventDispatcherObject
         return instance;
     }
 
-
     /// <summary>
-    /// Converts the specified normalized angle to a 
-    /// <see cref="JoystickDirection"/> constant that represents 
+    /// Converts the specified normalized angle to a
+    /// <see cref="JoystickDirection"/> constant that represents
     /// the direction of the angle.
     /// </summary>
-    /// <param name="normalAngle">A value between 0 and 1, that 
+    /// <param name="normalAngle">A value between 0 and 1, that
     /// specifies the normalized angle to convert.</param>
-    /// <returns>A <see cref="JoystickDirection"/> constant 
+    /// <returns>A <see cref="JoystickDirection"/> constant
     /// that specifies the direction of the angle.</returns>
     /// <exception cref="ArgumentException">
     /// <paramref name="normalAngle"/> is <see cref="float.NaN"/>.</exception>
@@ -1078,21 +1027,19 @@ public class Joystick : EventDispatcherObject
             return JoystickDirection.None;
     }
 
-
     /// <summary>
-    /// Gets the <see cref="string"/> representation of the 
+    /// Gets the <see cref="string"/> representation of the
     /// current <see cref="Joystick"/> instance.
     /// </summary>
-    /// <returns>The <see cref="string"/> representation of 
+    /// <returns>The <see cref="string"/> representation of
     /// the <see cref="Joystick"/></returns>
     public override string ToString()
     {
         return $"{X}, {Y}";
     }
 
-
     /// <summary>
-    /// It's called once on every update and raises the 
+    /// It's called once on every update and raises the
     /// <see cref="Updated"/> event.
     /// </summary>
     /// <seealso cref="Updated"/>
@@ -1100,7 +1047,6 @@ public class Joystick : EventDispatcherObject
     {
         RaiseEvent(() => Updated?.Invoke(this, EventArgs.Empty));
     }
-
 
     /// <summary>
     /// Raises the <see cref="PositionChanged"/> event.
@@ -1113,7 +1059,6 @@ public class Joystick : EventDispatcherObject
         RaiseEvent(() => PositionChanged?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
     /// Raises the <see cref="AngleChanged"/> event.
     /// </summary>
@@ -1123,7 +1068,6 @@ public class Joystick : EventDispatcherObject
     {
         RaiseEvent(() => AngleChanged?.Invoke(this, EventArgs.Empty));
     }
-
 
     /// <summary>
     /// Raises the <see cref="RadiusChanged"/> event.
@@ -1135,7 +1079,6 @@ public class Joystick : EventDispatcherObject
         RaiseEvent(() => RadiusChanged?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
     /// Raises the <see cref="DirectionChanged"/> event.
     /// </summary>
@@ -1145,7 +1088,6 @@ public class Joystick : EventDispatcherObject
     {
         RaiseEvent(() => DirectionChanged?.Invoke(this, EventArgs.Empty));
     }
-
 
     /// <summary>
     /// Raises the <see cref="IsMovingChanged"/> event.
@@ -1157,7 +1099,6 @@ public class Joystick : EventDispatcherObject
         RaiseEvent(() => IsMovingChanged?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
     /// Raises the <see cref="IsPushedChanged"/> event.
     /// </summary>
@@ -1167,7 +1108,6 @@ public class Joystick : EventDispatcherObject
     {
         RaiseEvent(() => IsPushedChanged?.Invoke(this, EventArgs.Empty));
     }
-
 
     private void UpdateRawPosition(float x, float y, TimeSpan time)
     {
@@ -1207,7 +1147,7 @@ public class Joystick : EventDispatcherObject
         Validate();
 
         // Update post-validation properties. These properties are update here,
-        // instead of on the validation method, because the validation method 
+        // instead of on the validation method, because the validation method
         // will not perform a validation when the raw position doesn't change,
         // and these properties need to be updated independently of position changes.
         Delta = JoystickDelta.FromJoystickPosition(oldX, oldY, _x, _y);
@@ -1222,45 +1162,42 @@ public class Joystick : EventDispatcherObject
         DispatchEvents();
     }
 
-
     /// <summary>
-    /// It's called on every update to the <see cref="Joystick"/>, 
-    /// before joystick validation. When overridden by a derived 
-    /// class, performs inheritors custom operations that need to 
+    /// It's called on every update to the <see cref="Joystick"/>,
+    /// before joystick validation. When overridden by a derived
+    /// class, performs inheritors custom operations that need to
     /// occur before the validation is performed.
     /// </summary>
     /// <remarks>
-    /// This method allows inheritors to perform any operation 
-    /// that must occur when the <see cref="Joystick"/> is updated, 
-    /// that might invalidate the <see cref="Joystick"/>, forcing 
+    /// This method allows inheritors to perform any operation
+    /// that must occur when the <see cref="Joystick"/> is updated,
+    /// that might invalidate the <see cref="Joystick"/>, forcing
     /// a validation to occur as soon as possible.
     /// <br/><br/>
     /// Use <see cref="RawX"/>, <see cref="RawY"/>, <see cref="RawAngle"/>,
-    /// <see cref="RawRadius"/> and <see cref="FrameTime"/> properties 
-    /// to get the new raw position of the joystick and the current 
+    /// <see cref="RawRadius"/> and <see cref="FrameTime"/> properties
+    /// to get the new raw position of the joystick and the current
     /// update's frame time.
     /// </remarks>
     /// <seealso cref="Invalidate()"/>
     protected virtual void OnUpdating()
     {
-
     }
 
-
     /// <summary>
-    /// Marks the effective position of the <see cref="Joystick"/> 
-    /// as outdated. The next time a getter method of one of the 
-    /// properties that are associated with the position of the 
-    /// <see cref="Joystick"/> is called, the <see cref="Joystick"/> 
+    /// Marks the effective position of the <see cref="Joystick"/>
+    /// as outdated. The next time a getter method of one of the
+    /// properties that are associated with the position of the
+    /// <see cref="Joystick"/> is called, the <see cref="Joystick"/>
     /// will be validated.
     /// </summary>
     /// <remarks>
-    /// Inheritors can call this method if they are implementing 
-    /// functionality that may affect th effective position of the 
-    /// <see cref="Joystick"/> — the value of <see cref="X"/> 
-    /// or <see cref="Y"/> properties — that is not automatically 
-    /// applied. For instance, if you are implementing a custom 
-    /// modifier property that consumers can change, you would call 
+    /// Inheritors can call this method if they are implementing
+    /// functionality that may affect th effective position of the
+    /// <see cref="Joystick"/> — the value of <see cref="X"/>
+    /// or <see cref="Y"/> properties — that is not automatically
+    /// applied. For instance, if you are implementing a custom
+    /// modifier property that consumers can change, you would call
     /// this method whenever your property's value changes.
     /// </remarks>
     /// <seealso cref="Validate()"/>
@@ -1268,7 +1205,6 @@ public class Joystick : EventDispatcherObject
     {
         _isValid = false;
     }
-
 
     private void Invalidate(bool validate)
     {
@@ -1278,34 +1214,33 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// If the effective position of the joystick is outdated, 
+    /// If the effective position of the joystick is outdated,
     /// forces it to get updated and all modifiers to be applied.
     /// </summary>
-    /// <returns><see langword="true"/> if the effective position 
-    /// of the joystick was updated and effectively 
-    /// changed as a result of this operation; 
+    /// <returns><see langword="true"/> if the effective position
+    /// of the joystick was updated and effectively
+    /// changed as a result of this operation;
     /// otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="NotSupportedException">The 
-    /// <see cref="ApplyCartesianModifiers(ref float, ref float)"/> 
+    /// <exception cref="NotSupportedException">The
+    /// <see cref="ApplyCartesianModifiers(ref float, ref float)"/>
     /// was overridden in the derived class, and outputted a
-    /// <see cref="float.NaN"/> value when called by 
+    /// <see cref="float.NaN"/> value when called by
     /// <see cref="Validate()"/>.</exception>
-    /// <exception cref="NotSupportedException">The 
-    /// <see cref="ApplyPolarModifiers(ref float, ref float)"/> was 
+    /// <exception cref="NotSupportedException">The
+    /// <see cref="ApplyPolarModifiers(ref float, ref float)"/> was
     /// overridden in the derived class, and outputted a
-    /// <see cref="float.NaN"/> value when called by 
+    /// <see cref="float.NaN"/> value when called by
     /// <see cref="Validate()"/>.</exception>
     /// <remarks>
-    /// You call this method when you need to force the effective 
-    /// position of the joystick to be updated with all the modifiers. 
-    /// You usually call this method after changing the value of a 
-    /// property that can affect the joystick's effective position. 
-    /// Although the effective position is automatically updated 
-    /// as needed when the getter method of some properties is 
-    /// called, calling <see cref="Validate()"/> method ensures it 
-    /// is updated immediately, so any events that depend on this 
+    /// You call this method when you need to force the effective
+    /// position of the joystick to be updated with all the modifiers.
+    /// You usually call this method after changing the value of a
+    /// property that can affect the joystick's effective position.
+    /// Although the effective position is automatically updated
+    /// as needed when the getter method of some properties is
+    /// called, calling <see cref="Validate()"/> method ensures it
+    /// is updated immediately, so any events that depend on this
     /// will be triggered.
     /// </remarks>
     /// <seealso cref="X"/>
@@ -1394,27 +1329,26 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// When overridden in derived classes, receives the specified 
-    /// joystick raw Cartesian coordinates and applies any modifiers 
+    /// When overridden in derived classes, receives the specified
+    /// joystick raw Cartesian coordinates and applies any modifiers
     /// to them.
     /// </summary>
-    /// <param name="rawX">Reference to the raw X axis value to modify. 
+    /// <param name="rawX">Reference to the raw X axis value to modify.
     /// This is a value between -1 and 1.</param>
-    /// <param name="rawY">Reference to the raw Y axis value to modify. 
+    /// <param name="rawY">Reference to the raw Y axis value to modify.
     /// This is a value between -1 and 1.</param>
     /// <remarks>
-    /// This method is called by <see cref="Validate()"/> method to 
-    /// apply the modifiers to the axes position. The base 
-    /// implementation applies all of the base Cartesian modifiers, so 
-    /// you need to call the base implementation from your own 
-    /// implementation to ensure the base modifiers are correctly 
-    /// applied. Because <paramref name="rawX"/> and 
-    /// <paramref name="rawY"/> represent the raw values of the X and 
-    /// Y axes, obtained from the underlying device, you have the 
-    /// ability to apply modifications that require the raw axes' 
-    /// value for them to be applied, meaning you would call the base 
+    /// This method is called by <see cref="Validate()"/> method to
+    /// apply the modifiers to the axes position. The base
+    /// implementation applies all of the base Cartesian modifiers, so
+    /// you need to call the base implementation from your own
+    /// implementation to ensure the base modifiers are correctly
+    /// applied. Because <paramref name="rawX"/> and
+    /// <paramref name="rawY"/> represent the raw values of the X and
+    /// Y axes, obtained from the underlying device, you have the
+    /// ability to apply modifications that require the raw axes'
+    /// value for them to be applied, meaning you would call the base
     /// implementation in the most appropriate moment for your needs.
     /// </remarks>
     /// <seealso cref="X"/>
@@ -1455,28 +1389,27 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
-    /// When overridden in derived classes, receives the specified 
-    /// joystick raw polar coordinates and applies any modifiers 
+    /// When overridden in derived classes, receives the specified
+    /// joystick raw polar coordinates and applies any modifiers
     /// to them.
     /// </summary>
-    /// <param name="normalAngle">Reference to the normalized angle 
+    /// <param name="normalAngle">Reference to the normalized angle
     /// to modify. This is a value between 0 and 1.</param>
-    /// <param name="radius">Reference to the radius to modify. 
-    /// This is a value between 0 and 1. See <see cref="Radius"/> 
-    /// property for more information about normalized 
+    /// <param name="radius">Reference to the radius to modify.
+    /// This is a value between 0 and 1. See <see cref="Radius"/>
+    /// property for more information about normalized
     /// <see cref="Joystick"/> angles.</param>
     /// <remarks>
-    /// This method is called by <see cref="Validate()"/> method to 
-    /// apply the modifiers to the joystick position in polar 
-    /// coordinates, after a call to 
-    /// <see cref="ApplyCartesianModifiers(ref float, ref float)"/> 
+    /// This method is called by <see cref="Validate()"/> method to
+    /// apply the modifiers to the joystick position in polar
+    /// coordinates, after a call to
+    /// <see cref="ApplyCartesianModifiers(ref float, ref float)"/>
     /// method.
     /// <br/>
-    /// The base implementation applies all of the base polar 
-    /// modifiers, so you need to call the base implementation from 
-    /// your own implementation to ensure the base modifiers are 
+    /// The base implementation applies all of the base polar
+    /// modifiers, so you need to call the base implementation from
+    /// your own implementation to ensure the base modifiers are
     /// correctly applied.
     /// </remarks>
     /// <seealso cref="Angle"/>
@@ -1510,7 +1443,6 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     private void RegisterSmoothingSample(in float x, in float y, in TimeSpan time)
     {
         if (SmoothingFactor > 0f && SmoothingSamplePeriod > TimeSpan.Zero)
@@ -1541,13 +1473,12 @@ public class Joystick : EventDispatcherObject
         }
     }
 
-
     /// <summary>
     /// Sets all writable properties in the current <see cref="Joystick"/>
-    /// instance with values obtained from the corresponding properties 
+    /// instance with values obtained from the corresponding properties
     /// in the specified <see cref="Joystick"/> instance.
     /// </summary>
-    /// <param name="joystick"><see cref="Joystick"/> instance to copy 
+    /// <param name="joystick"><see cref="Joystick"/> instance to copy
     /// the configuration from.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="joystick"/> is <see langword="null"/>.</exception>
@@ -1568,19 +1499,18 @@ public class Joystick : EventDispatcherObject
         SmoothingSamplePeriod = joystick.SmoothingSamplePeriod;
     }
 
-
     /// <summary>
-    /// Gets a new <see cref="DigitalButton"/> instance that activates 
-    /// (presses) when the specified activation function returns 
-    /// <see langword="true"/> for the current state of the 
+    /// Gets a new <see cref="DigitalButton"/> instance that activates
+    /// (presses) when the specified activation function returns
+    /// <see langword="true"/> for the current state of the
     /// <see cref="Joystick"/>.
     /// </summary>
-    /// <param name="activationFunction">Function that will be called 
-    /// on every update to the state of the <see cref="Joystick"/>, which 
-    /// receives the current <see cref="Joystick"/> instance and the 
+    /// <param name="activationFunction">Function that will be called
+    /// on every update to the state of the <see cref="Joystick"/>, which
+    /// receives the current <see cref="Joystick"/> instance and the
     /// <see cref="DigitalButton"/> as its parameters.</param>
-    /// <returns>A new <see cref="DigitalButton"/> instance that is updated 
-    /// automatically, and reports its state as pressed depending on the state 
+    /// <returns>A new <see cref="DigitalButton"/> instance that is updated
+    /// automatically, and reports its state as pressed depending on the state
     /// of the <see cref="Joystick"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="activationFunction"/> is <see langword="null"/>.</exception>
@@ -1604,34 +1534,33 @@ public class Joystick : EventDispatcherObject
         return button;
     }
 
-
     /// <summary>
-    /// Gets a new <see cref="DigitalButton"/> instance that activates 
-    /// (presses) whenever the current <see cref="Joystick"/>'s effective 
-    /// direction matches the specified direction and the joystick's 
+    /// Gets a new <see cref="DigitalButton"/> instance that activates
+    /// (presses) whenever the current <see cref="Joystick"/>'s effective
+    /// direction matches the specified direction and the joystick's
     /// effective radius reaches the specified activation threshold,
-    /// and then deactivates if the effective radius gets under the 
+    /// and then deactivates if the effective radius gets under the
     /// specified deactivation threshold.
     /// </summary>
-    /// <param name="direction">A <see cref="JoystickDirection"/> constant 
-    /// that specifies the effective direction the joystick must have for 
+    /// <param name="direction">A <see cref="JoystickDirection"/> constant
+    /// that specifies the effective direction the joystick must have for
     /// the button to be activated.</param>
-    /// <param name="activationThreshold">A number between the 0 and 1 
-    /// inclusive range, that specifies the minimum value over which 
-    /// the joystick's effective radius must reach for the button 
+    /// <param name="activationThreshold">A number between the 0 and 1
+    /// inclusive range, that specifies the minimum value over which
+    /// the joystick's effective radius must reach for the button
     /// to get activated.</param>
-    /// <param name="deactivationThreshold">A number between the 0 and 1 
-    /// inclusive range, that specifies the value under which the 
-    /// joystick's effective radius must be for the button 
-    /// to get deactivated, when the button is activated. Usually, 
-    /// this is a value equal to or lower than 
+    /// <param name="deactivationThreshold">A number between the 0 and 1
+    /// inclusive range, that specifies the value under which the
+    /// joystick's effective radius must be for the button
+    /// to get deactivated, when the button is activated. Usually,
+    /// this is a value equal to or lower than
     /// <paramref name="activationThreshold"/>.</param>
-    /// <returns>A new <see cref="DigitalButton"/> that is automatically 
-    /// updated whenever the state of the current <see cref="Joystick"/> 
-    /// is updated, and that is activated (pressed) whenever the state of 
+    /// <returns>A new <see cref="DigitalButton"/> that is automatically
+    /// updated whenever the state of the current <see cref="Joystick"/>
+    /// is updated, and that is activated (pressed) whenever the state of
     /// the joystick matches the specified conditions.</returns>
     /// <exception cref="ArgumentException"><paramref name="direction"/>
-    /// is not a defined constant in a <see cref="JoystickDirection"/> 
+    /// is not a defined constant in a <see cref="JoystickDirection"/>
     /// enumeration.</exception>
     /// <exception cref="ArgumentException">
     /// <paramref name="activationThreshold"/> is <see cref="float.NaN"/>.</exception>
@@ -1663,26 +1592,25 @@ public class Joystick : EventDispatcherObject
         });
     }
 
-
     /// <summary>
-    /// Gets a new <see cref="DigitalButton"/> instance that activates 
-    /// (presses) whenever the current <see cref="Joystick"/>'s effective 
-    /// direction matches the specified direction and the joystick's 
+    /// Gets a new <see cref="DigitalButton"/> instance that activates
+    /// (presses) whenever the current <see cref="Joystick"/>'s effective
+    /// direction matches the specified direction and the joystick's
     /// effective radius reaches the specified activation threshold.
     /// </summary>
-    /// <param name="direction">A <see cref="JoystickDirection"/> constant 
-    /// that specifies the effective direction the joystick must have for 
+    /// <param name="direction">A <see cref="JoystickDirection"/> constant
+    /// that specifies the effective direction the joystick must have for
     /// the button to be activated.</param>
-    /// <param name="activationThreshold">A number between the 0 and 1 
-    /// inclusive range, that specifies the minimum value over which 
-    /// the joystick's effective radius must reach for the button 
+    /// <param name="activationThreshold">A number between the 0 and 1
+    /// inclusive range, that specifies the minimum value over which
+    /// the joystick's effective radius must reach for the button
     /// to get activated.</param>
-    /// <returns>A new <see cref="DigitalButton"/> that is automatically 
-    /// updated whenever the state of the current <see cref="Joystick"/> 
-    /// is updated, and that is activated (pressed) whenever the state of 
+    /// <returns>A new <see cref="DigitalButton"/> that is automatically
+    /// updated whenever the state of the current <see cref="Joystick"/>
+    /// is updated, and that is activated (pressed) whenever the state of
     /// the joystick matches the specified conditions.</returns>
     /// <exception cref="ArgumentException"><paramref name="direction"/>
-    /// is not a defined constant in a <see cref="JoystickDirection"/> 
+    /// is not a defined constant in a <see cref="JoystickDirection"/>
     /// enumeration.</exception>
     /// <exception cref="ArgumentException">
     /// <paramref name="activationThreshold"/> is <see cref="float.NaN"/>.</exception>
@@ -1694,6 +1622,4 @@ public class Joystick : EventDispatcherObject
     }
 
     #endregion Methods
-
-
 }

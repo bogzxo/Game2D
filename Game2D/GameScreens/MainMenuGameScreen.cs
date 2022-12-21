@@ -1,23 +1,17 @@
-﻿using Game2D.Data;
-using Game2D.OpenGL;
+﻿using Game2D.OpenGL;
 using Game2D.Rendering;
 using Game2D.World;
 using Game2D.World.Generation;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.GameScreens
 {
     public class MainMenuGameScreen : IGameScreen
     {
-        RenderRectangle fullscreenRenderRect;
-        Shader clouds;
+        private RenderRectangle fullscreenRenderRect;
+        private Shader clouds;
 
         public void Initialize()
         {
@@ -37,14 +31,15 @@ namespace Game2D.GameScreens
             GameManager.Instance.GameWorld = new GameWorld();
         }
 
-        bool DrawButton(string label, Vector2 pos, Vector2 size)
+        private bool DrawButton(string label, Vector2 pos, Vector2 size)
         {
             ImGui.SetCursorPosX(pos.X);
             ImGui.SetCursorPosY(pos.Y);
 
             return ImGui.Button(label, new System.Numerics.Vector2(size.X, size.Y));
         }
-        void DrawText(string label, Vector2 pos)
+
+        private void DrawText(string label, Vector2 pos)
         {
             ImGui.PushStyleColor(ImGuiCol.Text, System.Numerics.Vector4.UnitW);
 
@@ -61,8 +56,9 @@ namespace Game2D.GameScreens
             ImGui.PopStyleColor();
         }
 
-        float iTime = 0, transitionTimer;
-        bool transition, optionsToggle;
+        private float iTime = 0, transitionTimer;
+        private bool transition, optionsToggle;
+
         public void Draw(float deltaTime)
         {
             iTime += deltaTime;
@@ -96,7 +92,6 @@ namespace Game2D.GameScreens
                 ImGui.End();
             }
 
-
             transitionTimer += transition ? deltaTime : 0.0f;
 
             if (transitionTimer > 1)
@@ -123,8 +118,9 @@ namespace Game2D.GameScreens
             }
         }
 
-        float updateTimer = 0.0f;
-        float[] samples;
+        private float updateTimer = 0.0f;
+        private float[] samples;
+
         private void DrawWorldGenerationTab(float dt)
         {
             updateTimer += dt;
@@ -157,7 +153,6 @@ namespace Game2D.GameScreens
 
         public void Update(float deltaTime)
         {
-
         }
     }
 }

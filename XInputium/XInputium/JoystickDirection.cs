@@ -1,16 +1,12 @@
-﻿using System;
-
-namespace XInputium;
+﻿namespace XInputium;
 
 /// <summary>
-/// Exposes constants that represent the push direction of 
+/// Exposes constants that represent the push direction of
 /// a joystick's axes.
 /// </summary>
 /// <seealso cref="Joystick"/>
 public enum JoystickDirection
 {
-
-
     /// <summary>
     /// Represents no direction, for when there is no movement.
     /// </summary>
@@ -35,6 +31,4 @@ public enum JoystickDirection
     /// The joystick is pushed up towards the right.
     /// </summary>
     Right = 4,
-
-
 }

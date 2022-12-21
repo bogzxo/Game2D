@@ -7,13 +7,6 @@ using Game2D.World.Generation;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.TimeZoneInfo;
 
 namespace Game2D.GameScreens
 {
@@ -28,8 +21,8 @@ namespace Game2D.GameScreens
         private uint[] indices;
         private Vertex[] vertices;
 
-        float iTime = 0, transitionTimer;
-        float pixels = 256;
+        private float iTime = 0, transitionTimer;
+        private float pixels = 256;
 
         public void Initialize()
         {
@@ -42,7 +35,6 @@ namespace Game2D.GameScreens
             //background = new Texture(1920, 1080);
             //backgroundSprite = new Sprite(background);
             //backgroundSprite.Position = new Vector2(0, 0);
-
 
             postProcessingShader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/post.frag"));
 
@@ -75,7 +67,8 @@ namespace Game2D.GameScreens
             };
         }
 
-        bool showGenerationOptions, showPlayerOptions;
+        private bool showGenerationOptions, showPlayerOptions;
+
         public void Draw(float dt)
         {
             transitionTimer += dt;
@@ -100,7 +93,6 @@ namespace Game2D.GameScreens
             backgroundShader.Uniform1("pixels", pixels);
             backgroundShader.Uniform1("brightness", 1.0f);
 
-
             vbo.Use();
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             vbo.End();
@@ -111,7 +103,6 @@ namespace Game2D.GameScreens
 
             GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
             worldRenderer.EndDraw();
-
 
             fbo.End();
 

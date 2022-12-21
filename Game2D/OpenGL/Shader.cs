@@ -1,14 +1,7 @@
-﻿using OpenTK.Core;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.OpenGL;
-
 
 public class GLShader : IDisposable
 {

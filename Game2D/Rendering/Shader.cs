@@ -1,7 +1,6 @@
 ﻿using Bogz.Logging;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System.Diagnostics;
 
 namespace Game2D.Rendering;
 
@@ -44,9 +43,11 @@ public partial class Shader : IDisposable
     }
 
     public void Uniform3(string name, ref Vector3 value) => GL.Uniform3(GetUniformLocation(name), ref value);
+
     public void Uniform3(string name, Vector3 value) => GL.Uniform3(GetUniformLocation(name), value);
 
     public void Uniform2(string name, ref Vector2 value) => GL.Uniform2(GetUniformLocation(name), ref value);
+
     public void Uniform2(string name, Vector2 value) => GL.Uniform2(GetUniformLocation(name), value);
 
     public void Uniform1(string name, float value) => GL.Uniform1(GetUniformLocation(name), value);

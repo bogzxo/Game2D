@@ -7,12 +7,11 @@ namespace Game2D.PlayerState
         public IdlePlayerState(PlayerStateManager manager)
             : base(manager)
         {
-
         }
 
         public override void Update(PlayerEntity player, float dt)
         {
-            if (GameManager.Instance.KeyboardState.IsAnyKeyDown )
+            if (GameManager.Instance.KeyboardState.IsAnyKeyDown)
                 Manager.ChangeState(PlayerStates.Moving);
         }
     }

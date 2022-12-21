@@ -1,9 +1,4 @@
 ﻿using Game2D.GameScreens.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Entities.Components
 {
@@ -23,7 +18,6 @@ namespace Game2D.Entities.Components
         {
             if (Enabled) Sprite?.Draw(dt);
         }
-
 
         public void Update(float dt)
         {

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using OpenTK.Graphics.OpenGL4;
 using System.Diagnostics;
-using System.Linq;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL4;
 
 namespace Game2D.OpenGL;
+
 internal static class Util
 {
     [Pure]

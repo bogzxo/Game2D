@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.ComponentModel;
 
 namespace XInputium.XInput;
 
 /// <summary>
-/// Provides the means to determine the state of all supported 
-/// users of XInput devices in the system, and manages a group 
-/// of <see cref="XInputDevice"/> instances that represent the 
+/// Provides the means to determine the state of all supported
+/// users of XInput devices in the system, and manages a group
+/// of <see cref="XInputDevice"/> instances that represent the
 /// underlying XInput devices.
 /// </summary>
 /// <seealso cref="XInputDevice"/>
@@ -16,8 +14,6 @@ public class XInputDeviceManager
     : IEnumerable<XInputDevice>, IReadOnlyCollection<XInputDevice>,
      INotifyPropertyChanged
 {
-
-
     #region Fields and constants
 
     private const int DevicesCount = 4;  // Number of XInput devices supported by this class.
@@ -32,11 +28,10 @@ public class XInputDeviceManager
 
     #endregion Fields and constants
 
-
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of an 
+    /// Initializes a new instance of an
     /// <see cref="XInputDeviceManager"/> class.
     /// </summary>
     public XInputDeviceManager()
@@ -57,39 +52,35 @@ public class XInputDeviceManager
 
     #endregion Constructors
 
-
     #region Events
 
     /// <summary>
-    /// It's invoked whenever an <see cref="XInputDevice"/> in the 
+    /// It's invoked whenever an <see cref="XInputDevice"/> in the
     /// <see cref="XInputDeviceManager"/> is connected.
     /// </summary>
     /// <seealso cref="DeviceDisconnected"/>
     /// <seealso cref="DeviceStateChanged"/>
     public event EventHandler<XInputDeviceEventArgs>? DeviceConnected;
 
-
     /// <summary>
-    /// It's invoked whenever an <see cref="XInputDevice"/> in the 
+    /// It's invoked whenever an <see cref="XInputDevice"/> in the
     /// <see cref="XInputDeviceManager"/> is unconnected.
     /// </summary>
     /// <seealso cref="DeviceDisconnected"/>
     /// <seealso cref="DeviceStateChanged"/>
     public event EventHandler<XInputDeviceEventArgs>? DeviceDisconnected;
 
-
     /// <summary>
-    /// It's invoked whenever the state of an <see cref="XInputDevice"/> 
+    /// It's invoked whenever the state of an <see cref="XInputDevice"/>
     /// in the <see cref="XInputDeviceManager"/> changes.
     /// </summary>
     /// <seealso cref="DeviceConnected"/>
     /// <seealso cref="DeviceDisconnected"/>
     public event EventHandler<XInputDeviceEventArgs>? DeviceStateChanged;
 
-
     /// <summary>
-    /// It's invoked whenever a value of a property in the 
-    /// <see cref="XInputDeviceManager"/> changes. Implements 
+    /// It's invoked whenever a value of a property in the
+    /// <see cref="XInputDeviceManager"/> changes. Implements
     /// <see cref="INotifyPropertyChanged.PropertyChanged"/>.
     /// </summary>
     /// <seealso cref="INotifyPropertyChanged.PropertyChanged"/>
@@ -97,63 +88,56 @@ public class XInputDeviceManager
 
     #endregion Events
 
-
     #region Properties
 
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance 
-    /// associated with the XINput device at the 
+    /// Gets the <see cref="XInputDevice"/> instance
+    /// associated with the XINput device at the
     /// XInput user index <see cref="XInputUserIndex.One"/>.
     /// </summary>
     public XInputDevice UserOne { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance 
-    /// associated with the XINput device at the 
+    /// Gets the <see cref="XInputDevice"/> instance
+    /// associated with the XINput device at the
     /// XInput user index <see cref="XInputUserIndex.Two"/>.
     /// </summary>
     public XInputDevice UserTwo { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance 
-    /// associated with the XINput device at the 
+    /// Gets the <see cref="XInputDevice"/> instance
+    /// associated with the XINput device at the
     /// XInput user index <see cref="XInputUserIndex.Three"/>.
     /// </summary>
     public XInputDevice UserThree { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance 
-    /// associated with the XINput device at the 
+    /// Gets the <see cref="XInputDevice"/> instance
+    /// associated with the XINput device at the
     /// XInput user index <see cref="XInputUserIndex.Four"/>.
     /// </summary>
     public XInputDevice UserFour { get; }
 
-
     int IReadOnlyCollection<XInputDevice>.Count => DevicesCount;
-
 
     /// <summary>
     /// Gets a collection that contains the <see cref="XInputDevice"/>
-    /// instances that represent currently connected XInput devices, 
+    /// instances that represent currently connected XInput devices,
     /// accordingly to the device's last state update.
     /// </summary>
     /// <seealso cref="IsAnyDeviceConnected"/>
     public IReadOnlyCollection<XInputDevice> ConnectedDevices => _connectedDevices;
 
-
     /// <summary>
-    /// Gets a <see cref="bool"/> that indicates if there 
-    /// are any <see cref="XInputDevice"/> connected, in 
+    /// Gets a <see cref="bool"/> that indicates if there
+    /// are any <see cref="XInputDevice"/> connected, in
     /// the <see cref="XInputDeviceManager"/>.
     /// </summary>
     /// <remarks>
-    /// The value returned by this property is based on 
-    /// the state each XInput device had at the time it 
-    /// was last updated. Calling <see cref="Update()"/> 
-    /// method updates all XInput devices of the 
+    /// The value returned by this property is based on
+    /// the state each XInput device had at the time it
+    /// was last updated. Calling <see cref="Update()"/>
+    /// method updates all XInput devices of the
     /// <see cref="XInputDeviceManager"/>.
     /// </remarks>
     /// <seealso cref="ConnectedDevices"/>
@@ -170,19 +154,18 @@ public class XInputDeviceManager
         }
     }
 
-
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance that represents 
-    /// an XInput device that can be connected at the specified 
+    /// Gets the <see cref="XInputDevice"/> instance that represents
+    /// an XInput device that can be connected at the specified
     /// XInput user index.
     /// </summary>
-    /// <param name="userIndex"><see cref="XInputUserIndex"/> 
-    /// constant that specifies the XInput user index of the 
+    /// <param name="userIndex"><see cref="XInputUserIndex"/>
+    /// constant that specifies the XInput user index of the
     /// XInput device to obtain.</param>
-    /// <returns>The <see cref="XInputDevice"/> instance associated 
+    /// <returns>The <see cref="XInputDevice"/> instance associated
     /// with <paramref name="userIndex"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="userIndex"/> 
-    /// is not a defined constant in an <see cref="XInputUserIndex"/> 
+    /// <exception cref="ArgumentException"><paramref name="userIndex"/>
+    /// is not a defined constant in an <see cref="XInputUserIndex"/>
     /// enumeration.</exception>
     /// <seealso cref="XInputUserIndex"/>
     public XInputDevice this[XInputUserIndex userIndex]
@@ -210,21 +193,19 @@ public class XInputDeviceManager
 
     #endregion Properties
 
-
     #region Methods
 
     /// <summary>
     /// Raises the <see cref="PropertyChanged"/> event.
     /// </summary>
-    /// <param name="e"><see cref="PropertyChangedEventArgs"/> 
-    /// instance containing information about the event. You can 
+    /// <param name="e"><see cref="PropertyChangedEventArgs"/>
+    /// instance containing information about the event. You can
     /// pass <see langword="null"/> to specify no specific property.</param>
     /// <seealso cref="PropertyChanged"/>
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs? e)
     {
         PropertyChanged?.Invoke(this, e ?? s_EA_);
     }
-
 
     /// <summary>
     /// Invokes the <see cref="DeviceConnected"/> event.
@@ -242,7 +223,6 @@ public class XInputDeviceManager
         DeviceConnected?.Invoke(this, e);
     }
 
-
     /// <summary>
     /// Invokes the <see cref="DeviceDisconnected"/> event.
     /// </summary>
@@ -258,7 +238,6 @@ public class XInputDeviceManager
 
         DeviceDisconnected?.Invoke(this, e);
     }
-
 
     /// <summary>
     /// Invokes the <see cref="DeviceStateChanged"/> event.
@@ -276,16 +255,15 @@ public class XInputDeviceManager
         DeviceStateChanged?.Invoke(this, e);
     }
 
-
     /// <summary>
-    /// Updates the state of the <see cref="XInputDevice"/> 
+    /// Updates the state of the <see cref="XInputDevice"/>
     /// instances in the <see cref="XInputDeviceManager"/>.
     /// </summary>
-    /// <returns><see langword="true"/> if any device reported 
+    /// <returns><see langword="true"/> if any device reported
     /// a state change; otherwise, <see langword="false"/>.</returns>
     /// <remarks>
-    /// Call this method to update the states of all 
-    /// <see cref="XInputDevice"/> instances in the 
+    /// Call this method to update the states of all
+    /// <see cref="XInputDevice"/> instances in the
     /// <see cref="XInputDeviceManager"/> at once.
     /// </remarks>
     public bool Update()
@@ -299,12 +277,11 @@ public class XInputDeviceManager
         return hasStateChanged;
     }
 
-
     /// <summary>
-    /// Gets an enumerator that iterates though all of the devices 
+    /// Gets an enumerator that iterates though all of the devices
     /// of the <see cref="XInputDeviceManager"/>.
     /// </summary>
-    /// <returns>An enumerator that can be used to iterate though 
+    /// <returns>An enumerator that can be used to iterate though
     /// all of the devices of the <see cref="XInputDeviceManager"/>.</returns>
     public IEnumerator<XInputDevice> GetEnumerator()
     {
@@ -314,14 +291,12 @@ public class XInputDeviceManager
         yield return UserFour;
     }
 
-
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
 
     #endregion Methods
-
 
     #region Event handlers
 
@@ -333,7 +308,6 @@ public class XInputDeviceManager
         OnDeviceConnected(e);
     }
 
-
     private void Device_Disconnected(object? sender, XInputDeviceEventArgs e)
     {
         _connectedDevices.Remove(e.Device);
@@ -342,13 +316,10 @@ public class XInputDeviceManager
         OnDeviceDisconnected(e);
     }
 
-
     private void Device_StateChanged(object? sender, XInputDeviceEventArgs e)
     {
         OnDeviceStateChanged(e);
     }
 
     #endregion Event handlers
-
-
 }

@@ -4,6 +4,7 @@
     {
         public int Width { get; private set; }
         public Chunk[] Chunks { get; private set; }
+
         public WorldLayer(int width)
         {
             Width = width;

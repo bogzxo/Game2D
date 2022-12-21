@@ -1,15 +1,8 @@
-﻿using Bogz.Logging;
-using Game2D.Data;
+﻿using Game2D.Data;
 using Game2D.OpenGL;
 using Game2D.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 
 namespace Game2D.World
 {
@@ -71,7 +64,6 @@ namespace Game2D.World
             var mvp = Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix()) * Matrix4.Transpose(model);
             shader.Matrix4("mvp", ref mvp);
 
-
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTextureUnit(0, texture.GLTexture);
 
@@ -109,7 +101,6 @@ namespace Game2D.World
             var mat = Matrix4.Identity;
 
             flatShader.Matrix4("mvp", ref mat);
-
 
             vbo.Use();
             GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);

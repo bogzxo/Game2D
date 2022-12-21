@@ -1,46 +1,45 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace XInputium.XInput;
 
 /// <summary>
-/// Represents an XInput game controller and provides the 
-/// means to obtain and change the state of a controller, 
-/// as well as changing what controller device is 
-/// providing state information. Inherits from 
+/// Represents an XInput game controller and provides the
+/// means to obtain and change the state of a controller,
+/// as well as changing what controller device is
+/// providing state information. Inherits from
 /// <see cref="LogicalInputDevice{TDevice, TState}"/>.
 /// </summary>
 /// <remarks>
-/// <see cref="XGamepad"/> class provides you high-level 
-/// access to an underlying XInput controller. It uses an 
-/// <see cref="XInputDevice"/> to communicate with the 
-/// underlying device and is an abstraction layer over the 
+/// <see cref="XGamepad"/> class provides you high-level
+/// access to an underlying XInput controller. It uses an
+/// <see cref="XInputDevice"/> to communicate with the
+/// underlying device and is an abstraction layer over the
 /// <see cref="XInputDevice"/>, adding additional functionality.
 /// <br/><br/>
-/// You can use <see cref="XInputDevice"/> instances to get 
-/// and set the state of an XInput controller, without using 
-/// <see cref="XGamepad"/> class. However, 
-/// <see cref="XGamepad"/> adds additional features that 
-/// can simplify your work flow, at the cost of adding 
-/// more complexity. If you don't need these additional 
-/// features, consider using <see cref="XInputDevice"/>, as 
-/// it is a more lightweight alternative to 
+/// You can use <see cref="XInputDevice"/> instances to get
+/// and set the state of an XInput controller, without using
+/// <see cref="XGamepad"/> class. However,
+/// <see cref="XGamepad"/> adds additional features that
+/// can simplify your work flow, at the cost of adding
+/// more complexity. If you don't need these additional
+/// features, consider using <see cref="XInputDevice"/>, as
+/// it is a more lightweight alternative to
 /// <see cref="XGamepad"/>.
 /// <br/><br/>
-/// An <see cref="XGamepad"/> instance represents a logical 
-/// game controller device, while an <see cref="XInputDevice"/> 
-/// instance represents a specific physical device. This means 
-/// you can switch the underlying <see cref="XInputDevice"/> 
-/// of an <see cref="XGamepad"/> instance to allow that 
-/// instance to use a different underlying physical device. 
-/// You do this by setting the value of 
-/// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> 
-/// property with a different <see cref="XInputDevice"/> 
-/// instance. The advantage of this behavior is that you will 
-/// keep any configurations you have made to the 
-/// <see cref="XGamepad"/> (for example, joystick dead-zones) 
-/// and you don't need to manage your own logic for event 
-/// registering and unregistering when you need to switch 
+/// An <see cref="XGamepad"/> instance represents a logical
+/// game controller device, while an <see cref="XInputDevice"/>
+/// instance represents a specific physical device. This means
+/// you can switch the underlying <see cref="XInputDevice"/>
+/// of an <see cref="XGamepad"/> instance to allow that
+/// instance to use a different underlying physical device.
+/// You do this by setting the value of
+/// <see cref="LogicalInputDevice{TDevice, TState}.Device"/>
+/// property with a different <see cref="XInputDevice"/>
+/// instance. The advantage of this behavior is that you will
+/// keep any configurations you have made to the
+/// <see cref="XGamepad"/> (for example, joystick dead-zones)
+/// and you don't need to manage your own logic for event
+/// registering and unregistering when you need to switch
 /// between physical XInput devices.
 /// </remarks>
 /// <seealso cref="LogicalInputDevice{TDevice, TState}"/>
@@ -49,8 +48,6 @@ namespace XInputium.XInput;
 public class XGamepad
     : LogicalInputDevice<XInputDevice, XInputDeviceState>
 {
-
-
     #region Fields
 
     /// <summary>
@@ -60,21 +57,23 @@ public class XGamepad
     /// <seealso cref="RightMotorSpeed"/>
     public static readonly float StoppedMotorSpeed = 0f;
 
-
     // Static PropertyChangedEventArgs to use for property value changes.
     private static readonly PropertyChangedEventArgs s_EA_IsVibrationEnabled = new(nameof(IsVibrationEnabled));
+
     private static readonly PropertyChangedEventArgs s_EA_LeftMotorSpeed = new(nameof(LeftMotorSpeed));
     private static readonly PropertyChangedEventArgs s_EA_RightMotorSpeed = new(nameof(RightMotorSpeed));
     private static readonly PropertyChangedEventArgs s_EA_VibrationFactor = new(nameof(VibrationFactor));
 
     // Property backing storage fields.
     private bool _isVibrationEnabled = true;  // Store for the value of IsVibrationEnabled property.
+
     private float _leftMotorSpeed = StoppedMotorSpeed;  // Store for the value of LeftMotorSpeed property.
     private float _rightMotorSpeed = StoppedMotorSpeed;  // Store for the value of RightMotorSpeed property.
     private float _vibrationFactor = 1f;  // Store for the value of VibrationFactor property.
 
     // Callbacks used to update instances of the triggers, joysticks and buttons.
     private readonly XInputButtonSetUpdateCallback _buttonsUpdateCallback;
+
     private readonly JoystickUpdateCallback _leftJoystickUpdateCallback;
     private readonly JoystickUpdateCallback _rightJoystickUpdateCallback;
     private readonly TriggerUpdateCallback _leftTriggerUpdateCallback;
@@ -82,31 +81,30 @@ public class XGamepad
 
     #endregion Fields
 
-
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of an <see cref="XGamepad"/> 
-    /// class, that uses the specified <see cref="XInputDevice"/> 
-    /// instance to communicate with the controller device and 
-    /// that measures time using the specified 
+    /// Initializes a new instance of an <see cref="XGamepad"/>
+    /// class, that uses the specified <see cref="XInputDevice"/>
+    /// instance to communicate with the controller device and
+    /// that measures time using the specified
     /// <see cref="InputLoopWatch"/>.
     /// </summary>
-    /// <param name="device"><see cref="XInputDevice"/> instance 
-    /// that will be used to perform communication with the 
-    /// underlying device. <see langword="null"/> can be 
+    /// <param name="device"><see cref="XInputDevice"/> instance
+    /// that will be used to perform communication with the
+    /// underlying device. <see langword="null"/> can be
     /// used to specify no device.</param>
-    /// <param name="watch"><see cref="InputLoopWatch"/> instance 
-    /// that will be used to measure time within the 
-    /// <see cref="XGamepad"/>. Use <see langword="null"/> to 
+    /// <param name="watch"><see cref="InputLoopWatch"/> instance
+    /// that will be used to measure time within the
+    /// <see cref="XGamepad"/>. Use <see langword="null"/> to
     /// specify the use of the default watch.</param>
     /// <remarks>
-    /// If you pass <see langword="null"/> to <paramref name="device"/>, 
-    /// no <see cref="XInputDevice"/> will be used, making the 
-    /// <see cref="XGamepad"/> instance unable to communicate with 
-    /// the underlying controller device. You can change the 
-    /// underlying device later, by setting the value of 
-    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> 
+    /// If you pass <see langword="null"/> to <paramref name="device"/>,
+    /// no <see cref="XInputDevice"/> will be used, making the
+    /// <see cref="XGamepad"/> instance unable to communicate with
+    /// the underlying controller device. You can change the
+    /// underlying device later, by setting the value of
+    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/>
     /// property.
     /// </remarks>
     public XGamepad(XInputDevice? device, InputLoopWatch? watch)
@@ -127,69 +125,62 @@ public class XGamepad
         Device = device;
     }
 
-
     /// <summary>
-    /// Initializes a new instance of an <see cref="XGamepad"/> 
-    /// class, that uses the specified <see cref="XInputDevice"/> 
+    /// Initializes a new instance of an <see cref="XGamepad"/>
+    /// class, that uses the specified <see cref="XInputDevice"/>
     /// instance to communicate with the controller device.
     /// </summary>
-    /// <param name="device"><see cref="XInputDevice"/> instance 
-    /// that will be used to perform communication with the 
-    /// underlying device. <see langword="null"/> can be 
+    /// <param name="device"><see cref="XInputDevice"/> instance
+    /// that will be used to perform communication with the
+    /// underlying device. <see langword="null"/> can be
     /// used to specify no device.</param>
     /// <remarks>
-    /// If you pass <see langword="null"/> to <paramref name="device"/>, 
-    /// no <see cref="XInputDevice"/> will be used, making the 
-    /// <see cref="XGamepad"/> instance unable to communicate with 
-    /// the underlying controller device. You can change the 
-    /// underlying device later, by setting the value of 
-    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> 
+    /// If you pass <see langword="null"/> to <paramref name="device"/>,
+    /// no <see cref="XInputDevice"/> will be used, making the
+    /// <see cref="XGamepad"/> instance unable to communicate with
+    /// the underlying controller device. You can change the
+    /// underlying device later, by setting the value of
+    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/>
     /// property.
     /// </remarks>
     public XGamepad(XInputDevice? device)
         : this(device, null)
     {
-
     }
 
-
     /// <summary>
-    /// Initializes a new instance of an <see cref="XGamepad"/> 
-    /// class that uses the first available connected controller 
-    /// as its <see cref="XInputDevice"/> or, if no controller 
+    /// Initializes a new instance of an <see cref="XGamepad"/>
+    /// class that uses the first available connected controller
+    /// as its <see cref="XInputDevice"/> or, if no controller
     /// is available, uses no underlying device.
     /// </summary>
     public XGamepad()
         : this(XInputDevice.GetFirstConnectedDevice(), null)
     {
-
     }
 
-
     /// <summary>
-    /// Initializes a new instance of an <see cref="XGamepad"/> 
-    /// class, that uses an <see cref="XInputDevice"/> that is 
+    /// Initializes a new instance of an <see cref="XGamepad"/>
+    /// class, that uses an <see cref="XInputDevice"/> that is
     /// associated with the specified user index.
     /// </summary>
-    /// <param name="userIndex"><see cref="XInputUserIndex"/> 
-    /// constant that specifies the index of the XInput 
+    /// <param name="userIndex"><see cref="XInputUserIndex"/>
+    /// constant that specifies the index of the XInput
     /// controller.</param>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="userIndex"/> is not a defined constant 
+    /// <paramref name="userIndex"/> is not a defined constant
     /// of an <see cref="XInputUserIndex"/> enumeration.</exception>
     public XGamepad(XInputUserIndex userIndex)
         : this(new XInputDevice(userIndex), null)
     {
-
     }
 
     #endregion Constructors
 
-
     #region Events
 
     /// <summary>
-    /// It's invoked whenever the pressed state of an XInput button 
+    /// It's invoked whenever the pressed state of an XInput button
     /// changes.
     /// </summary>
     /// <seealso cref="ButtonPressed"/>
@@ -198,9 +189,8 @@ public class XGamepad
     /// <seealso cref="Buttons"/>
     public event DigitalButtonEventHandler<XInputButton>? ButtonStateChanged;
 
-
     /// <summary>
-    /// It's invoked whenever an XInput button is pressed — 
+    /// It's invoked whenever an XInput button is pressed —
     /// that is, its state is changed from released to pressed.
     /// </summary>
     /// <seealso cref="ButtonReleased"/>
@@ -208,9 +198,8 @@ public class XGamepad
     /// <seealso cref="OnButtonPressed(DigitalButtonEventArgs{XInputButton})"/>
     public event DigitalButtonEventHandler<XInputButton>? ButtonPressed;
 
-
     /// <summary>
-    /// It's invoked whenever an XInput button is released — 
+    /// It's invoked whenever an XInput button is released —
     /// that is, its state changed from pressed to released.
     /// </summary>
     /// <seealso cref="ButtonPressed"/>
@@ -218,33 +207,29 @@ public class XGamepad
     /// <seealso cref="OnButtonReleased(DigitalButtonEventArgs{XInputButton})"/>
     public event DigitalButtonEventHandler<XInputButton>? ButtonReleased;
 
-
     /// <summary>
-    /// It's invoked whenever the effective position of the 
+    /// It's invoked whenever the effective position of the
     /// left joystick changes.
     /// </summary>
     /// <seealso cref="RightJoystickMove"/>
     public event EventHandler? LeftJoystickMove;
 
-
     /// <summary>
-    /// It's invoked whenever the effective position of the 
+    /// It's invoked whenever the effective position of the
     /// right joystick changes.
     /// </summary>
     /// <seealso cref="LeftJoystickMove"/>
     public event EventHandler? RightJoystickMove;
 
-
     /// <summary>
-    /// It's invoked whenever the effective position of the 
+    /// It's invoked whenever the effective position of the
     /// left trigger changes.
     /// </summary>
     /// <seealso cref="RightTriggerMove"/>
     public event EventHandler? LeftTriggerMove;
 
-
     /// <summary>
-    /// It's invoked whenever the effective position of the 
+    /// It's invoked whenever the effective position of the
     /// right trigger changes.
     /// </summary>
     /// <seealso cref="LeftTriggerMove"/>
@@ -252,19 +237,18 @@ public class XGamepad
 
     #endregion Events
 
-
     #region Properties
 
     /// <summary>
-    /// Gets or sets a <see cref="bool"/> that enables or disables the vibration 
+    /// Gets or sets a <see cref="bool"/> that enables or disables the vibration
     /// of the gamepad.
     /// </summary>
-    /// <value><see langword="true"/> to enable vibration, or <see langword="false"/> 
-    /// to disallow any vibration and stop any currently rotating motor. 
+    /// <value><see langword="true"/> to enable vibration, or <see langword="false"/>
+    /// to disallow any vibration and stop any currently rotating motor.
     /// The default is <see langword="true"/>.</value>
     /// <remarks>
-    /// The value of this property will be effectively applied on the device 
-    /// during the next call to 
+    /// The value of this property will be effectively applied on the device
+    /// during the next call to
     /// <see cref="LogicalInputDevice{TDevice, TState}.Update()"/> method.
     /// </remarks>
     /// <seealso cref="LeftMotorSpeed"/>
@@ -278,26 +262,25 @@ public class XGamepad
         }
     }
 
-
     /// <summary>
     /// Gets or sets the left motor rotation speed.
     /// </summary>
-    /// <value>A number between the 0 and 1 inclusive range, that specifies 
-    /// the motor rotation speed, where 0 means the motor is stopped and 1 
-    /// means the motor is running at full speed; if you specify 
-    /// <see cref="float.NaN"/>, it will also stop the motor, being recognized 
+    /// <value>A number between the 0 and 1 inclusive range, that specifies
+    /// the motor rotation speed, where 0 means the motor is stopped and 1
+    /// means the motor is running at full speed; if you specify
+    /// <see cref="float.NaN"/>, it will also stop the motor, being recognized
     /// as 0. The default value is <see cref="StoppedMotorSpeed"/>.</value>
     /// <remarks>
-    /// The value of this property will be effectively applied on the device 
-    /// during the next call to 
-    /// <see cref="LogicalInputDevice{TDevice, TState}.Update()"/> method. 
+    /// The value of this property will be effectively applied on the device
+    /// during the next call to
+    /// <see cref="LogicalInputDevice{TDevice, TState}.Update()"/> method.
     /// <br/><br/>
-    /// Note that the device motor will only rotate when the value of 
-    /// <see cref="IsVibrationEnabled"/> property is <see langword="true"/>. 
-    /// While <see cref="IsVibrationEnabled"/> property is set to 
-    /// <see langword="false"/>, the device motors will remain stopped, but 
-    /// <see cref="LeftMotorSpeed"/> will still report the value you set to 
-    /// it. To get the actual device left motor speed, use 
+    /// Note that the device motor will only rotate when the value of
+    /// <see cref="IsVibrationEnabled"/> property is <see langword="true"/>.
+    /// While <see cref="IsVibrationEnabled"/> property is set to
+    /// <see langword="false"/>, the device motors will remain stopped, but
+    /// <see cref="LeftMotorSpeed"/> will still report the value you set to
+    /// it. To get the actual device left motor speed, use
     /// <see cref="XInputDevice.LeftMotorSpeed"/> property.
     /// </remarks>
     /// <seealso cref="RightMotorSpeed"/>
@@ -313,26 +296,25 @@ public class XGamepad
         }
     }
 
-
     /// <summary>
     /// Gets or sets the left motor rotation speed.
     /// </summary>
-    /// <value>A number between the 0 and 1 inclusive range, that specifies 
-    /// the motor rotation speed, where 0 means the motor is stopped and 1 
-    /// means the motor is running at full speed; if you specify 
-    /// <see cref="float.NaN"/>, it will also stop the motor, being recognized 
+    /// <value>A number between the 0 and 1 inclusive range, that specifies
+    /// the motor rotation speed, where 0 means the motor is stopped and 1
+    /// means the motor is running at full speed; if you specify
+    /// <see cref="float.NaN"/>, it will also stop the motor, being recognized
     /// as 0. The default value is <see cref="StoppedMotorSpeed"/>.</value>
     /// <remarks>
-    /// The value of this property will be effectively applied on the device 
-    /// during the next call to 
+    /// The value of this property will be effectively applied on the device
+    /// during the next call to
     /// <see cref="LogicalInputDevice{TDevice, TState}.Update()"/> method.
     /// <br/><br/>
-    /// Note that the device motor will only rotate when the value of 
-    /// <see cref="IsVibrationEnabled"/> property is <see langword="true"/>. 
-    /// While <see cref="IsVibrationEnabled"/> property is set to 
-    /// <see langword="false"/>, the device motors will remain stopped, but 
-    /// <see cref="RightMotorSpeed"/> will still report the value you set to 
-    /// it. To get the actual device left motor speed, use 
+    /// Note that the device motor will only rotate when the value of
+    /// <see cref="IsVibrationEnabled"/> property is <see langword="true"/>.
+    /// While <see cref="IsVibrationEnabled"/> property is set to
+    /// <see langword="false"/>, the device motors will remain stopped, but
+    /// <see cref="RightMotorSpeed"/> will still report the value you set to
+    /// it. To get the actual device left motor speed, use
     /// <see cref="XInputDevice.RightMotorSpeed"/> property.
     /// </remarks>
     /// <seealso cref="LeftMotorSpeed"/>
@@ -348,18 +330,17 @@ public class XGamepad
         }
     }
 
-
     /// <summary>
     /// Gets or sets the multiplier for the device motors speed.
     /// </summary>
-    /// <value>A number equal to or greater than 0, by which 
-    /// <see cref="LeftMotorSpeed"/> and <see cref="RightMotorSpeed"/> 
+    /// <value>A number equal to or greater than 0, by which
+    /// <see cref="LeftMotorSpeed"/> and <see cref="RightMotorSpeed"/>
     /// will be multiplied. The default is 1.</value>
-    /// <exception cref="ArgumentException">The value being set to the property 
+    /// <exception cref="ArgumentException">The value being set to the property
     /// is <see cref="float.NaN"/>.</exception>
     /// <remarks>
-    /// The value of this property will be effectively applied on the device 
-    /// during the next call to 
+    /// The value of this property will be effectively applied on the device
+    /// during the next call to
     /// <see cref="LogicalInputDevice{TDevice, TState}.Update()"/> method.
     /// </remarks>
     /// <seealso cref="IsVibrationEnabled"/>
@@ -378,53 +359,47 @@ public class XGamepad
         }
     }
 
-
     /// <summary>
-    /// Gets the <see cref="XInputButtonSet"/> that encapsulates 
+    /// Gets the <see cref="XInputButtonSet"/> that encapsulates
     /// information about the state of the controller's buttons.
     /// </summary>
     /// <seealso cref="XInputButtonSet"/>
     /// <seealso cref="XInputButton"/>
     public XInputButtonSet Buttons { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="Joystick"/> instance that 
-    /// encapsulates information about the current state of 
+    /// Gets the <see cref="Joystick"/> instance that
+    /// encapsulates information about the current state of
     /// the controllers's left joystick.
     /// </summary>
     /// <seealso cref="RightJoystick"/>
     public Joystick LeftJoystick { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="Joystick"/> instance that 
-    /// encapsulates information about the current state of 
+    /// Gets the <see cref="Joystick"/> instance that
+    /// encapsulates information about the current state of
     /// the controllers's right joystick.
     /// </summary>
     /// <seealso cref="LeftJoystick"/>
     public Joystick RightJoystick { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="Trigger"/> instance that 
-    /// encapsulates information about the current state of 
+    /// Gets the <see cref="Trigger"/> instance that
+    /// encapsulates information about the current state of
     /// the controllers's left trigger.
     /// </summary>
     /// <seealso cref="RightTrigger"/>
     public Trigger LeftTrigger { get; }
 
-
     /// <summary>
-    /// Gets the <see cref="Trigger"/> instance that 
-    /// encapsulates information about the current state of 
+    /// Gets the <see cref="Trigger"/> instance that
+    /// encapsulates information about the current state of
     /// the controllers's right trigger.
     /// </summary>
     /// <seealso cref="LeftTrigger"/>
     public Trigger RightTrigger { get; }
 
     #endregion Properties
-
 
     #region Methods
 
@@ -446,7 +421,6 @@ public class XGamepad
         RaiseEvent(() => ButtonStateChanged?.Invoke(this, e));
     }
 
-
     /// <summary>
     /// Raises the <see cref="ButtonPressed"/> event.
     /// </summary>
@@ -462,7 +436,6 @@ public class XGamepad
 
         RaiseEvent(() => ButtonPressed?.Invoke(this, e));
     }
-
 
     /// <summary>
     /// Raises the <see cref="ButtonReleased"/> event.
@@ -480,9 +453,8 @@ public class XGamepad
         RaiseEvent(() => ButtonReleased?.Invoke(this, e));
     }
 
-
     /// <summary>
-    /// Raises the <see cref="LeftJoystickMove"/> 
+    /// Raises the <see cref="LeftJoystickMove"/>
     /// event.
     /// </summary>
     /// <seealso cref="LeftJoystickMove"/>
@@ -491,9 +463,8 @@ public class XGamepad
         RaiseEvent(() => LeftJoystickMove?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
-    /// Raises the <see cref="RightJoystickMove"/> 
+    /// Raises the <see cref="RightJoystickMove"/>
     /// event.
     /// </summary>
     /// <seealso cref="RightJoystickMove"/>
@@ -502,9 +473,8 @@ public class XGamepad
         RaiseEvent(() => RightJoystickMove?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
-    /// Raises the <see cref="LeftTriggerMove"/> 
+    /// Raises the <see cref="LeftTriggerMove"/>
     /// event.
     /// </summary>
     /// <seealso cref="LeftTriggerMove"/>
@@ -513,9 +483,8 @@ public class XGamepad
         RaiseEvent(() => LeftTriggerMove?.Invoke(this, EventArgs.Empty));
     }
 
-
     /// <summary>
-    /// Raises the <see cref="RightTriggerMove"/> 
+    /// Raises the <see cref="RightTriggerMove"/>
     /// event.
     /// </summary>
     /// <seealso cref="RightTriggerMove"/>
@@ -524,14 +493,13 @@ public class XGamepad
         RaiseEvent(() => RightTriggerMove?.Invoke(this, EventArgs.Empty));
     }
 
-    #endregion
-
+    #endregion Event raising related methods
 
     #region Input state related methods
 
     /// <summary>
-    /// Resets the <see cref="XGamepad"/> to its no-device state. 
-    /// Overrides 
+    /// Resets the <see cref="XGamepad"/> to its no-device state.
+    /// Overrides
     /// <see cref="LogicalInputDevice{TDevice, TState}.ResetLogicalState()"/>.
     /// </summary>
     /// <seealso cref="UpdateLogicalState()"/>
@@ -547,14 +515,13 @@ public class XGamepad
         RightMotorSpeed = StoppedMotorSpeed;
     }
 
-
     /// <summary>
-    /// Updates the logical state of the <see cref="XGamepad"/> 
-    /// based on the current device state. Overrides 
+    /// Updates the logical state of the <see cref="XGamepad"/>
+    /// based on the current device state. Overrides
     /// <see cref="LogicalInputDevice{TDevice, TState}.UpdateLogicalState()"/>.
     /// </summary>
-    /// <exception cref="InvalidOperationException">No device is set. 
-    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> property 
+    /// <exception cref="InvalidOperationException">No device is set.
+    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> property
     /// is <see langword="null"/>.</exception>
     /// <seealso cref="ResetLogicalState()"/>
     /// <seealso cref="SetDeviceState()"/>
@@ -575,15 +542,14 @@ public class XGamepad
         _rightTriggerUpdateCallback.Invoke(device.CurrentState.RightTrigger.Value, FrameTime);
     }
 
-
     /// <summary>
-    /// Sets the physical device state, based on the current logical 
-    /// state. More specifically, sets the device's motors rotation 
-    /// speed. Overrides 
+    /// Sets the physical device state, based on the current logical
+    /// state. More specifically, sets the device's motors rotation
+    /// speed. Overrides
     /// <see cref="LogicalInputDevice{TDevice, TState}.SetDeviceState()"/>.
     /// </summary>
-    /// <exception cref="InvalidOperationException">No device is set. 
-    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/> 
+    /// <exception cref="InvalidOperationException">No device is set.
+    /// <see cref="LogicalInputDevice{TDevice, TState}.Device"/>
     /// is <see langword="null"/>.</exception>
     /// <seealso cref="UpdateLogicalState()"/>
     protected override void SetDeviceState()
@@ -619,27 +585,26 @@ public class XGamepad
         }
     }
 
-    #endregion
+    #endregion Input state related methods
 
-
-    #region InputEvent registration related methods    
+    #region InputEvent registration related methods
 
     /// <summary>
-    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered when the specified button changes its state 
-    /// from released to pressed, meaning the user has just tapped 
+    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered when the specified button changes its state
+    /// from released to pressed, meaning the user has just tapped
     /// the button.
     /// </summary>
-    /// <param name="button"><see cref="XButtons"/> constant that 
+    /// <param name="button"><see cref="XButtons"/> constant that
     /// specifies the XInput button to listen for.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/>
     /// that was registered.</returns>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
-    /// is not a defined constant in an <see cref="XButtons"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
+    /// is not a defined constant in an <see cref="XButtons"/>
     /// enumeration.</exception>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
     /// is <see cref="XButtons.None"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
@@ -656,22 +621,21 @@ public class XGamepad
         return this.RegisterButtonPressedEvent(Buttons[button], callback);
     }
 
-
     /// <summary>
-    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered when the specified button changes its state 
+    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered when the specified button changes its state
     /// from pressed to released.
     /// </summary>
-    /// <param name="button"><see cref="XButtons"/> constant that 
+    /// <param name="button"><see cref="XButtons"/> constant that
     /// specifies the XInput button to listen for.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
-    /// is not a defined constant in an <see cref="XButtons"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
+    /// is not a defined constant in an <see cref="XButtons"/>
     /// enumeration.</exception>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
     /// is <see cref="XButtons.None"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
@@ -690,35 +654,34 @@ public class XGamepad
         return this.RegisterButtonReleasedEvent(Buttons[button], callback);
     }
 
-
     /// <summary>
-    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/> 
-    /// that is triggered once when the specified button is held by 
+    /// Registers and returns a <see cref="DigitalButtonInputEvent{T}"/>
+    /// that is triggered once when the specified button is held by
     /// the specified duration.
     /// </summary>
-    /// <param name="button"><see cref="XButtons"/> constant that 
+    /// <param name="button"><see cref="XButtons"/> constant that
     /// specifies the XInput button to listen for.</param>
-    /// <param name="holdDuration">The amount of time the user must 
-    /// hold down the button for the event to fire. If you specify 
-    /// <see cref="TimeSpan.Zero"/>, this event will behave like a 
+    /// <param name="holdDuration">The amount of time the user must
+    /// hold down the button for the event to fire. If you specify
+    /// <see cref="TimeSpan.Zero"/>, this event will behave like a
     /// pressed event.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="DigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
-    /// is not a defined constant in an <see cref="XButtons"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
+    /// is not a defined constant in an <see cref="XButtons"/>
     /// enumeration.</exception>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
     /// is <see cref="XButtons.None"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
     /// <remarks>
-    /// The returned registered <see cref="DigitalButtonInputEvent{T}"/> 
-    /// will be triggered once when the user presses and holds the button 
-    /// for the specified amount of time. Once the event is triggered, 
-    /// it will only be triggered again after the user releases the 
-    /// button and repeats the same action (pressing and holding the 
+    /// The returned registered <see cref="DigitalButtonInputEvent{T}"/>
+    /// will be triggered once when the user presses and holds the button
+    /// for the specified amount of time. Once the event is triggered,
+    /// it will only be triggered again after the user releases the
+    /// button and repeats the same action (pressing and holding the
     /// button for <paramref name="holdDuration"/>).
     /// </remarks>
     /// <seealso cref="RegisterButtonPressedEvent(XButtons, DigitalButtonInputEventHandler{XInputButton})"/>
@@ -737,44 +700,43 @@ public class XGamepad
         return this.RegisterButtonHoldEvent(Buttons[button], holdDuration, callback);
     }
 
-
     /// <summary>
-    /// Registers and returns a <see cref="RepeatDigitalButtonInputEvent{T}"/> 
-    /// that is triggered repeatedly while the specified button is held, and 
-    /// uses the specified acceleration parameters for acceleration or 
+    /// Registers and returns a <see cref="RepeatDigitalButtonInputEvent{T}"/>
+    /// that is triggered repeatedly while the specified button is held, and
+    /// uses the specified acceleration parameters for acceleration or
     /// deceleration of repeat delay times.
     /// </summary>
-    /// <param name="button"><see cref="XButtons"/> constant that 
+    /// <param name="button"><see cref="XButtons"/> constant that
     /// specifies the XInput button to listen for.</param>
-    /// <param name="initialDelay">Amount of time the button must be 
+    /// <param name="initialDelay">Amount of time the button must be
     /// held for the repeating to start.</param>
-    /// <param name="repeatDelay">Base amount of time to wait between each 
+    /// <param name="repeatDelay">Base amount of time to wait between each
     /// repeat.</param>
-    /// <param name="accelerationRatio">A number greater than 0, that specifies 
-    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that 
-    /// will be applied on each triggering repeat. A value less than 1 causes 
-    /// the repeats to be slower, more than 1 causes the repeats to be faster, 
+    /// <param name="accelerationRatio">A number greater than 0, that specifies
+    /// the acceleration ratio of the <paramref name="repeatDelay"/> time that
+    /// will be applied on each triggering repeat. A value less than 1 causes
+    /// the repeats to be slower, more than 1 causes the repeats to be faster,
     /// and 1 uses no acceleration or deceleration.</param>
-    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is greater than 1, causing the repeat delay time to be shorter on each 
-    /// triggering repeat, this specifies the minimum delay time allowed between 
+    /// <param name="minRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is greater than 1, causing the repeat delay time to be shorter on each
+    /// triggering repeat, this specifies the minimum delay time allowed between
     /// each repeat.</param>
-    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/> 
-    /// is lower than 1, causing the repeat delay time to be longer on each 
-    /// triggering repeat, this specifies the maximum delay time allowed between 
+    /// <param name="maxRepeatDelay">When <paramref name="accelerationRatio"/>
+    /// is lower than 1, causing the repeat delay time to be longer on each
+    /// triggering repeat, this specifies the maximum delay time allowed between
     /// each repeat.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
-    /// is not a defined constant in an <see cref="XButtons"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
+    /// is not a defined constant in an <see cref="XButtons"/>
     /// enumeration.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
     /// is <see cref="XButtons.None"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/> 
+    /// <exception cref="ArgumentException"><paramref name="accelerationRatio"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="accelerationRatio"/> is equal to or lower than 0.</exception>
@@ -795,25 +757,24 @@ public class XGamepad
             accelerationRatio, minRepeatDelay, maxRepeatDelay, callback);
     }
 
-
     /// <summary>
-    /// Registers and returns a <see cref="RepeatDigitalButtonInputEvent{T}"/> 
+    /// Registers and returns a <see cref="RepeatDigitalButtonInputEvent{T}"/>
     /// that is triggered repeatedly while the specified button is held.
     /// </summary>
-    /// <param name="button"><see cref="XButtons"/> constant that 
+    /// <param name="button"><see cref="XButtons"/> constant that
     /// specifies the XInput button to listen for.</param>
-    /// <param name="initialDelay">Amount of time the button must be 
+    /// <param name="initialDelay">Amount of time the button must be
     /// held for the repeating to start.</param>
-    /// <param name="repeatDelay">Amount of time to wait between each 
+    /// <param name="repeatDelay">Amount of time to wait between each
     /// repeat.</param>
-    /// <param name="callback">Callback that will be called when 
+    /// <param name="callback">Callback that will be called when
     /// the event is triggered.</param>
-    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that 
+    /// <returns>The new <see cref="RepeatDigitalButtonInputEvent{T}"/> that
     /// was registered.</returns>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
-    /// is not a defined constant in an <see cref="XButtons"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
+    /// is not a defined constant in an <see cref="XButtons"/>
     /// enumeration.</exception>
-    /// <exception cref="ArgumentException"><paramref name="button"/> 
+    /// <exception cref="ArgumentException"><paramref name="button"/>
     /// is <see cref="XButtons.None"/>.</exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="callback"/> is <see langword="null"/>.</exception>
@@ -826,10 +787,9 @@ public class XGamepad
             callback);
     }
 
-    #endregion
+    #endregion InputEvent registration related methods
 
     #endregion Methods
-
 
     #region Event handlers
 
@@ -846,24 +806,20 @@ public class XGamepad
         }
     }
 
-
     private void LeftJoystick_PositionChanged(object? sender, EventArgs e)
     {
         OnLeftJoystickMove();
     }
-
 
     private void RightJoystick_PositionChanged(object? sender, EventArgs e)
     {
         OnRightJoystickMove();
     }
 
-
     private void LeftTrigger_ValueChanged(object? sender, EventArgs e)
     {
         OnLeftTriggerMove();
     }
-
 
     private void RightTrigger_ValueChanged(object? sender, EventArgs e)
     {
@@ -871,6 +827,4 @@ public class XGamepad
     }
 
     #endregion Event handlers
-
-
 }

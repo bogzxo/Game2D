@@ -1,19 +1,16 @@
-﻿using System;
-using XBtn = XInputium.XInput.Internal.Win32.XINPUT_GAMEPAD_wButtons;
+﻿using XBtn = XInputium.XInput.Internal.Win32.XINPUT_GAMEPAD_wButtons;
 
 namespace XInputium.XInput;
 
 /// <summary>
-/// Exposes constants that represent a button of an 
-/// XInput controller. These constants can be used 
+/// Exposes constants that represent a button of an
+/// XInput controller. These constants can be used
 /// as bitwise flags to represent several buttons.
 /// </summary>
 /// <seealso cref="XInputButton"/>
 [Flags]
 public enum XButtons
 {
-
-
     /// <summary>
     /// No button. This is used to represent no buttons.
     /// </summary>
@@ -88,5 +85,4 @@ public enum XButtons
     /// The Y button.
     /// </summary>
     Y = XBtn.XINPUT_GAMEPAD_Y,
-
 }

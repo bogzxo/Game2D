@@ -1,23 +1,13 @@
-﻿using Bogz.Logging;
-using Game2D.Entities.Components;
-using Game2D.OpenGL;
+﻿using Game2D.Entities.Components;
 using Game2D.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Entities
 {
     public class ParticleSystemEntity : IEntity
     {
-        struct ParticleInstanceData
+        private struct ParticleInstanceData
         {
             public Vector2 Position { get; set; }
             public float Age { get; set; }
@@ -39,7 +29,8 @@ namespace Game2D.Entities
         public Dictionary<Type, IEntityComponent> Components { get; set; }
         public EntityPhysicsComponent Physics { get; private set; }
 
-        Random rand = new Random();
+        private Random rand = new Random();
+
         public ParticleSystemEntity(int count)
         {
             Count = count;
@@ -103,22 +94,19 @@ namespace Game2D.Entities
             GL.EnableVertexAttribArray(4);
             GL.VertexAttribPointer(4, 1, VertexAttribPointerType.Float, false, ParticleInstanceData.SizeInBytes, Vector2.SizeInBytes + sizeof(float));
 
-
             GL.EnableVertexAttribArray(5);
             GL.VertexAttribPointer(5, 3, VertexAttribPointerType.Float, false, ParticleInstanceData.SizeInBytes, Vector2.SizeInBytes + sizeof(float) * 2);
 
-
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.VertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
-
         }
 
         ~ParticleSystemEntity()
         {
-
         }
 
         private float _tmr = 0.0f;
+
         public void Draw(float dt)
         {
             _tmr += dt;
@@ -163,10 +151,10 @@ namespace Game2D.Entities
             GL.BindVertexArray(0);
 
             _shader.End();
-
         }
 
         private float _updateTimer = 0.0f;
+
         public void Update(float dt)
         {
             _timer += dt;
@@ -180,7 +168,6 @@ namespace Game2D.Entities
                 GL.BufferData(BufferTarget.ArrayBuffer, ParticleInstanceData.SizeInBytes * _translations.Length, _translations, BufferUsageHint.StaticDraw);
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             }
-
 
             foreach (var item in Components)
                 item.Value.Update(dt);

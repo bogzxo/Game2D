@@ -1,12 +1,10 @@
 ﻿using OpenTK.Windowing.Desktop;
-using System;
-using System.Runtime.InteropServices;
 
 namespace Game2D
 {
-    static class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
             var s = NativeWindowSettings.Default;
             s.Size = new OpenTK.Mathematics.Vector2i(1920, 1080);

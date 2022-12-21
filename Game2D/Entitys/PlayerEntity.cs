@@ -1,19 +1,11 @@
 ﻿using Game2D.Animations;
-using Game2D.Data;
 using Game2D.Entities.Components;
 using Game2D.GameScreens.Graphics;
 using Game2D.PlayerState;
 using Game2D.Rendering;
 using Game2D.World;
-using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Entities
 {
@@ -28,9 +20,11 @@ namespace Game2D.Entities
             IsMoving = false;
         }
     }
+
     public class PlayerEntity : IEntity
     {
         #region Public Members
+
         public EntityPhysicsComponent PhysicsComponent { get; private set; }
         public EntityDrawableComponent DrawableComponent { get; private set; }
         public Vector2 Position { get => PhysicsComponent.Position; set => PhysicsComponent.Position = value; }
@@ -39,12 +33,15 @@ namespace Game2D.Entities
         public ParticleSystemEntity Particle { get; private set; }
         public PlayerInformation Information = new PlayerInformation();
         public PlayerState.PlayerState State { get => _manager.CurrentState; }
-        #endregion
+
+        #endregion Public Members
 
         #region Private members
+
         private AnimationManager _animationManager;
         private readonly PlayerStateManager _manager;
-        #endregion
+
+        #endregion Private members
 
         public PlayerEntity()
         {
@@ -104,7 +101,6 @@ namespace Game2D.Entities
             PhysicsComponent.ApplyForce(inputState * Information.Speed * dt);
 
             DrawableComponent.Sprite!.IsFlipped = GameManager.Instance.InputManager.LastDirection.X < 0;
-
 
             if (!GameManager.Instance.InputManager.IsAnyActiveInput)
                 _manager.ChangeState(PlayerStates.Idle);

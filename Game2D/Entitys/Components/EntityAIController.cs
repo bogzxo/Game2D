@@ -1,11 +1,4 @@
-﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game2D.Entities.Components
+﻿namespace Game2D.Entities.Components
 {
     public class EntityAIController : IEntityComponent
     {
@@ -14,14 +7,10 @@ namespace Game2D.Entities.Components
 
         public void Draw(float dt)
         {
-
         }
 
         public void Update(float dt)
         {
-
-
-
         }
     }
 }

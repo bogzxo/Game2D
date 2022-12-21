@@ -1,25 +1,24 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.Animations
 {
     public class AnimationManager
     {
         #region Private Members
+
         private float timer;
         private string currentAnimation;
         private Dictionary<string, AnimationInformation> animations;
-        #endregion
+
+        #endregion Private Members
 
         #region Public Members
+
         public Vector2 SpriteSize { get; }
         public float AnimationDelay { get; set; } = 0.1f;
-        #endregion
+
+        #endregion Public Members
 
         public AnimationManager(Vector2 spriteSize)
         {

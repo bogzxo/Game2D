@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Bogz.Logging.Loggers;
+﻿namespace Bogz.Logging.Loggers;
 
 public class BasicLogger : ILoggerDisposable
 {
     private StreamWriter _streamWriter;
+
     public BasicLogger(string path = "")
     {
         if (!path.Equals(string.Empty))
@@ -32,18 +28,23 @@ public class BasicLogger : ILoggerDisposable
             case LogLevel.Info:
                 color = ConsoleColor.Gray;
                 break;
+
             case LogLevel.Warning:
                 color = ConsoleColor.Yellow;
                 break;
+
             case LogLevel.Error:
                 color = ConsoleColor.Red;
                 break;
+
             case LogLevel.FatalError:
                 color = ConsoleColor.DarkRed;
                 break;
+
             case LogLevel.Success:
                 color = ConsoleColor.Green;
                 break;
+
             default:
                 color = Console.ForegroundColor;
                 break;

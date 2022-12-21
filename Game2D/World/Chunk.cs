@@ -1,32 +1,33 @@
 ﻿using Bogz.Logging;
 using Game2D.Data;
 using Game2D.OpenGL;
-using Game2D.World.Generation;
-using Game2D.World.Tiles;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System.Reflection.Emit;
 
 namespace Game2D.World
 {
     public class Chunk
     {
         #region Public Members
+
         public static int Width { get; } = 32;
         public static int Height { get; } = 32;
         public static Vector2 Size { get => new Vector2(Width, Height); }
         public int Position { get; set; }
         public Tile[,] Tiles { get; set; }
 
-        #endregion
+        #endregion Public Members
 
         #region Private Members
+
         private VertexBufferObject vbo;
         private Vertex[] verticesArray;
         private uint[] indicesArray;
-        const int tilesetSize = 10;
-        const float texOffset = 1.0f / tilesetSize;
-        #endregion
+        private const int tilesetSize = 10;
+        private const float texOffset = 1.0f / tilesetSize;
+
+        #endregion Private Members
+
         public Chunk(int position)
         {
             Tiles = new Tile[Width, Height];
@@ -36,6 +37,7 @@ namespace Game2D.World
             vbo.PushVertexAttribPointer(0, 3, VertexAttribPointerType.Float, Vertex.SizeInBytes, 0);
             vbo.PushVertexAttribPointer(1, 2, VertexAttribPointerType.Float, Vertex.SizeInBytes, Vector3.SizeInBytes);
         }
+
         public void GenerateChunk(GameWorldGenerator gameWorldGenerator)
         {
             for (int x = 0; x < Width; x++)
@@ -46,8 +48,6 @@ namespace Game2D.World
 
             generateMesh();
         }
-
-
 
         private void generateMesh()
         {
@@ -87,7 +87,6 @@ namespace Game2D.World
                             new Vertex(new Vector3(position.X + 0, position.Y + 1, 0), texCoords + new Vector2(0, 0))
                         });
 
-
                         updateIndicies();
                     }
                 }
@@ -98,11 +97,13 @@ namespace Game2D.World
 
             Logger.Instance.Log(LogLevel.Success, $"Generated chunk with {vertices.Count} vertices.");
         }
+
         public void UploadVertexBuffer()
         {
             vbo.BufferData(this.verticesArray, Vertex.SizeInBytes);
             vbo.BufferIndices(this.indicesArray);
         }
+
         public void Draw(float dt)
         {
             vbo.Use();

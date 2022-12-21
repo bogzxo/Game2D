@@ -1,13 +1,7 @@
 ﻿using Game2D.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game2D.PlayerState
 {
-
     public class PlayerStateManager
     {
         private Dictionary<PlayerStates, PlayerState> playerStates;

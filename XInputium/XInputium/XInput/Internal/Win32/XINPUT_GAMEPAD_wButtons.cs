@@ -1,12 +1,8 @@
-﻿using System;
-
-namespace XInputium.XInput.Internal.Win32;
+﻿namespace XInputium.XInput.Internal.Win32;
 
 [Flags]
 internal enum XINPUT_GAMEPAD_wButtons : ushort
 {
-
-
     XINPUT_GAMEPAD_DPAD_UP = 0x0001,
 
     XINPUT_GAMEPAD_DPAD_DOWN = 0x0002,
@@ -34,6 +30,4 @@ internal enum XINPUT_GAMEPAD_wButtons : ushort
     XINPUT_GAMEPAD_X = 0x4000,
 
     XINPUT_GAMEPAD_Y = 0x8000,
-
-
 }

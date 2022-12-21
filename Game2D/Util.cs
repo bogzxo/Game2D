@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Game2D;
+
 // cum
 internal static class Util
 {

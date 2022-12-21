@@ -1,26 +1,22 @@
-﻿using System;
-
-namespace XInputium.XInput;
+﻿namespace XInputium.XInput;
 
 /// <summary>
-/// Encapsulates information about an event associated 
+/// Encapsulates information about an event associated
 /// with an <see cref="XInputDevice"/> instance.
 /// </summary>
 /// <seealso cref="XInputDevice"/>
 /// <seealso cref="EventArgs"/>
 public class XInputDeviceEventArgs : EventArgs
 {
-
-
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of an 
-    /// <see cref="XInputDeviceEventArgs"/> class, 
-    /// that is associated with the specified 
+    /// Initializes a new instance of an
+    /// <see cref="XInputDeviceEventArgs"/> class,
+    /// that is associated with the specified
     /// <see cref="XInputDevice"/> instance.
     /// </summary>
-    /// <param name="device"><see cref="XInputDevice"/> instance 
+    /// <param name="device"><see cref="XInputDevice"/> instance
     /// associated with the event.</param>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="device"/> is <see langword="null"/>.</exception>
@@ -34,17 +30,14 @@ public class XInputDeviceEventArgs : EventArgs
 
     #endregion Constructors
 
-
     #region Properties
 
     /// <summary>
-    /// Gets the <see cref="XInputDevice"/> instance 
+    /// Gets the <see cref="XInputDevice"/> instance
     /// associated with the event.
     /// </summary>
     /// <seealso cref="XInputDevice"/>
     public XInputDevice Device { get; }
 
     #endregion Properties
-
-
 }

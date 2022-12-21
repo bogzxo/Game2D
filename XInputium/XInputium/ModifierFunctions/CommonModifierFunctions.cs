@@ -1,17 +1,13 @@
-﻿using System;
-
-namespace XInputium.ModifierFunctions;
+﻿namespace XInputium.ModifierFunctions;
 
 /// <summary>
-/// Provides static members that allow the creation of 
-/// customized <see cref="ModifierFunction"/> delegates 
+/// Provides static members that allow the creation of
+/// customized <see cref="ModifierFunction"/> delegates
 /// for the most common usages.
 /// </summary>
 /// <seealso cref="ModifierFunction"/>
 public static class CommonModifierFunctions
 {
-
-
     #region Properties
 
     /// <summary>
@@ -20,15 +16,13 @@ public static class CommonModifierFunctions
     public static ModifierFunction Zero { get; }
         = value => 0f;
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that reverses a value, 
+    /// Gets a <see cref="ModifierFunction"/> that reverses a value,
     /// where a 0 value will return 1 and a 1 value will return 0.
     /// </summary>
     /// <seealso cref="Negate"/>
     public static ModifierFunction Reverse { get; }
         = value => MathF.CopySign(1f - Math.Min(MathF.Abs(value), 1f), value);
-
 
     /// <summary>
     /// Gets a <see cref="ModifierFunction"/> that negates a value,
@@ -38,18 +32,16 @@ public static class CommonModifierFunctions
     public static ModifierFunction Negate { get; }
         = value => -value;
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that clamps 
+    /// Gets a <see cref="ModifierFunction"/> that clamps
     /// a value within the 0 and 1 inclusive range.
     /// </summary>
     /// <seealso cref="Clamp11"/>
     public static ModifierFunction Clamp01 { get; }
         = value => InputMath.Clamp01(value);
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that clamps 
+    /// Gets a <see cref="ModifierFunction"/> that clamps
     /// a value within the -1 and 1 inclusive range.
     /// </summary>
     /// <seealso cref="Clamp01"/>
@@ -58,16 +50,15 @@ public static class CommonModifierFunctions
 
     #endregion Properties
 
-
     #region Methods
 
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that scales its 
+    /// Gets a <see cref="ModifierFunction"/> that scales its
     /// input value to the specified scale.
     /// </summary>
-    /// <param name="scale">A number that will be multiplied 
+    /// <param name="scale">A number that will be multiplied
     /// by the function's input value.</param>
-    /// <returns>A new <see cref="ModifierFunction"/> that 
+    /// <returns>A new <see cref="ModifierFunction"/> that
     /// multiplies its input value by <paramref name="scale"/>.</returns>
     /// <exception cref="ArgumentException">
     /// <paramref name="scale"/> is <see cref="float.NaN"/>.</exception>
@@ -81,18 +72,17 @@ public static class CommonModifierFunctions
         return value => value * scale;
     }
 
-
     /// <summary>
-    /// Gets a new <see cref="ModifierFunction"/> that combines 
+    /// Gets a new <see cref="ModifierFunction"/> that combines
     /// the two specified functions in sequence.
     /// </summary>
-    /// <param name="function1">First function. This function's 
-    /// return value will be the input value of 
+    /// <param name="function1">First function. This function's
+    /// return value will be the input value of
     /// <paramref name="function2"/>.</param>
-    /// <param name="function2">Second function, which will receive 
+    /// <param name="function2">Second function, which will receive
     /// the return value of <paramref name="function2"/>.</param>
-    /// <returns>A new <see cref="ModifierFunction"/> instance that 
-    /// combines <paramref name="function1"/> and 
+    /// <returns>A new <see cref="ModifierFunction"/> instance that
+    /// combines <paramref name="function1"/> and
     /// <paramref name="function2"/>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="function1"/> is null.</exception>
@@ -109,21 +99,20 @@ public static class CommonModifierFunctions
         return value => function2(function1(value));
     }
 
-
     /// <summary>
-    /// Gets a new <see cref="ModifierFunction"/> that returns 
-    /// 0 if input value is less than the specified absolute middle 
-    /// or 1 if the value is equal to or greater than the specified 
-    /// absolute middle or -1 if the value is less than the specified 
+    /// Gets a new <see cref="ModifierFunction"/> that returns
+    /// 0 if input value is less than the specified absolute middle
+    /// or 1 if the value is equal to or greater than the specified
+    /// absolute middle or -1 if the value is less than the specified
     /// negated absolute middle.
     /// </summary>
-    /// <param name="middle">Value that determines where any input 
+    /// <param name="middle">Value that determines where any input
     /// value should start returning true.</param>
-    /// <returns>A new <see cref="ModifierFunction"/> that returns 
-    /// 0 if its input value is less than the absolute 
-    /// <paramref name="middle"/>, 1 if the input value is greater 
-    /// than the absolute <paramref name="middle"/> or -1 if the 
-    /// input value is less that the negated absolute 
+    /// <returns>A new <see cref="ModifierFunction"/> that returns
+    /// 0 if its input value is less than the absolute
+    /// <paramref name="middle"/>, 1 if the input value is greater
+    /// than the absolute <paramref name="middle"/> or -1 if the
+    /// input value is less that the negated absolute
     /// <paramref name="middle"/>.</returns>
     /// <exception cref="ArgumentException">
     /// <paramref name="middle"/> is <see cref="float.NaN"/>.</exception>
@@ -140,19 +129,18 @@ public static class CommonModifierFunctions
         return value => value >= middle ? 1f : value < -middle ? -1f : 0f;
     }
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that applies the 
+    /// Gets a <see cref="ModifierFunction"/> that applies the
     /// specified inner and outer dead-zone to a value.
     /// </summary>
-    /// <param name="innerDeadZone">Region from 0 where the 
+    /// <param name="innerDeadZone">Region from 0 where the
     /// dead-zone will be applied.</param>
-    /// <param name="outerDeadZone">Region from 1 or -1 where 
+    /// <param name="outerDeadZone">Region from 1 or -1 where
     /// the dead-zone will be applied.</param>
     /// <returns>The newly created <see cref="ModifierFunction"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="innerDeadZone"/> 
+    /// <exception cref="ArgumentException"><paramref name="innerDeadZone"/>
     /// is <see cref="float.NaN"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="outerDeadZone"/> 
+    /// <exception cref="ArgumentException"><paramref name="outerDeadZone"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <seealso cref="InputMath.ApplyDeadZone(float, float, float)"/>
     public static ModifierFunction ApplyDeadZone(
@@ -174,15 +162,14 @@ public static class CommonModifierFunctions
             value);
     }
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that applies the 
+    /// Gets a <see cref="ModifierFunction"/> that applies the
     /// specified inner dead-zone to a value.
     /// </summary>
-    /// <param name="innerDeadZone">Region from 0 where the 
+    /// <param name="innerDeadZone">Region from 0 where the
     /// dead-zone will be applied.</param>
     /// <returns>The newly created <see cref="ModifierFunction"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="innerDeadZone"/> 
+    /// <exception cref="ArgumentException"><paramref name="innerDeadZone"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <seealso cref="InputMath.ApplyDeadZone(float, float)"/>
     public static ModifierFunction ApplyDeadZone(float innerDeadZone)
@@ -190,32 +177,31 @@ public static class CommonModifierFunctions
         return ApplyDeadZone(innerDeadZone, 0f);
     }
 
-
     /// <summary>
-    /// Gets a <see cref="ModifierFunction"/> that quantizes its input 
+    /// Gets a <see cref="ModifierFunction"/> that quantizes its input
     /// value to the specified step size.
     /// </summary>
-    /// <param name="stepSize">Number by how much the quantization 
-    /// is performed. If 0 is specified, no quantization is applied, 
-    /// making the <see cref="ModifierFunction"/> return its input 
+    /// <param name="stepSize">Number by how much the quantization
+    /// is performed. If 0 is specified, no quantization is applied,
+    /// making the <see cref="ModifierFunction"/> return its input
     /// value.</param>
-    /// <returns>A <see cref="ModifierFunction"/> that quantizes its 
+    /// <returns>A <see cref="ModifierFunction"/> that quantizes its
     /// input value to the specified <paramref name="stepSize"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="stepSize"/> 
+    /// <exception cref="ArgumentException"><paramref name="stepSize"/>
     /// is <see cref="float.NaN"/>.</exception>
     /// <remarks>
-    /// The <see cref="ModifierFunction"/> returned by this method 
-    /// quantizes its input to a specified step size. In other words, 
+    /// The <see cref="ModifierFunction"/> returned by this method
+    /// quantizes its input to a specified step size. In other words,
     /// its output is equal to <paramref name="stepSize"/>
-    /// multiplied by the closest integer that is lower or equal to 
-    /// its input. For instance, if <paramref name="stepSize"/> is 
-    /// 0.25, the function's output will be a multiplier of 0.25 
+    /// multiplied by the closest integer that is lower or equal to
+    /// its input. For instance, if <paramref name="stepSize"/> is
+    /// 0.25, the function's output will be a multiplier of 0.25
     /// (ex. 0, 0.25, 0.5, 0.75, or 1).
     /// <br/><br/>
-    /// The returned <see cref="ModifierFunction"/> can be useful in 
+    /// The returned <see cref="ModifierFunction"/> can be useful in
     /// scenarios where you intent to divide an axis in several even
-    /// chunks. One valid example would be to use the 
-    /// <see cref="ModifierFunction"/> returned by this method with 
+    /// chunks. One valid example would be to use the
+    /// <see cref="ModifierFunction"/> returned by this method with
     /// a <paramref name="stepSize"/> of 0.125 (or 1/8th) in the angle
     /// axis of a joystick. This way, the joystick's angle would always
     /// get snapped to a horizontal, vertical or diagonal direction.
@@ -237,6 +223,4 @@ public static class CommonModifierFunctions
     }
 
     #endregion Methods
-
-
 }

@@ -6,6 +6,7 @@ namespace Game2D.PlayerState
     {
         public string AnimationName { get; set; } = "idle";
         public PlayerStateManager Manager { get; protected set; }
+
         public PlayerState(PlayerStateManager manager)
         {
             Manager = manager;
