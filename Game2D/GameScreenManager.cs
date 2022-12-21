@@ -21,7 +21,7 @@ namespace Game2D
         public GameScreenManager()
         {
             gameScreens = new Dictionary<Type, (IGameScreen screen, GameScreenManagerGameScreenInformation information)>();
-            SetGameScreen(typeof(GameScreens.GamePlayGameScreen));
+            SetGameScreen(typeof(GameScreens.MainMenuGameScreen));
         }
 
         public void Update(float dt)

@@ -30,7 +30,7 @@ public class BasicLogger : ILoggerDisposable
         switch (level)
         {
             case LogLevel.Info:
-                color = ConsoleColor.Green;
+                color = ConsoleColor.Gray;
                 break;
             case LogLevel.Warning:
                 color = ConsoleColor.Yellow;
@@ -42,7 +42,7 @@ public class BasicLogger : ILoggerDisposable
                 color = ConsoleColor.DarkRed;
                 break;
             case LogLevel.Success:
-                color = ConsoleColor.Gray;
+                color = ConsoleColor.Green;
                 break;
             default:
                 color = Console.ForegroundColor;

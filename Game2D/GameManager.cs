@@ -30,6 +30,7 @@ namespace Game2D
         public ImGuiController ImGuiController { get; private set; }
         public InputManager InputManager { get; private set; }
         public GameScreenManager GameScreenManager { get; private set; }
+        public AssetManager AssetManager { get; private set; }
         public PlayerEntity Player { get; set; }
         public Camera Camera { get; set; }
         public GameWorld GameWorld { get; set; }
@@ -42,8 +43,8 @@ namespace Game2D
             Logger.InitializeLogger(new BasicLogger("info.log"));
             InputManager = new InputManager(InputManagerConfiguration.Default);
 
-
             ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
+            AssetManager = new AssetManager();
         }
 
         protected override void OnLoad()
