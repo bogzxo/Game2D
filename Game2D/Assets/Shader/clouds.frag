@@ -2,6 +2,7 @@
 
 uniform float iTime;
 uniform vec2 iResolution;
+uniform float pixels;
 
 in vec2 texCoords;
 
@@ -39,8 +40,6 @@ float fbm(vec2 coords)
 
 	return value;
 }
-
-float pixels = 256;
 
 float value(vec2 fragCoord)
 {

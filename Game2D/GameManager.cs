@@ -56,6 +56,8 @@ namespace Game2D
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
 
+            Title = "Game2D";
+
             GameScreenManager = new GameScreenManager();
         }
         protected override void OnRenderFrame(FrameEventArgs args)

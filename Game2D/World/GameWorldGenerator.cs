@@ -15,11 +15,17 @@ namespace Game2D.World
             _surfaceNoise.SetFrequency(Parameters.BaseSurfaceFrequency);
             _cavernNoise.SetFrequency(Parameters.BaseCavernFrequency);
 
+            _surfaceNoise.SetSeed(Parameters.Seed);
+            _cavernNoise.SetSeed(Parameters.Seed);
+
             Regenerate();
         }
 
         public void Regenerate()
         {
+            _surfaceNoise.SetSeed(Parameters.Seed);
+            _cavernNoise.SetSeed(Parameters.Seed);
+
             _world = new float[GameManager.Instance.GameWorld.Width * Chunk.Width, Chunk.Height];
 
             var heightMapSamples = new List<int>();

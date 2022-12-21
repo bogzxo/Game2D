@@ -27,6 +27,7 @@ namespace Game2D.GameScreens
         private Vertex[] vertices;
 
         float iTime = 0;
+        float pixels = 256;
 
         public void Initialize()
         {
@@ -73,6 +74,9 @@ namespace Game2D.GameScreens
         bool showGenerationOptions, showPlayerOptions;
         public void Draw(float dt)
         {
+            GameManager.Instance.Camera.Position.Z += GameManager.Instance.MouseState.ScrollDelta.Y;
+            pixels = (int)(256 * (1 + GameManager.Instance.MouseState.Scroll.Y / 15.0f));
+
             DrawImGui();
 
             fbo.Use();
@@ -88,6 +92,9 @@ namespace Game2D.GameScreens
             backgroundShader.Matrix4("mvp", ref mat);
             backgroundShader.Uniform1("iTime", iTime);
             backgroundShader.Uniform2("iResolution", ref ires);
+            backgroundShader.Uniform1("pixels", pixels);
+
+            Console.WriteLine(pixels);
 
             vbo.Use();
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -135,6 +142,7 @@ namespace Game2D.GameScreens
 
             if (showGenerationOptions && ImGui.Begin("WorldGeneration"))
             {
+                ImGui.InputInt("Seed: ", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.Seed);
                 ImGui.SliderFloat($"Genration Threshold:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.TileGenerationThreshold, 0.0f, 1.0f);
                 ImGui.SliderFloat($"Erosion Bias:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionBias, 0.0f, 1.0f);
                 ImGui.SliderInt($"Erosion Passes:", ref GameManager.Instance.GameWorld.GameWorldGenerator.Parameters.ErosionPasses, 1, 10);
