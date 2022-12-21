@@ -94,7 +94,6 @@ namespace Game2D.GameScreens
             backgroundShader.Uniform2("iResolution", ref ires);
             backgroundShader.Uniform1("pixels", pixels);
 
-            Console.WriteLine(pixels);
 
             vbo.Use();
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
