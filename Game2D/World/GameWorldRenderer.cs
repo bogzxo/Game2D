@@ -70,7 +70,9 @@ namespace Game2D.World
             shader.Uniform1("inputTexture", 0);
 
             foreach (var chunk in world.Chunks)
-                chunk.Draw(dt);
+                chunk.TileMesh.Draw();
+            foreach (var chunk in world.Chunks)
+                chunk.VegetationMesh.Draw();
 
             foreach (var item in world.Entities)
                 item.Draw(dt);
