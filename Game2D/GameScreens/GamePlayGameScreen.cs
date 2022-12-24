@@ -1,7 +1,9 @@
 ﻿using Game2D.Data;
+using Game2D.Data.Inventory;
 using Game2D.Entities;
 using Game2D.OpenGL;
 using Game2D.Rendering;
+using Game2D.Rendering.UI;
 using Game2D.World;
 using Game2D.World.Generation;
 using ImGuiNET;
@@ -20,6 +22,9 @@ namespace Game2D.GameScreens
         private FrameBufferObject fbo;
         private uint[] indices;
         private Vertex[] vertices;
+        private UIHotbar hotbar;
+        private Inventory inventory;
+        private InventoryRenderer inventoryRenderer;
 
         private float iTime = 0, transitionTimer;
         private float pixels = 256;
@@ -35,6 +40,7 @@ namespace Game2D.GameScreens
             //background = new Texture(1920, 1080);
             //backgroundSprite = new Sprite(background);
             //backgroundSprite.Position = new Vector2(0, 0);
+
 
             postProcessingShader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/basic.vert"), (ShaderType.FragmentShader, "Assets/Shader/post.frag"));
 
@@ -65,6 +71,11 @@ namespace Game2D.GameScreens
             {
                 fbo.Resize(e.Width, e.Height);
             };
+
+
+            inventory = new Inventory();
+            inventoryRenderer = new InventoryRenderer(ref inventory);
+            hotbar = new UIHotbar(ref inventory);
         }
 
         private bool showGenerationOptions, showPlayerOptions;
@@ -72,8 +83,11 @@ namespace Game2D.GameScreens
         public void Draw(float dt)
         {
             transitionTimer += dt;
-            GameManager.Instance.Camera.Position.Z += GameManager.Instance.MouseState.ScrollDelta.Y;
-            pixels = (int)(256 * (1 + GameManager.Instance.MouseState.Scroll.Y / 15.0f));
+
+            // TODO: IMPLEMENT A NEW ZOOM
+
+            //GameManager.Instance.Camera.Position.Z += GameManager.Instance.MouseState.ScrollDelta.Y;
+            //pixels = (int)(256 * (1 + GameManager.Instance.MouseState.Scroll.Y / 15.0f));
 
             DrawImGui();
 
@@ -117,6 +131,9 @@ namespace Game2D.GameScreens
             vbo.Use();
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             vbo.End();
+
+            hotbar.Draw(dt);
+            inventoryRenderer.Draw(dt);
         }
 
         private void DrawImGui()
@@ -171,6 +188,10 @@ namespace Game2D.GameScreens
         public void Update(float dt)
         {
             iTime += dt;
+            
+            inventory.Update(dt);
+            hotbar.Update(dt);
+
 
             GameManager.Instance.GameWorld.Update(dt);
         }

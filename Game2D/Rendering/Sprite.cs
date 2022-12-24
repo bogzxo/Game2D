@@ -1,12 +1,11 @@
 ﻿using Bogz.Logging;
 using Game2D.Data;
 using Game2D.OpenGL;
-using Game2D.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System.Drawing;
 
-namespace Game2D.GameScreens.Graphics
+namespace Game2D.Rendering
 {
     public class Sprite : IEntity, IDisposable
     {
@@ -32,7 +31,7 @@ namespace Game2D.GameScreens.Graphics
 
         public Dictionary<Type, IEntityComponent> Components { get; set; } = new Dictionary<Type, IEntityComponent>();
 
-        public Sprite(Texture tex, Vector2 size, Shader sprShader = null)
+        public Sprite(Texture tex, Vector2 size, Shader? sprShader = null)
         {
             Size = size;
 
@@ -79,22 +78,27 @@ namespace Game2D.GameScreens.Graphics
             _model = Matrix4.CreateTranslation(Position.X, Position.Y, 0);
         }
 
-        public void Draw(float dt)
+        public void UpdateTextureRectangle(bool usePlayerCamera = true)
         {
-            var mvp = Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix()) * Matrix4.Transpose(_model);
             var imageSize = new Vector2(TextureRectangle.Width, TextureRectangle.Height);
             var texturePosition = new Vector2(TextureRectangle.X, TextureRectangle.Y);
-
             _shader.UseShader();
-            _shader.Matrix4("mvp", ref mvp);
+
             _shader.Uniform2("imageSize", ref imageSize);
             _shader.Uniform2("texturePosition", ref texturePosition);
+            var mvp = usePlayerCamera ? Matrix4.Transpose(GameManager.Instance.Camera.GetProjectionMatrix()) * Matrix4.Transpose(GameManager.Instance.Camera.GetViewMatrix()) * Matrix4.Transpose(_model) : Matrix4.Identity;
 
+            _shader.Matrix4("mvp", ref mvp);
             _shader.Uniform1("flipped", IsFlipped ? 1 : 0);
+            _shader.End();
+        }
 
+        public void Draw(float dt)
+        {
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTextureUnit(0, Texture.GLTexture);
 
+            _shader.UseShader();
             _shader.Uniform1("inputTexture", 0);
 
             _vbo.Use();

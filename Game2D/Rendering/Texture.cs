@@ -26,6 +26,8 @@ public class Texture : IDisposable
 
     public Texture(int w, int h, bool genMipmaps = false, bool srgb = false) => new Texture(new Bitmap(w, h), genMipmaps, srgb);
 
+    public Texture(string path, bool generateMipmaps = false, bool srgb = false) => new Texture(new Bitmap(path), generateMipmaps, srgb);
+
     public Texture(Bitmap image, bool generateMipmaps, bool srgb)
     {
         Width = image.Width;

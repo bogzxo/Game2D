@@ -1,5 +1,6 @@
 ﻿using Game2D.OpenGL;
 using Game2D.Rendering;
+using Game2D.Rendering.UI;
 using Game2D.World;
 using Game2D.World.Generation;
 using ImGuiNET;
@@ -59,12 +60,12 @@ namespace Game2D.GameScreens
         private float iTime = 0, transitionTimer;
         private bool transition, optionsToggle;
 
-        public void Draw(float deltaTime)
+        public void Draw(float dt)
         {
-            iTime += deltaTime;
+            iTime += dt;
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
+            GL.Viewport(0, 0, 1920, 1080);
             clouds.UseShader();
 
             var mat = Matrix4.Identity;
@@ -76,7 +77,7 @@ namespace Game2D.GameScreens
             clouds.Uniform1("pixels", 256.0f);
             clouds.Uniform1("brightness", 1 - transitionTimer);
 
-            fullscreenRenderRect.Draw(deltaTime);
+            fullscreenRenderRect.Draw(dt);
             clouds.End();
 
             ImGui.SetNextWindowSize(ImGui.GetIO().DisplaySize);
@@ -92,7 +93,7 @@ namespace Game2D.GameScreens
                 ImGui.End();
             }
 
-            transitionTimer += transition ? deltaTime : 0.0f;
+            transitionTimer += transition ? dt : 0.0f;
 
             if (transitionTimer > 1)
                 GameManager.Instance.GameScreenManager.SetGameScreen(typeof(GamePlayGameScreen));
@@ -109,7 +110,7 @@ namespace Game2D.GameScreens
                 }
                 if (ImGui.BeginTabItem("World Generation"))
                 {
-                    DrawWorldGenerationTab(deltaTime);
+                    DrawWorldGenerationTab(dt);
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();

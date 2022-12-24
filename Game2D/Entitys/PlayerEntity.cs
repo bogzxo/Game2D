@@ -1,6 +1,5 @@
 ﻿using Game2D.Animations;
 using Game2D.Entities.Components;
-using Game2D.GameScreens.Graphics;
 using Game2D.PlayerState;
 using Game2D.Rendering;
 using Game2D.World;
@@ -117,6 +116,9 @@ namespace Game2D.Entities
             _animationManager.SetCurrentAnimation(_manager.CurrentState.AnimationName);
             Particle.IsSpawning = Information.IsMoving && PhysicsComponent.OnGround;
             _animationManager.Update(dt);
+
+            if (_animationManager.RequiresSpriteUpdate)
+                DrawableComponent.Sprite!.UpdateTextureRectangle();
 
             GameManager.Instance.Camera.Position = new Vector3(Position.X, Position.Y, GameManager.Instance.Camera.Position.Z);
 

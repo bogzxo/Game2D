@@ -41,6 +41,8 @@ namespace Game2D
             ImGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
             AssetManager = new AssetManager();
 
+            GameManager.Instance.AssetManager.RegisterShader("basic_shader", "Assets/Shader/basic.vert", "Assets/Shader/image.frag");
+
             // make sure config dir exists
             if (!Directory.Exists("config"))
                 Directory.CreateDirectory("config");

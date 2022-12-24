@@ -26,25 +26,42 @@ namespace Game2D.Data
             Shader = Shader.CreateShader((ShaderType.FragmentShader, fragPath), (ShaderType.VertexShader, vertPath));
         }
     }
+    public struct AssetManagerTextureAsset
+    {
+        public Texture Texture { get; set; }
 
+        public AssetManagerTextureAsset(string path)
+        {
+            Texture = new Texture(path);
+        }
+    }
+
+    public enum AssetType
+    {
+        Texture,
+        Shader,
+        Font
+    }
     public class AssetManager : IDisposable
     {
         private bool disposedValue;
 
         public Dictionary<string, AssetManagerFontAsset> Fonts { get; set; }
         public Dictionary<string, AssetManagerShaderAsset> Shaders { get; set; }
+        public Dictionary<string, AssetManagerTextureAsset> Textures { get; set; }
 
         public AssetManager()
         {
             Fonts = new Dictionary<string, AssetManagerFontAsset>();
             Shaders = new Dictionary<string, AssetManagerShaderAsset>();
+            Textures = new Dictionary<string, AssetManagerTextureAsset>();
 
             Logger.Instance.Log(LogLevel.Info, "Asset Manager Loaded!");
         }
 
         public ImFontPtr GetFont(in string name) => Fonts[name].Pointer;
-
         public Shader GetShader(in string name) => Shaders[name].Shader;
+        public Texture GetTexture(in string name) => Textures[name].Texture;
 
         public void RegisterFont(string name, string path, int size)
         {
@@ -70,6 +87,14 @@ namespace Game2D.Data
             return Shaders[name].Shader;
         }
 
+        public Texture RegisterTexture(in string name, in string path)
+        {
+            Textures.Add(name, new AssetManagerTextureAsset(path));
+            Logger.Instance.Log(LogLevel.Success, $"Texture({name}) Loaded Successfully!");
+
+            return Textures[name].Texture;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -80,6 +105,9 @@ namespace Game2D.Data
                 foreach (var item in Shaders)
                     item.Value.Shader.Dispose();
 
+                foreach (var item in Textures)
+                    item.Value.Texture.Dispose();
+
                 if (disposing)
                 {
                     Fonts.Clear();
@@ -87,6 +115,9 @@ namespace Game2D.Data
 
                     Shaders.Clear();
                     Shaders = null;
+
+                    Textures.Clear();
+                    Textures = null;
                 }
 
                 disposedValue = true;
@@ -105,6 +136,17 @@ namespace Game2D.Data
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        internal bool HasAsset(AssetType type, string name)
+        {
+            return type switch
+            {
+                AssetType.Texture => Textures.ContainsKey(name),
+                AssetType.Shader => Shaders.ContainsKey(name),
+                AssetType.Font => Fonts.ContainsKey(name),
+                _ => false,
+            };
         }
     }
 }

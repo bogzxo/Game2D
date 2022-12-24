@@ -17,6 +17,7 @@ namespace Game2D.Animations
 
         public Vector2 SpriteSize { get; }
         public float AnimationDelay { get; set; } = 0.1f;
+        public bool RequiresSpriteUpdate { get; private set; }
 
         #endregion Public Members
 
@@ -35,9 +36,10 @@ namespace Game2D.Animations
 
             if (timer > AnimationDelay)
             {
+                RequiresSpriteUpdate = true;
                 animations[currentAnimation].ProgressFrame();
                 timer = 0;
-            }
+            } else RequiresSpriteUpdate = false;
         }
 
         public void SetCurrentAnimation(string name)

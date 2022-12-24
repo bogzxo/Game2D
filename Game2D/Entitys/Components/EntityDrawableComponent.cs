@@ -1,4 +1,4 @@
-﻿using Game2D.GameScreens.Graphics;
+﻿using Game2D.Rendering;
 
 namespace Game2D.Entities.Components
 {
