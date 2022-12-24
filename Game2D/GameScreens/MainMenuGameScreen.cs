@@ -25,7 +25,7 @@ namespace Game2D.GameScreens
         private void LoadData()
         {
             WorldGenerationParameters.LoadFromFile("config/worldgen.json");
-            clouds = GameManager.Instance.AssetManager.RegisterShader("background_clouds", "Assets/Shader/clouds.frag", "Assets/Shader/basic.vert");
+            clouds = GameManager.Instance.AssetManager.RegisterShader("background_clouds", "Assets/Shader/basic.vert", "Assets/Shader/clouds.frag");
             GameManager.Instance.AssetManager.RegisterFont("roboto128", "Assets/Fonts/Roboto-Medium.ttf", 128);
 
             GameManager.Instance.GameWorld = new GameWorld();

@@ -45,6 +45,9 @@
     <None Update="Assets\Player\spritesheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Shader\wavy.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Shader\particle.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

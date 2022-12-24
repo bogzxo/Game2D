@@ -10,13 +10,14 @@ namespace Game2D.World
     {
         private GameWorld world;
         private Texture texture;
-        private Shader shader, flatShader;
+        private Shader shader, flatShader, vegetationShader;
         private Matrix4 model;
 
         private VertexBufferObject vbo;
         private uint[] indices;
         private Vertex[] vertices;
         private FrameBufferObject fbo0;
+        private float iTime;
 
         public GameWorldRenderer(GameWorld world, string path)
         {
@@ -24,7 +25,7 @@ namespace Game2D.World
             texture = new Texture(new System.Drawing.Bitmap(path), false, false);
 
             shader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/tileMapRenderer.vert"), (ShaderType.FragmentShader, "Assets/Shader/tileMapRenderer.frag"));
-
+            vegetationShader = GameManager.Instance.AssetManager.RegisterShader("vegetation_shader", "Assets/Shader/wavy.vert", "Assets/Shader/tileMapRenderer.frag");
             flatShader = Shader.CreateShader((ShaderType.VertexShader, "Assets/Shader/tileMapRenderer.vert"), (ShaderType.FragmentShader, "Assets/Shader/shadows.frag"));
 
             model = Matrix4.Identity;
@@ -53,6 +54,8 @@ namespace Game2D.World
 
         public void BeginDraw(float dt)
         {
+            iTime += dt;
+
             fbo0.Use();
             GL.DrawBuffers(4, new[] { DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2, DrawBuffersEnum.ColorAttachment3 });
             GL.ClearColor(new Color4(0, 0, 0, 0));
@@ -71,14 +74,30 @@ namespace Game2D.World
 
             foreach (var chunk in world.Chunks)
                 chunk.TileMesh.Draw();
+
+
+            shader.End();
+
+            vegetationShader.UseShader();
+            vegetationShader.Matrix4("mvp", ref mvp);
+
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTextureUnit(0, texture.GLTexture);
+
+            vegetationShader.Uniform1("inputTexture", 0);
+            vegetationShader.Uniform1("iTime", iTime);
+
             foreach (var chunk in world.Chunks)
                 chunk.VegetationMesh.Draw();
+
+
+            vegetationShader.End();
+
+            GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
 
             foreach (var item in world.Entities)
                 item.Draw(dt);
 
-            shader.End();
-            GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
             fbo0.End();
         }
 

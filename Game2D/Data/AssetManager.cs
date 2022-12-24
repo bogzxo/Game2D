@@ -62,7 +62,7 @@ namespace Game2D.Data
                 Logger.Instance.Log(LogLevel.Error, $"Font({name}) Failed to load!");
         }
 
-        public Shader RegisterShader(in string name, in string fragPath, in string vertPath)
+        public Shader RegisterShader(in string name, in string vertPath, in string fragPath)
         {
             Shaders.Add(name, new AssetManagerShaderAsset(fragPath, vertPath));
             Logger.Instance.Log(LogLevel.Success, $"Shader({name}) Loaded Successfully!");
