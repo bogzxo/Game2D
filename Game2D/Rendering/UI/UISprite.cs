@@ -25,8 +25,8 @@ namespace Game2D.Rendering.UI
 
         public void Update(float dt)
         {
-            mat = Matrix4.Identity * Matrix4.Transpose(Matrix4.CreateScale(new Vector3(Scale.X * (Texture.Width / Texture.Height) / 2.0f, Scale.Y, 1)))
-              * Matrix4.Transpose(Matrix4.CreateTranslation(Position.X, Position.Y, 0));
+            mat = Matrix4.Identity
+              * Matrix4.Transpose(Matrix4.CreateTranslation(Position.X, Position.Y, 0)) * Matrix4.Transpose(Matrix4.CreateScale(new Vector3(Scale.X * (Texture.Width / Texture.Height) / 2.0f, Scale.Y, 1)));
         }
 
         public void Draw(float dt)

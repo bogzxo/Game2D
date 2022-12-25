@@ -19,10 +19,10 @@ namespace Game2D.OpenGL
             };
 
             vertices = new Vertex[] {
-                new Vertex(new Vector3(-1,-1,0), new Vector2(0,0)),
-                new Vertex(new Vector3(1,-1,0), new Vector2(1,0)),
-                new Vertex(new Vector3(1,1,0), new Vector2(1,1)),
-                new Vertex(new Vector3(-1,1,0), new Vector2(0,1))
+                new Vertex(new Vector3(-1,-1,0), new Vector2(0,1)),
+                new Vertex(new Vector3(1,-1,0), new Vector2(1,1)),
+                new Vertex(new Vector3(1,1,0), new Vector2(1,0)),
+                new Vertex(new Vector3(-1,1,0), new Vector2(0,0))
             };
 
             vbo.PushVertexAttribPointer(0, 3, VertexAttribPointerType.Float, Vertex.SizeInBytes, 0);

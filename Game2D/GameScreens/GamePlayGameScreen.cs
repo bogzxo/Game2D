@@ -14,6 +14,7 @@ namespace Game2D.GameScreens
 {
     public class GamePlayGameScreen : IGameScreen
     {
+        private SlimeEntity entityTest;
         private PlayerEntity player;
         private GameWorldRenderer worldRenderer;
         private Shader postProcessingShader;
@@ -22,7 +23,6 @@ namespace Game2D.GameScreens
         private FrameBufferObject fbo;
         private uint[] indices;
         private Vertex[] vertices;
-        private UIHotbar hotbar;
         private Inventory inventory;
         private InventoryRenderer inventoryRenderer;
 
@@ -75,7 +75,8 @@ namespace Game2D.GameScreens
 
             inventory = new Inventory();
             inventoryRenderer = new InventoryRenderer(ref inventory);
-            hotbar = new UIHotbar(ref inventory);
+
+            entityTest = new SlimeEntity();
         }
 
         private bool showGenerationOptions, showPlayerOptions;
@@ -113,6 +114,8 @@ namespace Game2D.GameScreens
             backgroundShader.End();
 
             worldRenderer.BeginDraw(dt);
+            entityTest.Draw(dt);
+
             fbo.Use();
 
             GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
@@ -132,7 +135,6 @@ namespace Game2D.GameScreens
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             vbo.End();
 
-            hotbar.Draw(dt);
             inventoryRenderer.Draw(dt);
         }
 
@@ -188,9 +190,10 @@ namespace Game2D.GameScreens
         public void Update(float dt)
         {
             iTime += dt;
-            
+
+            entityTest.Update(dt);
+            inventoryRenderer.Update(dt);
             inventory.Update(dt);
-            hotbar.Update(dt);
 
 
             GameManager.Instance.GameWorld.Update(dt);
